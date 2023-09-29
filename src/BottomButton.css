@@ -1,0 +1,20 @@
+a.bottom-button {
+    display: block;
+    float: left;
+    width: 20%;
+    text-align: center;
+    height: 2em;
+}
+
+    a.bottom-button:hover {
+        background-color: #a99b;
+    }
+
+    a.bottom-button p.icon {
+        font-size: 1.2em;
+    }
+
+    a.bottom-button p.caption {
+        font-size: 0.3em;
+        margin-top: -2.5em;
+    }
