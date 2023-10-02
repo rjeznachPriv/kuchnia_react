@@ -1,0 +1,14 @@
+{
+  "numOfWorkers": 1,
+  "frequency": 1,
+  "locate": true,
+  "inputStream": {
+    "name": "Live",
+    "type": "LiveStream",
+    "target": "#cameraCanvas"
+  },
+  "decoder": {
+    "readers": [ "ean_reader" ]
+  }
+}
+

@@ -6,8 +6,13 @@ a.bottom-button {
     height: 2em;
 }
 
+    a.bottom-button.active {
+        background-color: #a99b;
+    }
+
     a.bottom-button:hover {
         background-color: #a99b;
+        cursor: pointer;
     }
 
     a.bottom-button p.icon {
