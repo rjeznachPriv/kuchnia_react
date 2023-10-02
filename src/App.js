@@ -12,25 +12,26 @@ function App() {
         setActiveTab(newActiveTab);
     }
 
-    function onBarcodeScanned(code, data) {
-        var errorSum = 0;
-        data.codeResult.decodedCodes.forEach(code => {
-            errorSum += code.error ? code.error : 0; 
-        })
-
-        return { code: code, valid: errorSum < 1.45 }; // magic number
+    function onBarcodeScanned(code) {
+        console.log(`Proper code: ${code}`);
     }
 
-  return (
-      <div className="App">
-          <Header title={ title } />
-          <aside></aside>
-          <main>
-              <Scanner onBarcodeScanned={onBarcodeScanned} activeTab={activeTab}  />
-          </main>
-          <Footer active={activeTab} onBottomButtonClick={onBottomButtonClick} />
-    </div>
-  );
+    function onPictureTaken(pictureBlob) {
+        console.log(`Picture ${pictureBlob}`);
+    }
+
+    return (
+        <div className="App">
+            <Header title={title} />
+            <div className="main-content">
+                <aside></aside>
+                <main>
+                    <Scanner onBarcodeScanned={onBarcodeScanned} onPictureTaken={onPictureTaken} activeTab={activeTab} />
+                </main>
+            </div>
+            <Footer active={activeTab} onBottomButtonClick={onBottomButtonClick} />
+        </div>
+    );
 }
 
 export default App;

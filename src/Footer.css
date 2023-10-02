@@ -1,17 +1,20 @@
-#app-footer {
+footer#app-footer {
     display: block;
     width: 100%;
     height: 2em;
+    min-height: 2em;
     background-color: #cbbc;
     text-align: center;
-    font-size: 3em;
+    font-size: 2em;
     font-weight: bold;
     color: #855;
     align-items: center;
     justify-content: center;
-    
     position: absolute;
     bottom: 0;
-    width: 100%;
-
 }
+
+    footer#app-footer a {
+        display: block
+    }
+    footer#app-footer a p {display:block}
