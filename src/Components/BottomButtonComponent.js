@@ -1,7 +1,7 @@
-import './BottomButton.css';
+import './../Styles/BottomButtonComponent.css';
 import React from 'react';
 
-function BottomButton(props) {
+function BottomButtonComponent(props) {
     var className = `bottom-button${props.footerProps.active == props.id ? ' active' : ''}`;
 
     return (
@@ -13,4 +13,4 @@ function BottomButton(props) {
   );
 }
 
-export default BottomButton;
+export default BottomButtonComponent;

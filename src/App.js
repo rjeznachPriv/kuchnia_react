@@ -1,15 +1,48 @@
-import './App.css';
-import Header from './Header.js';
-import Footer from './Footer.js';
 import { useState } from 'react';
-import Scanner from './Scanner';
+
+import './Styles/App.css';
+
+import HeaderComponent from './Components/HeaderComponent.js';
+import FooterComponent from './Components/FooterComponent.js';
+import ScannerComponent from './Components/ScannerComponent.js';
+import StoragesComponent from './Components/StoragesComponent.js';
+
+import data from "./Configuration/InitialData.json";
+import captions from "./Configuration/LocalizedCaptionsPL.json"
+import names from "./Configuration/VitalHTMLids.json";
 
 function App() {
-    var title = 'Jedzonko w kuchni';
+    const TITLE_STORAGES = captions.title_storages;
+    const TITLE_CATEGORIES = captions.title_categories;
+    const TITLE_CAMERA = captions.title_camera;
+    const TITLE_SUPPLIES = captions.title_supplies;
+    const TITLE_PRODUCTS = captions.title_products;
+
+    var [title, setTitle] = useState(captions.default_app_title);
     var [activeTab, setActiveTab] = useState('');
 
     function onBottomButtonClick(newActiveTab) {
         setActiveTab(newActiveTab);
+
+        switch (newActiveTab) {
+            case names.storages_tab_button:
+                setTitle(TITLE_STORAGES)
+                break;
+            case names.categories_tab_button:
+                setTitle(TITLE_CATEGORIES)
+                break;
+            case names.camera_tab_button:
+                setTitle(TITLE_CAMERA)
+                break;
+            case names.supplies_tab_button:
+                setTitle(TITLE_SUPPLIES)
+                break;
+            case names.products_tab_button:
+                setTitle(TITLE_PRODUCTS)
+                break;
+            default:
+                title = '';
+        }
     }
 
     function onBarcodeScanned(code) {
@@ -22,14 +55,15 @@ function App() {
 
     return (
         <div className="App">
-            <Header title={title} />
+            <HeaderComponent title={title} />
             <div className="main-content">
                 <aside></aside>
                 <main>
-                    <Scanner onBarcodeScanned={onBarcodeScanned} onPictureTaken={onPictureTaken} activeTab={activeTab} />
+                    <ScannerComponent onBarcodeScanned={onBarcodeScanned} onPictureTaken={onPictureTaken} activeTab={activeTab} />
+                    <StoragesComponent activeTab={activeTab} storages={data.storages} />
                 </main>
             </div>
-            <Footer active={activeTab} onBottomButtonClick={onBottomButtonClick} />
+            <FooterComponent activeTab={activeTab} onBottomButtonClick={onBottomButtonClick} />
         </div>
     );
 }

@@ -1,10 +1,14 @@
-import './Scanner.css';
+
 import { useState } from 'react';
 import React, { useEffect } from "react";
-import config from "./scannerConfig.json";
 import Quagga from "quagga";
+import $ from 'jquery';
 
-const Scanner = props => {
+import './../Styles/ScannerComponent.css';
+import config from "./../Configuration/scannerComponentConfig.json";
+import names from "./../Configuration/VitalHTMLids.json";
+
+const ScannerComponent = props => {
     var [takePictureClass, setTakePictureClass] = useState('');
     var [scanClass, setScanClass] = useState('');
 
@@ -12,11 +16,12 @@ const Scanner = props => {
     const beepNotOkSound = new Audio('./beep-not_ok.mp3');
     const cameraSound = new Audio('./camera.mp3');
 
-    const SCANNING_PAUSE_AFTER_SCAN = 2000;
+    const SCANNING_PAUSE_AFTER_SCAN = 2000;     //Move all this to scannerConfig
     const FLASH_OVERLAY_PERIOD = 400;
     const ERROR_LIMIT = 1.45;
+    const TAKEN_PICTURE_QUALITY = 0.3;
 
-    var localStyle = { display: props.activeTab == "bb3" ? 'block' : 'none' };
+    var localStyle = { display: props.activeTab === names.camera_tab_button ? 'block' : 'none' };
 
     useEffect(() => {
         Quagga.init(config, err => {
@@ -31,8 +36,14 @@ const Scanner = props => {
 
         Quagga.onDetected(function (result) {
             Quagga.pause();
-            runSequence(Array(() => setScanClass('fadeInAndOut'), () => setScanClass('')), FLASH_OVERLAY_PERIOD);
-            runSequence(Array(() => HandleDetectedCode(result), () => Quagga.start()), SCANNING_PAUSE_AFTER_SCAN);
+            runSequence([
+                () => setScanClass('fadeInAndOut'),
+                () => setScanClass('')],
+                FLASH_OVERLAY_PERIOD);
+            runSequence([
+                () => HandleDetectedCode(result),
+                () => Quagga.start()],
+                SCANNING_PAUSE_AFTER_SCAN);
         });
     }, []);
 
@@ -57,7 +68,17 @@ const Scanner = props => {
 
     function handleTakePictureButtonClick() {
         cameraSound.play();
-        runSequence(Array(() => setTakePictureClass('fadeInAndOut'), () => setTakePictureClass('')), FLASH_OVERLAY_PERIOD);
+        runSequence([
+            () => setTakePictureClass('fadeInAndOut'),
+            () => setTakePictureClass('')],
+            FLASH_OVERLAY_PERIOD);
+
+        const canvas = $('#cameraCanvas canvas.drawingBuffer')[0];
+        const video = $('#cameraCanvas video')[0];
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        let image_data_url = canvas.toDataURL('image/jpeg', TAKEN_PICTURE_QUALITY);
+
+        props.onPictureTaken(image_data_url); //blob
     }
 
     function runSequence(sequence, delay, counter = 0) {    //TODO: move to some module
@@ -79,4 +100,4 @@ const Scanner = props => {
     );
 };
 
-export default Scanner;
+export default ScannerComponent;
