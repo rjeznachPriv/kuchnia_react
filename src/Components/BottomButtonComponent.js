@@ -2,7 +2,7 @@ import './../Styles/BottomButtonComponent.css';
 import React from 'react';
 
 function BottomButtonComponent(props) {
-    var className = `bottom-button${props.footerProps.active == props.id ? ' active' : ''}`;
+    var className = `bottom-button${props.footerProps.active === props.id ? ' active' : ''}`;
 
     return (
 

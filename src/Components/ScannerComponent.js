@@ -7,6 +7,7 @@ import $ from 'jquery';
 import './../Styles/ScannerComponent.css';
 import config from "./../Configuration/scannerComponentConfig.json";
 import names from "./../Configuration/VitalHTMLids.json";
+import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
 const ScannerComponent = props => {
     var [takePictureClass, setTakePictureClass] = useState('');
@@ -20,6 +21,7 @@ const ScannerComponent = props => {
     const FLASH_OVERLAY_PERIOD = 400;
     const ERROR_LIMIT = 1.45;
     const TAKEN_PICTURE_QUALITY = 0.3;
+    const CAMERA_SCANNER_INFO = captions.camera_scanner_info;
 
     var localStyle = { display: props.activeTab === names.camera_tab_button ? 'block' : 'none' };
 
@@ -93,6 +95,7 @@ const ScannerComponent = props => {
 
     return (
         <div id="cameraCanvas" style={localStyle} >
+            <div className="camera-scanner-info">{CAMERA_SCANNER_INFO}</div>
             <div className="take-picture-button" onClick={handleTakePictureButtonClick}></div>
             <div className={`${scanClass} scan-overlay`}></div>
             <div className={`${takePictureClass} take-picture-overlay`}></div>

@@ -1,0 +1,20 @@
+.modal-main-window {
+    background-image: url('./../img/logo1b.png');
+    background-size: cover;
+    position: absolute;
+    width: 60%;
+    top: 5%;
+    left: 20%;
+    z-index: 1001;
+    border-style: double;
+    border-width: 4px;
+    border-color: #D1C4C1;
+    border-radius: 120px;
+    aspect-ratio: 1 / 1;
+}
+
+.modal-top-bar {
+}
+
+.modal-top-bar-x-button {
+}

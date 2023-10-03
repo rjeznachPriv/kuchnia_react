@@ -7,9 +7,9 @@ import FooterComponent from './Components/FooterComponent.js';
 import ScannerComponent from './Components/ScannerComponent.js';
 import StoragesComponent from './Components/StoragesComponent.js';
 
-import data from "./Configuration/InitialData.json";
 import captions from "./Configuration/LocalizedCaptionsPL.json"
 import names from "./Configuration/VitalHTMLids.json";
+import InfoModalComponent from './Components/InfoModalComponent';
 
 function App() {
     const TITLE_STORAGES = captions.title_storages;
@@ -50,17 +50,18 @@ function App() {
     }
 
     function onPictureTaken(pictureBlob) {
-        console.log(`Picture ${pictureBlob}`);
     }
 
     return (
         <div className="App">
+            <InfoModalComponent></InfoModalComponent>
+
             <HeaderComponent title={title} />
             <div className="main-content">
                 <aside></aside>
                 <main>
                     <ScannerComponent onBarcodeScanned={onBarcodeScanned} onPictureTaken={onPictureTaken} activeTab={activeTab} />
-                    <StoragesComponent activeTab={activeTab} storages={data.storages} />
+                    <StoragesComponent activeTab={activeTab}/>
                 </main>
             </div>
             <FooterComponent activeTab={activeTab} onBottomButtonClick={onBottomButtonClick} />

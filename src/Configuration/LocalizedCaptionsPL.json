@@ -1,9 +1,11 @@
 {
+  "default_app_title": "Zapasy w kuchni",
   "title_storages": "Schowki",
-  "title_categories": "Kategorie zapasów",
+  "title_categories": "Kategorie",
   "title_camera": "Skanuj/Fotografuj",
   "title_supplies": "Zapasy",
   "title_products": "Produkty",
 
-  "default_app_title": "Zapasy w kuchni"
+
+  "camera_scanner_info":  "Kod kreskowy zostanie zeskanowany samoczynnie"
 }
