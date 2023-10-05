@@ -6,7 +6,6 @@
 }
 
 #storages-tab {
-    overflow-y: auto;
     margin: 5px;
     border-style: double;
     border-width: 4px;
@@ -33,6 +32,12 @@
 .modal-delete-content h2 {
 }
 .modal-delete-content p{
+}
+
+.storages-table-container {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
 }
 
 .StoragesComponent table svg {

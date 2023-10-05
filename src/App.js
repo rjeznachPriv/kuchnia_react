@@ -6,6 +6,7 @@ import FooterComponent from './Components/FooterComponent.js';
 import SuppliesComponent from './Components/SuppliesComponent.js';
 import ScannerComponent from './Components/ScannerComponent.js';
 import StoragesComponent from './Components/StoragesComponent.js';
+import BarcodeGeneratorComponent from './Components/BarcodeGeneratorComponent.js';
 
 import captions from "./Configuration/LocalizedCaptionsPL.json"
 import names from "./Configuration/VitalHTMLids.json";
@@ -99,6 +100,12 @@ function App() {
             case names.products_tab:
                 setTitle(TITLE_PRODUCTS)
                 break;
+            case 'barcode_generator_tab':
+                setTitle('Generator kodów');
+                break;
+            case 'grocery_list_tab':
+                setTitle('Lista zakupów');
+                break;
             default:
                 setTitle('');
         }
@@ -134,7 +141,8 @@ function App() {
             <div className="main-content">
                 <aside></aside>
                 <main>
-                    <SuppliesComponent/>
+                    <BarcodeGeneratorComponent activeTab={activeTab} />
+                    <SuppliesComponent activeTab={activeTab} />
                     <ScannerComponent
                         onBarcodeScanned={onBarcodeScanned}
                         onPictureTaken={onPictureTaken}

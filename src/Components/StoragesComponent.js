@@ -68,9 +68,12 @@ function StoragesComponent(props) {
         } else if (IsAdding() == true) {
             setStorageToAddBarcode(barcode);
         } else if (IsStorageTabActive()) {
-            //TODO: open supplies("zapasy") tab with filtered supplies from this storage
-            //console.log(`otwieram zakladke zapasy dla schowka: ${barcode}`);
+            console.log('Move to "Zapasy" with Supplies filtered by storage of barcode:' + barcode);
         }
+    }
+
+    function onStorageNameClicked(guid) {
+        console.log('Move to "Zapasy" with Supplies filtered by storage of id:' + guid);
     }
 
     function onFiltered(items) {
@@ -151,7 +154,6 @@ function StoragesComponent(props) {
 
     return (
         <div id="storages-tab" style={localStyle} className="StoragesComponent">
-            {props.activeTab}
             <InfoModalComponent
                 mainWindowClassName={`modal-delete-window ${deleteModalFadingClass}`}
                 mainWindowTopBarClassName="modal-delete-top-bar"
@@ -193,11 +195,11 @@ function StoragesComponent(props) {
                 fadeOut={hideEditModal}>
             </InfoModalComponent>
             Dodac barcode window (male okienko z aparatu)
-            Klikniecie w schowek otworzy jego zawartosc
             <p><AutocompleteSearchComponent
                 callback={onFiltered}
                 items={storages}
             ></AutocompleteSearchComponent></p>
+            <div className="storages-table-container">
             <table>
                 <thead>
                     <tr className="table-header">
@@ -229,7 +231,12 @@ function StoragesComponent(props) {
                 <tbody>
                     {storagesToDisplay.map((item) => (
                         <tr className="item" key={item.guid}>
-                            <td>{item.name}</td>
+                            <td>
+                                <a key={item.guid}
+                                    id={ item.id}
+                                   onClick={() => onStorageNameClicked(item.guid)}>
+                                    {item.name}
+                                </a></td>
                             <td>{item.barcode}</td>
                             <td>
                                 <FaEdit role="button" tabIndex="0" onClick={() => showEditModal(item.guid)}></FaEdit>
@@ -240,7 +247,8 @@ function StoragesComponent(props) {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+                </table>
+            </div>
         </div>
     );
 }
