@@ -2,11 +2,11 @@ import './../Styles/BottomButtonComponent.css';
 import React from 'react';
 
 function BottomButtonComponent(props) {
-    var className = `bottom-button${props.footerProps.active === props.id ? ' active' : ''}`;
+    var className = `bottom-button${props.active ? ' active' : ''}`;
 
     return (
 
-        <a className={className} onClick={ () => props.footerProps.onBottomButtonClick(props.id) }>
+        <a className={className} onClick={() => props.footerProps.onBottomButtonClick(props.enableTab) }>
             <p className="icon">{props.icon}</p>
             <p className="caption">{props.caption}</p>
         </a>

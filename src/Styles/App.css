@@ -49,3 +49,17 @@ td {
     ;
 }
 
+.IntroBackground {
+    width: 60%;
+    top: 5%;
+    background-size: cover;
+    background-position:center;
+    border-radius: 120px;
+    aspect-ratio: 1 / 1;
+    background-image: url('./../img/logo1b.png');
+}
+
+.IntroSpecialModal {
+    opacity:0;
+}
+

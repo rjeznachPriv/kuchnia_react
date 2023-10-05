@@ -6,6 +6,20 @@
   "title_supplies": "Zapasy",
   "title_products": "Produkty",
 
+  "camera_scanner_info": "Kod kreskowy zostanie zeskanowany samoczynnie",
 
-  "camera_scanner_info":  "Kod kreskowy zostanie zeskanowany samoczynnie"
+  "field_storage_name": "Nazwa schowka",
+  "field_barcode": "Kod kreskowy",
+
+
+  "message_are_you_sure_to_remove_storage": "Czy na pewno chcesz usunąć schowek",
+  "message_removing_storage": "Usuwanie schowka",
+  "message_storage_edit": "Edycja schowka",
+  "message_yes": "Tak",
+  "message_no": "Nie",
+  "message_cancel": "Anuluj",
+  "message_save": "Zapisz",
+  "message_edit": "Edytuj",
+  "message_delete": "Usuń"
+
 }

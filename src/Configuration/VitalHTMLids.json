@@ -1,8 +1,8 @@
 {
-  "storages_tab_button": "storages_tab_button",
-  "categories_tab_button": "categories_tab_button",
-  "camera_tab_button": "camera_tab_button",
-  "supplies_tab_button": "supplies_tab_button",
-  "products_tab_button": "products_tab_button"
+  "storages_tab": "storages_tab",
+  "categories_tab": "categories_tab",
+  "camera_tab": "camera_tab",
+  "supplies_tab": "supplies_tab",
+  "products_tab": "products_tab"
 }
 

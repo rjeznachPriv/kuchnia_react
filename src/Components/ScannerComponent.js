@@ -23,7 +23,7 @@ const ScannerComponent = props => {
     const TAKEN_PICTURE_QUALITY = 0.3;
     const CAMERA_SCANNER_INFO = captions.camera_scanner_info;
 
-    var localStyle = { display: props.activeTab === names.camera_tab_button ? 'block' : 'none' };
+    var localStyle = { display: props.activeTab === names.camera_tab ? 'block' : 'none' };
 
     useEffect(() => {
         Quagga.init(config, err => {
