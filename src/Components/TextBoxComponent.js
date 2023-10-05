@@ -6,9 +6,9 @@ function TextBoxComponent(props) {
             <label htmlFor={props.id}>{props.label}</label>
             <input
                 type="text"
-                placeholder={props.value}
-                required
-                
+                placeholder={props.placeholder}
+                id={props.id}
+                value={props.value}
                 onChange={(e) => props.onChangeValue(e)}></input>
             <p className="ValidationMessage">validation msg</p>
         </div>

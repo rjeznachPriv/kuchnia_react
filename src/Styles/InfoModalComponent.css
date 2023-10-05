@@ -72,15 +72,11 @@
         }
 
         .InfoModalContentContainer .line input {
-            border-style: none;
-            border-radius: 10px;
-            padding: 5px;
-            width: 90%;
+           
         }
 
         .InfoModalContentContainer .line p.ValidationMessage {
-            font-size: 0.7em;
-            color: red;
+      
         }
 
 .InfoModalButtons {

@@ -3,6 +3,7 @@ import './Styles/App.css';
 
 import HeaderComponent from './Components/HeaderComponent.js';
 import FooterComponent from './Components/FooterComponent.js';
+import SuppliesComponent from './Components/SuppliesComponent.js';
 import ScannerComponent from './Components/ScannerComponent.js';
 import StoragesComponent from './Components/StoragesComponent.js';
 
@@ -21,13 +22,13 @@ function App() {
 
     const [title, setTitle] = useState(captions.default_app_title);
     const [activeTab, setActiveTab] = useState('');
-    
+
     const [appStates, setAppStates] = useState([
         { name: "scanner", component: ScannerComponent },
         { name: "storages", component: StoragesComponent },
     ]);
     const [allowedTransitions, setAllowedTransitions] = useState([
-        
+
 
     ]);
     const [currentAppState, setCurrentAppState] = useState(null);
@@ -37,10 +38,11 @@ function App() {
 
     useEffect(() => {
         console.log('a');
-        logoModalReference.current.fadeOutSlow();
+        //logoModalReference.current.fadeOutSlow();
+        logoModalReference.current.fadeOut();
     }, []);
 
- 
+
 
     function AdvanceStateMachine(targetState) {
         if (currentAppState == null) {
@@ -115,6 +117,8 @@ function App() {
         barcodeListeners.push(listener);
     }
 
+    //TODO: register PictureTakenListener
+
     return (
         <div className="App">
             <InfoModalComponent
@@ -130,14 +134,20 @@ function App() {
             <div className="main-content">
                 <aside></aside>
                 <main>
-                    <ScannerComponent onBarcodeScanned={onBarcodeScanned} onPictureTaken={onPictureTaken} activeTab={activeTab} />
+                    <SuppliesComponent/>
+                    <ScannerComponent
+                        onBarcodeScanned={onBarcodeScanned}
+                        onPictureTaken={onPictureTaken}
+                        activeTab={activeTab} />
                     <StoragesComponent
                         activeTab={activeTab}
                         registerBarcodeListener={registerBarcodeListener}
                     />
                 </main>
             </div>
-            <FooterComponent activeTab={activeTab} onBottomButtonClick={onBottomButtonClick} />
+            <FooterComponent
+                activeTab={activeTab}
+                onBottomButtonClick={onBottomButtonClick} />
         </div>
     );
 }

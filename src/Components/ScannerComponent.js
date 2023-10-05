@@ -3,6 +3,7 @@ import { useState } from 'react';
 import React, { useEffect } from "react";
 import Quagga from "quagga";
 import $ from 'jquery';
+import ChooseYourActionModalComponent from './ChooseYourActionModalComponent';
 
 import './../Styles/ScannerComponent.css';
 import config from "./../Configuration/scannerComponentConfig.json";
@@ -16,12 +17,6 @@ const ScannerComponent = props => {
     const beepOkSound = new Audio('./beep-ok.mp3');
     const beepNotOkSound = new Audio('./beep-not_ok.mp3');
     const cameraSound = new Audio('./camera.mp3');
-
-    const SCANNING_PAUSE_AFTER_SCAN = 2000;     //Move all this to scannerConfig
-    const FLASH_OVERLAY_PERIOD = 400;
-    const ERROR_LIMIT = 1.45;
-    const TAKEN_PICTURE_QUALITY = 0.3;
-    const CAMERA_SCANNER_INFO = captions.camera_scanner_info;
 
     var localStyle = { display: props.activeTab === names.camera_tab ? 'block' : 'none' };
 
@@ -41,13 +36,13 @@ const ScannerComponent = props => {
             runSequence([
                 () => setScanClass('fadeInAndOut'),
                 () => setScanClass('')],
-                FLASH_OVERLAY_PERIOD);
+                config.flashOverlayTime);
             runSequence([
                 () => HandleDetectedCode(result),
                 () => Quagga.start()],
-                SCANNING_PAUSE_AFTER_SCAN);
+                config.scanningPauseAfterScan);
         });
-    }, []);
+    }, [Quagga]);
 
     function HandleDetectedCode(result) {                                       //TODO: rename me, to be without 'handle'
         if (ValidateDetectedCode(result.codeResult.code, result).valid) {
@@ -65,7 +60,7 @@ const ScannerComponent = props => {
             errorSum += code.error ? code.error : 0;
         })
 
-        return { code: code, valid: errorSum < ERROR_LIMIT };
+        return { code: code, valid: errorSum < config.errorLimit };
     }
 
     function handleTakePictureButtonClick() {
@@ -73,12 +68,12 @@ const ScannerComponent = props => {
         runSequence([
             () => setTakePictureClass('fadeInAndOut'),
             () => setTakePictureClass('')],
-            FLASH_OVERLAY_PERIOD);
+            config.flashOverlayTime);
 
         const canvas = $('#cameraCanvas canvas.drawingBuffer')[0];
         const video = $('#cameraCanvas video')[0];
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        let image_data_url = canvas.toDataURL('image/jpeg', TAKEN_PICTURE_QUALITY);
+        let image_data_url = canvas.toDataURL('image/jpeg', config.takenPictureQuality);
 
         props.onPictureTaken(image_data_url); //blob
     }
@@ -95,10 +90,11 @@ const ScannerComponent = props => {
 
     return (
         <div id="cameraCanvas" style={localStyle} >
-            <div className="camera-scanner-info">{CAMERA_SCANNER_INFO}</div>
+            <div className="camera-scanner-info">{captions.camera_scanner_info}</div>
             <div className="take-picture-button" onClick={handleTakePictureButtonClick}></div>
             <div className={`${scanClass} scan-overlay`}></div>
             <div className={`${takePictureClass} take-picture-overlay`}></div>
+
         </div>
     );
 };

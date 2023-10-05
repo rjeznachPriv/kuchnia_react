@@ -3,6 +3,9 @@
   "categories_tab": "categories_tab",
   "camera_tab": "camera_tab",
   "supplies_tab": "supplies_tab",
-  "products_tab": "products_tab"
+  "products_tab": "products_tab",
+
+  "add_storage_name_input": "add_storage_name_input",
+  "add_storage_barcode_input": "add_storage_barcode_input"
 }
 

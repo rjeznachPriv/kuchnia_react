@@ -34,19 +34,24 @@
     }
 
 table {
+    position: relative;
     font-size: 1em;
     color: #855555;
     width: 95%;
     margin-left: auto;
     margin-right: auto;
 }
-td {
+table th {
+    position: sticky;
+    top: 0; /* Don't forget this, required for the stickiness */
+    background-color: #D7C28D;
+}
+td, th {
     border-color: #DDCBA0;
     border-style: solid;
     border-width: 3px;
     margin: 1px;
     background-color: #d8bc86aa;
-    ;
 }
 
 .IntroBackground {
@@ -62,4 +67,3 @@ td {
 .IntroSpecialModal {
     opacity:0;
 }
-

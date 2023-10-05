@@ -34,3 +34,8 @@
 }
 .modal-delete-content p{
 }
+
+.StoragesComponent table svg {
+    width: 2em;
+    height: 2em;
+}

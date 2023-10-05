@@ -1,11 +1,14 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
+import guidGenerator from 'guid-generator';
 
 import { FaEdit } from 'react-icons/fa';
 import { FaTimes } from 'react-icons/fa';
+import { MdAddBox } from 'react-icons/md';
 
 import InfoModalComponent from './InfoModalComponent.js';
 import TextBoxComponent from './TextBoxComponent.js';
+import AutocompleteSearchComponent from './AutocompleteSearchComponent.js';
 
 import './../Styles/StoragesComponent.css';
 import names from "./../Configuration/VitalHTMLids.json";
@@ -14,11 +17,16 @@ import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 function StoragesComponent(props) {
 
-    const [storages, setStorages] = useState(data.storages);
+    const [storages, setStorages] = useState(data.storages);    //TODO: read from individual profile
+    const [storagesToDisplay, setStoragesToDisplay] = useState(storages);
+
     const [storageToDeleteGuid, setStorageToDeleteGuid] = useState();
     const [storageToEditGuid, setStorageToEditGuid] = useState();
     const [storageToEditName, setStorageToEditName] = useState();
     const [storageToEditBarcode, setStorageToEditBarcode] = useState();
+    const [storageToAddName, setStorageToAddName] = useState();
+    const [storageToAddBarcode, setStorageToAddBarcode] = useState();
+
     const [deleteModalFadingClass, setDeleteModalFadingClass] = useState('fadeOut');
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
 
@@ -34,7 +42,7 @@ function StoragesComponent(props) {
 
     const barcodeTextBoxComponent = (
         <TextBoxComponent
-            label={`${captions.field_barcode}:` }
+            label={`${captions.field_barcode}:`}
             value={storageToEditBarcode}
             onChangeValue={(e) => { setStorageToEditBarcode(e.target.value) }}
         ></TextBoxComponent>
@@ -46,23 +54,29 @@ function StoragesComponent(props) {
 
     useEffect(() => {
         currentState.current = {
+            'storages': storages,
             'editModalFadingClass': editModalFadingClass,
-            'setStorageToEditBarcode': setStorageToEditBarcode,
             'props': props
         };
-    }, [editModalFadingClass, setStorageToEditBarcode, props]);
+    }, [storages, editModalFadingClass, props]);
+
+    var localStyle = { display: props.activeTab === names.storages_tab ? 'block' : 'none' };
 
     function onBarcodeScannedWhenEditing(barcode) {
         if (isEditing()) {
-            console.log(`setStorageToEditBarcode ${barcode}`);
             setStorageToEditBarcode(barcode);
+        } else if (IsAdding() == true) {
+            setStorageToAddBarcode(barcode);
         } else if (IsStorageTabActive()) {
             //TODO: open supplies("zapasy") tab with filtered supplies from this storage
-            console.log(`otwieram zakladke zapasy dla schowka: ${barcode}`);
+            //console.log(`otwieram zakladke zapasy dla schowka: ${barcode}`);
         }
     }
 
-    var localStyle = { display: props.activeTab === names.storages_tab ? 'block' : 'none' };
+    function onFiltered(items) {
+        setStoragesToDisplay(items);
+    }
+
 
     function hideDeleteModal() {
         setDeleteModalFadingClass("fadeOut");
@@ -90,8 +104,9 @@ function StoragesComponent(props) {
     }
 
     function deleteStorage(guid) {
-        var storagesToKeep = storages.filter((item) => item.guid != guid);
-        setStorages(storagesToKeep);
+        var _storages = storages.filter((item) => item.guid != guid);
+        setStorages(_storages);
+        setStoragesToDisplay(_storages);
         setDeleteModalFadingClass("fadeOut");
     }
 
@@ -106,14 +121,32 @@ function StoragesComponent(props) {
 
         setStorages(_storages);
         setEditModalFadingClass('fadeOut');
+        setStoragesToDisplay(_storages);
+    }
+
+    function addStorage() {
+        var _storages = storages.slice();
+        _storages.push({
+            guid: guidGenerator(),
+            name: storageToAddName,
+            barcode: storageToAddBarcode
+        });
+
+        setStorages(_storages);
+
+        setStorageToAddName('');
+        setStorageToAddBarcode('');
+        setStoragesToDisplay(_storages);
     }
 
     function IsStorageTabActive() {
-        return currentState.current.props.activeTab == "storages_tab"
+        return currentState.current.props.activeTab == "storages_tab";
     }
-
+    function IsAdding() {
+        return document.activeElement.id == names.add_storage_barcode_input || document.activeElement.id == names.add_storage_name_input;
+    }
     function isEditing() {
-        return currentState.current.props.activeTab == "storages_tab" && currentState.current.editModalFadingClass == "fadeIn" ;
+        return currentState.current.props.activeTab == "storages_tab" && currentState.current.editModalFadingClass == "fadeIn";
     }
 
     return (
@@ -159,21 +192,42 @@ function StoragesComponent(props) {
                 button3Action=""
                 fadeOut={hideEditModal}>
             </InfoModalComponent>
-            Dodac barcode
+            Dodac barcode window (male okienko z aparatu)
             Klikniecie w schowek otworzy jego zawartosc
-            <p>SZUKAJKA</p>
+            <p><AutocompleteSearchComponent
+                callback={onFiltered}
+                items={storages}
+            ></AutocompleteSearchComponent></p>
             <table>
                 <thead>
-                    <tr>
+                    <tr className="table-header">
                         <th>{captions.field_storage_name}</th>
                         <th>{captions.field_barcode}</th>
-                        <th>{captions.message_edit}</th>
-                        <th>{captions.message_delete}</th>
                     </tr>
+                    <tr className="table-header">
+                        <th>
+                            <TextBoxComponent
+                                id={names.add_storage_name_input}
+                                value={storageToAddName}
+                                placeholder="name"
+                                onChangeValue={(e) => { setStorageToAddName(e.target.value) }}
+                            ></TextBoxComponent>
+                        </th>
+                        <th>
+                            <TextBoxComponent
+                                id={names.add_storage_barcode_input}
+                                value={storageToAddBarcode}
+                                placeholder="barcode"
+                                onChangeValue={(e) => { setStorageToAddBarcode(e.target.value) }}
+                            ></TextBoxComponent>
+                        </th>
+                        <th></th>
+                        <th>
+                            <MdAddBox role="button" tabIndex="0" onClick={() => addStorage()}></MdAddBox>
+                        </th></tr>
                 </thead>
                 <tbody>
-                    <tr className="item"><td>Input na nazwe nowego schowka</td><td></td><td>PLUSIK</td></tr>
-                    {storages.map((item) => (
+                    {storagesToDisplay.map((item) => (
                         <tr className="item" key={item.guid}>
                             <td>{item.name}</td>
                             <td>{item.barcode}</td>
