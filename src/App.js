@@ -24,64 +24,63 @@ function App() {
     const [title, setTitle] = useState(captions.default_app_title);
     const [activeTab, setActiveTab] = useState('');
 
-    const [appStates, setAppStates] = useState([
-        { name: "scanner", component: ScannerComponent },
-        { name: "storages", component: StoragesComponent },
-    ]);
-    const [allowedTransitions, setAllowedTransitions] = useState([
+    //const [appStates, setAppStates] = useState([
+    //    { name: "scanner", component: ScannerComponent },
+    //    { name: "storages", component: StoragesComponent },
+    //]);
+    //const [allowedTransitions, setAllowedTransitions] = useState([
 
 
-    ]);
-    const [currentAppState, setCurrentAppState] = useState(null);
+    //]);
+    //const [currentAppState, setCurrentAppState] = useState(null);
 
     var barcodeListeners = [];
 
 
     useEffect(() => {
-        console.log('a');
         //logoModalReference.current.fadeOutSlow();
         logoModalReference.current.fadeOut();
     }, []);
 
 
 
-    function AdvanceStateMachine(targetState) {
-        if (currentAppState == null) {
-            performTransition(appStates[0]);
-            return;
-        }
+    //function AdvanceStateMachine(targetState) {
+    //    if (currentAppState == null) {
+    //        performTransition(appStates[0]);
+    //        return;
+    //    }
 
-        var allowedStateTransfers = allowedTransitions.filter(function (element) {
-            if (element.from == currentAppState.name) {
-                return element;
-            }
-        });
+    //    var allowedStateTransfers = allowedTransitions.filter(function (element) {
+    //        if (element.from == currentAppState.name) {
+    //            return element;
+    //        }
+    //    });
 
-        if (allowedTransitions.length == 1) {
-            targetState = appStates.find(function (element) {
-                if (element.name == allowedStateTransfers[0].to) {
-                    return element;
-                }
-            });
+    //    if (allowedTransitions.length == 1) {
+    //        targetState = appStates.find(function (element) {
+    //            if (element.name == allowedStateTransfers[0].to) {
+    //                return element;
+    //            }
+    //        });
 
-            performTransition(targetState);
+    //        performTransition(targetState);
 
-        } else {
-            //if no parameter and more than one transition allowed throw exception!
-            // if parameter and is allowd then perform.
-            // if parameter and not allowed throw exception.
-            console.log('target state:');
-            console.log(targetState);
-        }
-    }
+    //    } else {
+    //        //if no parameter and more than one transition allowed throw exception!
+    //        // if parameter and is allowd then perform.
+    //        // if parameter and not allowed throw exception.
+    //        console.log('target state:');
+    //        console.log(targetState);
+    //    }
+    //}
 
-    function performTransition(targetState) {
-        //jQuery('.statediv').fadeOut();
-        currentAppState = targetState;
-        //jQuery(targetState.selector).fadeIn();
-    }
+    //function performTransition(targetState) {
+    //    //jQuery('.statediv').fadeOut();
+    //    currentAppState = targetState;
+    //    //jQuery(targetState.selector).fadeIn();
+    //}
 
-    function onBottomButtonClick(newActiveTab) {
+    function activateTabWithId(newActiveTab) {
         setActiveTab(newActiveTab);
 
         switch (newActiveTab) {
@@ -112,12 +111,13 @@ function App() {
     }
 
     function onBarcodeScanned(code) {
-        barcodeListeners.forEach((element) => {
-            element(code);
+        barcodeListeners.forEach((storedCallback) => {
+            storedCallback(code);
         });
     }
 
     function onPictureTaken(pictureBlob) {
+        
     }
 
     function registerBarcodeListener(listener) {
@@ -141,21 +141,27 @@ function App() {
             <div className="main-content">
                 <aside></aside>
                 <main>
+               
+
                     <BarcodeGeneratorComponent activeTab={activeTab} />
+
                     <SuppliesComponent activeTab={activeTab} />
+
                     <ScannerComponent
+                        activateTabWithId={activateTabWithId}
+                        registerBarcodeListener={registerBarcodeListener}
                         onBarcodeScanned={onBarcodeScanned}
                         onPictureTaken={onPictureTaken}
                         activeTab={activeTab} />
+
                     <StoragesComponent
                         activeTab={activeTab}
-                        registerBarcodeListener={registerBarcodeListener}
-                    />
+                        registerBarcodeListener={registerBarcodeListener} />
                 </main>
             </div>
             <FooterComponent
                 activeTab={activeTab}
-                onBottomButtonClick={onBottomButtonClick} />
+                activateTabWithId={activateTabWithId} />
         </div>
     );
 }

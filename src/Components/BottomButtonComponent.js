@@ -6,7 +6,7 @@ function BottomButtonComponent(props) {
 
     return (
 
-        <a className={className} onClick={() => props.footerProps.onBottomButtonClick(props.enableTab) }>
+        <a className={className} onClick={() => props.footerProps.activateTabWithId(props.enableTab) }>
             <p className="icon">{props.icon}</p>
             <p className="caption">{props.caption}</p>
         </a>

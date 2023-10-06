@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
+import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 import './../Styles/AutocompleteSearchComponent.css';
 
@@ -13,7 +14,7 @@ function AutocompleteSearchComponent(props) {
     }
 
     function searchList(phrase) {
-        let filteredItems = props.items.filter((item) => {
+        var filteredItems = props.items.filter((item) => {
             return item.name.match(phrase.toLowerCase());
         });
 
@@ -21,13 +22,16 @@ function AutocompleteSearchComponent(props) {
     }
 
     return (
-        <input
-            Type="search"
-            placeholder="Search here"
-            onChange={handleChange}
-            value={searchInput}
-        />
-  );
+        <div className="AutocompleteSearchComponent">
+            <div className="searchBox-label">{captions.message_search} :</div>
+            <input className="searchBox"
+                type="search"
+                placeholder={captions.message_search}
+                onChange={handleChange}
+                value={searchInput}
+            />
+        </div>
+    );
 }
 
 export default AutocompleteSearchComponent;

@@ -13,6 +13,8 @@ import captions from "./../Configuration/LocalizedCaptionsPL.json";
 const ScannerComponent = props => {
     var [takePictureClass, setTakePictureClass] = useState('');
     var [scanClass, setScanClass] = useState('');
+    var [barcode, setBarcode] = useState('');
+    var [pictureData, setPictureData] = useState();
 
     const beepOkSound = new Audio('./beep-ok.mp3');
     const beepNotOkSound = new Audio('./beep-not_ok.mp3');
@@ -31,12 +33,11 @@ const ScannerComponent = props => {
             }
         });
 
+        props.registerBarcodeListener(onBarcodeScannedWhenCameraActive);
+
         Quagga.onDetected(function (result) {
             Quagga.pause();
-            runSequence([
-                () => setScanClass('fadeInAndOut'),
-                () => setScanClass('')],
-                config.flashOverlayTime);
+
             runSequence([
                 () => HandleDetectedCode(result),
                 () => Quagga.start()],
@@ -75,7 +76,9 @@ const ScannerComponent = props => {
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
         let image_data_url = canvas.toDataURL('image/jpeg', config.takenPictureQuality);
 
-        props.onPictureTaken(image_data_url); //blob
+        setPictureData(image_data_url);
+        props.onPictureTaken(image_data_url);
+        props.activateTabWithId('choose-tab')
     }
 
     function runSequence(sequence, delay, counter = 0) {    //TODO: move to some module
@@ -88,13 +91,29 @@ const ScannerComponent = props => {
         }
     }
 
-    return (
-        <div id="cameraCanvas" style={localStyle} >
-            <div className="camera-scanner-info">{captions.camera_scanner_info}</div>
-            <div className="take-picture-button" onClick={handleTakePictureButtonClick}></div>
-            <div className={`${scanClass} scan-overlay`}></div>
-            <div className={`${takePictureClass} take-picture-overlay`}></div>
+    function onBarcodeScannedWhenCameraActive(barcode) {
+        setBarcode(barcode);
+        runSequence([
+            () => setScanClass('fadeInAndOut'),
+            () => setScanClass(''),
+            () => props.activateTabWithId('choose-tab')],
+            config.flashOverlayTime);
+    }
 
+    return (
+        <div className="ScannerComponent">
+            <ChooseYourActionModalComponent
+                pictureData={pictureData}
+                barcode={barcode}
+                activeTab={props.activeTab}
+            ></ChooseYourActionModalComponent>
+            <div id="cameraCanvas" style={localStyle} >
+                <div className="camera-scanner-info">{captions.camera_scanner_info}</div>
+                <div className="take-picture-button" onClick={handleTakePictureButtonClick}></div>
+                <div className={`${scanClass} scan-overlay`}></div>
+                <div className={`${takePictureClass} take-picture-overlay`}></div>
+
+            </div>
         </div>
     );
 };

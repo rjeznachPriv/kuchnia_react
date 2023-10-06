@@ -3,32 +3,38 @@
     {
       "guid": "bae78c2f-5706-457c-ba7e-fb4afd014e8b",
       "name": "szafka1",
-      "barcode": "9781234567891"
+      "barcode": "9781234567891",
+      "frequency":  0
     },
     {
       "guid": "9fd2c13c-9765-48b1-afd7-81cc89a3cd8d",
       "name": "szafka2",
-      "barcode": "9781234567892"
+      "barcode": "9781234567892",
+      "frequency": 0
     },
     {
       "guid": "4ee41280-6ec1-45d7-bdf0-f9a9d311902d",
       "name": "szafka3",
-      "barcode": "9781234567893"
+      "barcode": "9781234567893",
+      "frequency": 0
     },
     {
       "guid": "692b7378-4e89-4b22-b824-cdcb19e60f5c",
       "name": "szafka4",
-      "barcode": "9781234567894"
+      "barcode": "9781234567894",
+      "frequency": 0
     },
     {
       "guid": "780c99ce-993d-4e4f-8e29-6e43312c58f0",
       "name": "szafka5",
-      "barcode": "9781234567895"
+      "barcode": "9781234567895",
+      "frequency": 0
     },
     {
       "guid": "570e8298-ee0b-47ba-8717-9c495c2fc1bb",
       "name": "szafka6",
-      "barcode": "9781234567896"
+      "barcode": "9781234567896",
+      "frequency": 0
     },
     {
       "guid": "7f96d0a4-bcf9-4d8b-bf92-eb2c9ac43e18",

@@ -1,0 +1,21 @@
+.AutocompleteSearchComponent {
+    position: relative;
+    height: auto;
+    width: 100%;
+    float: left;
+}
+.searchBox-label {
+    margin-left: 2em;
+    height: 2em;
+    line-height: 2em;
+    vertical-align: central;
+    float: left;
+    font-weight: bold;
+    color: #8A5555;
+}
+.searchBox {
+    height: 2em;
+    float: left;
+    width: 50%;
+    margin-bottom: 0.5em;
+}
