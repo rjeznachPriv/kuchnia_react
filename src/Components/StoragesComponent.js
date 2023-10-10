@@ -17,8 +17,7 @@ import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 function StoragesComponent(props) {
 
-    const [storages, setStorages] = useState(data.storages);    //TODO: read from individual profile
-    const [storagesToDisplay, setStoragesToDisplay] = useState(storages);
+    const [storagesToDisplay, setStoragesToDisplay] = useState(props.storages);
 
     const [storageToDeleteGuid, setStorageToDeleteGuid] = useState();
     const [storageToEditGuid, setStorageToEditGuid] = useState();
@@ -54,41 +53,39 @@ function StoragesComponent(props) {
 
     useEffect(() => {
         currentState.current = {
-            'storages': storages,
+            'storages': props.storages,
             'editModalFadingClass': editModalFadingClass,
             'props': props
         };
-    }, [storages, editModalFadingClass, props]);
+    }, [props.storages, editModalFadingClass, props]); // props, props.storages ?
 
     var localStyle = { display: props.activeTab === names.storages_tab ? 'block' : 'none' };
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
-        if (isEditing()) {
+        if (isEditingStorage()) {
             setStorageToEditBarcode(barcode);
-        } else if (IsAdding() == true) {
+        } else if (IsAddingStorage()) {
             setStorageToAddBarcode(barcode);
-        } else if (IsStorageTabActive()) {
+        } else if (IsStoragesTabActive()) {
             var guid = getStorage({ barcode: barcode })?.guid;
             if (guid)
                 onStorageNameClicked(guid);
             else {
-                // nie ma takiego kodu w bazie schowkow. Przejdz do CHOOSE?
+                // nie ma takiego kodu w bazie schowkow. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac artykul lub schowek)
             }
         }
     }
 
     function onStorageNameClicked(guid) {   //call also when scanned
 
-        var _storages = storages.map((item) => {
+        var _storages = props.storages.map((item) => {
             return (item.guid == guid) ?
                 { ...item, frequency: item.frequency + 1 } :
                 item;
         });
 
-        setStorages(_storages);
+        props.setStorages(_storages);
         setStoragesToDisplay(_storages);
-        //setEditModalFadingClass('fadeOut'); //?
-        ///setStoragesToDisplay(_storages);
 
         console.log('Move to "Zapasy" with Supplies filtered by storage of id:' + guid);
     }
@@ -120,11 +117,11 @@ function StoragesComponent(props) {
 
     function getStorage({ guid = null, barcode = null } = {}) {
         if (guid) {
-            var storage = storages.filter((item) => item.guid == guid)[0];
+            var storage = props.storages.filter((item) => item.guid == guid)[0];
             return storage ? storage : null;
         }
         if (barcode) {
-            var storage = storages.filter((item) => item.barcode == barcode)[0];
+            var storage = props.storages.filter((item) => item.barcode == barcode)[0];
             return storage ? storage : null;
         }
 
@@ -132,14 +129,14 @@ function StoragesComponent(props) {
     }
 
     function deleteStorage(guid) {
-        var _storages = storages.filter((item) => item.guid != guid);
-        setStorages(_storages);
+        var _storages = props.storages.filter((item) => item.guid != guid);
+        props.setStorages(_storages);
         setStoragesToDisplay(_storages);
         setDeleteModalFadingClass("fadeOut");
     }
 
     function updateStorage(storageId) {
-        var _storages = storages.map((item) => {
+        var _storages = props.storages.map((item) => {
             return (item.guid == storageId) ? {
                 name: storageToEditName,
                 guid: storageToEditGuid,
@@ -147,33 +144,34 @@ function StoragesComponent(props) {
             } : item
         });
 
-        setStorages(_storages);
+        props.setStorages(_storages);
         setEditModalFadingClass('fadeOut');
         setStoragesToDisplay(_storages);
     }
 
     function addStorage() {
-        var _storages = storages.slice();
+        var _storages = props.storages.slice();
         _storages.push({
             guid: guidGenerator(),
             name: storageToAddName,
-            barcode: storageToAddBarcode
+            barcode: storageToAddBarcode,
+            frequency: 0
         });
 
-        setStorages(_storages);
+        props.setStorages(_storages);
 
         setStorageToAddName('');
         setStorageToAddBarcode('');
         setStoragesToDisplay(_storages);
     }
 
-    function IsStorageTabActive() {
+    function IsStoragesTabActive() {
         return currentState.current.props.activeTab == "storages_tab";
     }
-    function IsAdding() {
+    function IsAddingStorage() {
         return document.activeElement.id == names.add_storage_barcode_input || document.activeElement.id == names.add_storage_name_input;
     }
-    function isEditing() {
+    function isEditingStorage() {
         return currentState.current.props.activeTab == "storages_tab" && currentState.current.editModalFadingClass == "fadeIn";
     }
 
@@ -219,11 +217,10 @@ function StoragesComponent(props) {
                 button3Action=""
                 fadeOut={hideEditModal}>
             </InfoModalComponent>
-            [Zliczac uzycia i pozycjonowac wedlug tego]
             [Dodac barcode window (male okienko z aparatu)]
             <AutocompleteSearchComponent
                 callback={onFiltered}
-                items={storages}
+                items={props.storages}
             ></AutocompleteSearchComponent>
             <div className="storages-table-container">
                 <table>

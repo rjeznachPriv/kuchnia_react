@@ -1,16 +1,20 @@
 import { useEffect, useState, useRef } from "react";
 import './Styles/App.css';
+import Quagga from "quagga";
 
 import HeaderComponent from './Components/HeaderComponent.js';
 import FooterComponent from './Components/FooterComponent.js';
+import CategoriesComponent from './Components/CategoriesComponent.js';
 import SuppliesComponent from './Components/SuppliesComponent.js';
-import ScannerComponent from './Components/ScannerComponent.js';
+import ScannerTabComponent from './Components/ScannerTabComponent.js';
 import StoragesComponent from './Components/StoragesComponent.js';
 import BarcodeGeneratorComponent from './Components/BarcodeGeneratorComponent.js';
 
+import data from "./Configuration/InitialData.json";
 import captions from "./Configuration/LocalizedCaptionsPL.json"
 import names from "./Configuration/VitalHTMLids.json";
 import InfoModalComponent from './Components/InfoModalComponent';
+import ProductsComponent from "./Components/ProductsComponent";
 
 function App() {
     const TITLE_STORAGES = captions.title_storages;
@@ -24,65 +28,23 @@ function App() {
     const [title, setTitle] = useState(captions.default_app_title);
     const [activeTab, setActiveTab] = useState('');
 
-    //const [appStates, setAppStates] = useState([
-    //    { name: "scanner", component: ScannerComponent },
-    //    { name: "storages", component: StoragesComponent },
-    //]);
-    //const [allowedTransitions, setAllowedTransitions] = useState([
-
-
-    //]);
-    //const [currentAppState, setCurrentAppState] = useState(null);
-
     var barcodeListeners = [];
-
 
     useEffect(() => {
         //logoModalReference.current.fadeOutSlow();
         logoModalReference.current.fadeOut();
     }, []);
 
+    const [categories, setCategories] = useState(data.categories); //TODO: read from individual profile
+    const [products, setProducts] = useState(data.products);    //TODO: read from common profile?
+    const [storages, setStorages] = useState(data.storages);    //TODO: read from individual profile
 
+    const [cameraStream, setCameraStream] = useState();    //TODO: read from individual profile
 
-    //function AdvanceStateMachine(targetState) {
-    //    if (currentAppState == null) {
-    //        performTransition(appStates[0]);
-    //        return;
-    //    }
-
-    //    var allowedStateTransfers = allowedTransitions.filter(function (element) {
-    //        if (element.from == currentAppState.name) {
-    //            return element;
-    //        }
-    //    });
-
-    //    if (allowedTransitions.length == 1) {
-    //        targetState = appStates.find(function (element) {
-    //            if (element.name == allowedStateTransfers[0].to) {
-    //                return element;
-    //            }
-    //        });
-
-    //        performTransition(targetState);
-
-    //    } else {
-    //        //if no parameter and more than one transition allowed throw exception!
-    //        // if parameter and is allowd then perform.
-    //        // if parameter and not allowed throw exception.
-    //        console.log('target state:');
-    //        console.log(targetState);
-    //    }
-    //}
-
-    //function performTransition(targetState) {
-    //    //jQuery('.statediv').fadeOut();
-    //    currentAppState = targetState;
-    //    //jQuery(targetState.selector).fadeIn();
-    //}
 
     function activateTabWithId(newActiveTab) {
         setActiveTab(newActiveTab);
-
+        cutAllCameraStreams();
         switch (newActiveTab) {
             case names.storages_tab:
                 setTitle(TITLE_STORAGES)
@@ -110,6 +72,17 @@ function App() {
         }
     }
 
+    function cutAllCameraStreams() {
+        Quagga.CameraAccess.release()
+
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(t => {
+                t.stop();
+                cameraStream.removeTrack(t);
+            });
+        }
+    }
+
     function onBarcodeScanned(code) {
         barcodeListeners.forEach((storedCallback) => {
             storedCallback(code);
@@ -117,14 +90,16 @@ function App() {
     }
 
     function onPictureTaken(pictureBlob) {
-        
+
     }
 
     function registerBarcodeListener(listener) {
         barcodeListeners.push(listener);
     }
 
-    //TODO: register PictureTakenListener
+    //TODO: register PictureTakenListener?
+
+    //TODO: register FilterContentMethod: Czyli po przelaczeniu na tab cgcemy by juz wyfiltrowal....
 
     return (
         <div className="App">
@@ -141,22 +116,57 @@ function App() {
             <div className="main-content">
                 <aside></aside>
                 <main>
-               
 
-                    <BarcodeGeneratorComponent activeTab={activeTab} />
-
-                    <SuppliesComponent activeTab={activeTab} />
-
-                    <ScannerComponent
+                    <CategoriesComponent
+                        activeTab={activeTab}
                         activateTabWithId={activateTabWithId}
+                        categories={categories}
+                        setCategories={setCategories}
                         registerBarcodeListener={registerBarcodeListener}
                         onBarcodeScanned={onBarcodeScanned}
-                        onPictureTaken={onPictureTaken}
-                        activeTab={activeTab} />
+                    />
+                    <ProductsComponent
+                        activeTab={activeTab}
+                        activateTabWithId={activateTabWithId}
+                        cameraStream={cameraStream}
+                        categories={categories}
+                        products={products}
+                        quagga={Quagga}
+                        registerBarcodeListener={registerBarcodeListener}
+                        setCameraStream={setCameraStream}
+                        setProducts={setProducts}
+                        onBarcodeScanned={onBarcodeScanned}
+                    />
 
                     <StoragesComponent
                         activeTab={activeTab}
-                        registerBarcodeListener={registerBarcodeListener} />
+                        registerBarcodeListener={registerBarcodeListener}
+                        storages={storages}
+                        setStorages={setStorages}
+                    />
+
+                    <ScannerTabComponent
+                        activateTabWithId={activateTabWithId}
+                        cameraStream={cameraStream}
+                        quagga={ Quagga}
+                        registerBarcodeListener={registerBarcodeListener}
+                        onBarcodeScanned={onBarcodeScanned}
+                        onPictureTaken={onPictureTaken}
+                        activeTab={activeTab}
+                    />
+
+
+                    <SuppliesComponent
+                        activeTab={activeTab}
+                        activateTabWithId={activateTabWithId}
+                    />
+
+                    <BarcodeGeneratorComponent
+                        activeTab={activeTab}
+                        activateTabWithId={activateTabWithId}
+                    />
+
+
                 </main>
             </div>
             <FooterComponent

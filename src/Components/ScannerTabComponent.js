@@ -1,16 +1,16 @@
 
 import { useState } from 'react';
 import React, { useEffect } from "react";
-import Quagga from "quagga";
+import { runSequence } from './../utils/utils.js';
 import $ from 'jquery';
 import ChooseYourActionModalComponent from './ChooseYourActionModalComponent';
 
-import './../Styles/ScannerComponent.css';
+import './../Styles/ScannerTabComponent.css';
 import config from "./../Configuration/scannerComponentConfig.json";
 import names from "./../Configuration/VitalHTMLids.json";
 import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
-const ScannerComponent = props => {
+const ScannerTabComponent = props => {
     var [takePictureClass, setTakePictureClass] = useState('');
     var [scanClass, setScanClass] = useState('');
     var [barcode, setBarcode] = useState('');
@@ -23,27 +23,30 @@ const ScannerComponent = props => {
     var localStyle = { display: props.activeTab === names.camera_tab ? 'block' : 'none' };
 
     useEffect(() => {
-        Quagga.init(config, err => {
+
+    }, []);
+
+    function InitializeQuagga() {
+        props.quagga.init(config, err => {
             if (err) {
                 console.log(err, "error msg");
             }
-            Quagga.start();
-            return () => {
-                Quagga.stop()
-            }
+     
+            props.quagga.start();
+            return () => { props.quagga.stop() }
         });
 
         props.registerBarcodeListener(onBarcodeScannedWhenCameraActive);
 
-        Quagga.onDetected(function (result) {
-            Quagga.pause();
+        props.quagga.onDetected(function (result) {
+            props.quagga.pause();
 
             runSequence([
                 () => HandleDetectedCode(result),
-                () => Quagga.start()],
+                () => props.quagga.start()],
                 config.scanningPauseAfterScan);
         });
-    }, [Quagga]);
+    }
 
     function HandleDetectedCode(result) {                                       //TODO: rename me, to be without 'handle'
         if (ValidateDetectedCode(result.codeResult.code, result).valid) {
@@ -81,16 +84,6 @@ const ScannerComponent = props => {
         props.activateTabWithId('choose-tab')
     }
 
-    function runSequence(sequence, delay, counter = 0) {    //TODO: move to some module
-        if (counter < sequence.length) {
-            sequence[counter]();
-            setTimeout(
-                function () {
-                    runSequence(sequence, delay, counter + 1);
-                }, delay);
-        }
-    }
-
     function onBarcodeScannedWhenCameraActive(barcode) {
         setBarcode(barcode);
         runSequence([
@@ -101,14 +94,14 @@ const ScannerComponent = props => {
     }
 
     return (
-        <div className="ScannerComponent">
+        <div className="ScannerTabComponent">
             <ChooseYourActionModalComponent
                 pictureData={pictureData}
                 barcode={barcode}
                 activeTab={props.activeTab}
             ></ChooseYourActionModalComponent>
-            <div id="cameraCanvas" style={localStyle} >
-                <div className="camera-scanner-info">{captions.camera_scanner_info}</div>
+            <div id="cameraCanvas" style={localStyle} onClick={InitializeQuagga} >
+                <div className="camera-scanner-info">{props.quagga.CameraAccess.getActiveTrack() ? captions.camera_scanner_info : captions.camera_scanner_activate}</div>
                 <div className="take-picture-button" onClick={handleTakePictureButtonClick}></div>
                 <div className={`${scanClass} scan-overlay`}></div>
                 <div className={`${takePictureClass} take-picture-overlay`}></div>
@@ -118,4 +111,4 @@ const ScannerComponent = props => {
     );
 };
 
-export default ScannerComponent;
+export default ScannerTabComponent;

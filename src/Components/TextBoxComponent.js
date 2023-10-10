@@ -5,7 +5,7 @@ function TextBoxComponent(props) {
         <div>
             <label htmlFor={props.id}>{props.label}</label>
             <input
-                type="text"
+                type={props.type ? props.type : "text"}
                 placeholder={props.placeholder}
                 id={props.id}
                 value={props.value}

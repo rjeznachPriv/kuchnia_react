@@ -12,7 +12,6 @@ a.bottom-button {
 
     a.bottom-button:hover {
         background-color: #a99b;
-        cursor: pointer;
     }
 
     a.bottom-button p.icon {

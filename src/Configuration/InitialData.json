@@ -4,7 +4,7 @@
       "guid": "bae78c2f-5706-457c-ba7e-fb4afd014e8b",
       "name": "szafka1",
       "barcode": "9781234567891",
-      "frequency":  0
+      "frequency": 0
     },
     {
       "guid": "9fd2c13c-9765-48b1-afd7-81cc89a3cd8d",
@@ -39,12 +39,80 @@
     {
       "guid": "7f96d0a4-bcf9-4d8b-bf92-eb2c9ac43e18",
       "name": "szafka7",
-      "barcode": "9781234567897"
+      "barcode": "9781234567897",
+      "frequency": 0
     },
     {
       "guid": "f862584b-f73c-4374-8847-7536be91afdf",
       "name": "szafka8",
-      "barcode": "9781234567898"
+      "barcode": "9781234567898",
+      "frequency": 0
+    }
+  ],
+  "supplies": [
+    {
+      "guid": "f8621234-f73b-2374-8847-7536be91afd2",
+      "product_id": "f8621234-f73b-2374-8847-7536be91afdf",
+      "valid_until": "16/10/2023",
+      "storage_id": "bae78c2f-5706-457c-ba7e-fb4afd014e8b",
+      "isOpen": false
+    },
+    {
+      "guid": "f8621234-f83b-2374-8847-7536be91afd2",
+      "product_id": "f8621234-f73b-2374-8847-7536be91afdf",
+      "valid_until": "16/10/2023",
+      "storage_id": "bae78c2f-5706-457c-ba7e-fb4afd014e8b",
+      "isOpen": false
+    },
+    {
+      "guid": "f9621234-f83b-2374-8847-7536be91afd2",
+      "product_id": "f8621234-f73b-2374-8847-7536be91af12",
+      "valid_until": "17/10/2023",
+      "storage_id": "9fd2c13c-9765-48b1-afd7-81cc89a3cd8d",
+      "isOpen": false
+    }
+  ],
+  "products": [
+    {
+      "guid": "f8621234-f73b-2374-8847-7536be91afdf",
+      "category_id": "p13c-yW0",
+      "name": "bułka",
+      "barcode": "123456",
+      "img": "",
+      "alarm": "5",
+      "frequency": 0
+    },
+    {
+      "guid": "f8621234-f73b-2374-8847-7536be91af12",
+      "category_id": "p13c-yW0",
+      "name": "chleb",
+      "barcode": "321567",
+      "img": "",
+      "alarm": "1",
+      "frequency": 0
+    },
+    {
+      "guid": "f8221234-fe3b-2379-8847-7536be91af12",
+      "category_id": "0W0C3",
+      "name": "jablko",
+      "barcode": "82365",
+      "img": "",
+      "alarm": "1",
+      "frequency": 0
+    }
+  ],
+  "categories": [
+    {
+      "guid": "p13c-yW0",
+      "name": "pieczywo",
+      "alarm": 2,
+      "frequency": 0
+    },
+    {
+      "guid": "0W0C3",
+      "name": "owoce",
+      "alarm": 4,
+      "frequency": 0
     }
   ]
 }

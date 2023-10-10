@@ -32,16 +32,16 @@ const InfoModalComponent = forwardRef((props, ref) => {
                 <h2>{props.title}</h2>
                 <div className="InfoModalContentContainer">
                     <span>{props.text}</span>
-                    <span className="line">{props.contentLine1}</span>
-                    <span className="line">{props.contentLine2}</span>
-                    <span className="line">{props.contentLine3}</span>
-                    <span className="line">{props.contentLine4}</span>
-                    <span className="line">{props.contentLine5}</span>
-                    <span className="line">{props.contentLine6}</span>
-                    <span className="line">{props.contentLine7}</span>
-                    <span className="line">{props.contentLine8}</span>
-                    <span className="line">{props.contentLine9}</span>
-                    <span className="line">{props.contentLine10}</span>
+                    <div className="line">{props.contentLine1}</div>
+                    <div className="line">{props.contentLine2}</div>
+                    <div className="line">{props.contentLine3}</div>
+                    <div className="line">{props.contentLine4}</div>
+                    <div className="line">{props.contentLine5}</div>
+                    <div className="line">{props.contentLine6}</div>
+                    <div className="line">{props.contentLine7}</div>
+                    <div className="line">{props.contentLine8}</div>
+                    <div className="line">{props.contentLine9}</div>
+                    <div className="line">{props.contentLine10}</div>
                 </div>
                 <div className={`InfoModalButtons ${props.buttonsClass}`}>
                     <button className={`InfoModalButton1 ${props.button1Class}`} onClick={() => props.button1Action()}>{props.button1Text}</button>
