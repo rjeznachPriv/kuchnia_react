@@ -5,6 +5,7 @@ import $ from 'jquery';
 import { FaCameraRotate } from "react-icons/fa6";
 import { FaCamera } from "react-icons/fa6";
 
+import config from "./../Configuration/scannerComponentConfig.json";
 import './../Styles/CameraComponent.css';
 import names from "./../Configuration/VitalHTMLids.json";
 import captions from "./../Configuration/LocalizedCaptionsPL.json";
@@ -24,7 +25,7 @@ const ScannerTabComponent = props => {
     }, [cameras]);
 
     function ShowLiveCameraPicture() {
-        props.quagga.CameraAccess.release()
+        props.quagga.CameraAccess.release();
         getConnectedDevices('videoinput', (cameras) => InitializeCamera(cameras));
     }
 
@@ -51,8 +52,7 @@ const ScannerTabComponent = props => {
             }
         })
             .then(function (videoStream) {
-                props.setCameraStream(videoStream);
-                var video = document.getElementById('camera-component-video');
+                var video = document.getElementById(names["camera-component-video"]);
                 if ("srcObject" in video) {
                     video.srcObject = videoStream;
                 } else {
@@ -82,12 +82,12 @@ const ScannerTabComponent = props => {
         runSequence([
             () => setTakePictureClass('fadeInAndOut'),
             () => setTakePictureClass('')],
-            500);
+            config.flashOverlayTime);
 
-        const canvas = $('#camera-component-canvas')[0];
-        const video = $('#camera-component-video')[0];
+        const canvas = $(`#${names["camera-component-canvas"]}`)[0];
+        const video = $(`#${names["camera-component-video"]}`)[0];
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        let image_data_url = canvas.toDataURL('image/jpeg', 0.3);
+        let image_data_url = canvas.toDataURL('image/jpeg', config.takenPictureQuality);
 
         //setPictureData(image_data_url);
         //props.onPictureTaken(image_data_url);
@@ -98,7 +98,7 @@ const ScannerTabComponent = props => {
         <div className="CameraComponent">
             <div className="container">
                 <video
-                    id="camera-component-video"
+                    id={names["camera-component-video"]}
                     onClick={ShowLiveCameraPicture}>
                 </video>
                 <div className={`${takePictureClass} take-picture-overlay`}></div>
@@ -108,7 +108,7 @@ const ScannerTabComponent = props => {
                 <div className="switch-camera button" onClick={handleSwitchCameraButtonClick}>
                     <FaCameraRotate></FaCameraRotate>
                 </div>
-                <canvas id="camera-component-canvas"></canvas>
+                <canvas id={names["camera-component-canvas"]}></canvas>
             </div>
         </div>
     );

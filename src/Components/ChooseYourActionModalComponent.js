@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import JsBarcode from "jsbarcode";
 import $ from 'jquery';
+import names from "./../Configuration/VitalHTMLids.json";
 import './../Styles/ChooseYourActionModalComponent.css';
 
 function ChooseYourActionModalComponent(props) {
 
-    var localStyle = { display: props.activeTab === 'choose-tab' ? 'block' : 'none' };
+    var localStyle = { display: props.activeTab === names.choose_tab ? 'block' : 'none' };
 
     useEffect(() => {
         if (ValidateBarCode(props.barcode))
@@ -24,7 +25,7 @@ function ChooseYourActionModalComponent(props) {
     }
 
     return (
-        <div id="choose-tab" style={localStyle} className="ChooseYourActionModalComponent">
+        <div id={names.choose_tab} style={localStyle} className="ChooseYourActionModalComponent">
             <input value={props.barcode}></input>
             <svg id="scanned-barcode"></svg>
             <img id="taken-photo"></img>

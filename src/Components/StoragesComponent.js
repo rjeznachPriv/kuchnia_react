@@ -12,7 +12,6 @@ import AutocompleteSearchComponent from './AutocompleteSearchComponent.js';
 
 import './../Styles/StoragesComponent.css';
 import names from "./../Configuration/VitalHTMLids.json";
-import data from "./../Configuration/InitialData.json";
 import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 function StoragesComponent(props) {
@@ -76,7 +75,7 @@ function StoragesComponent(props) {
         }
     }
 
-    function onStorageNameClicked(guid) {   //call also when scanned
+    function onStorageNameClicked(guid) {
 
         var _storages = props.storages.map((item) => {
             return (item.guid == guid) ?
@@ -166,17 +165,17 @@ function StoragesComponent(props) {
     }
 
     function IsStoragesTabActive() {
-        return currentState.current.props.activeTab == "storages_tab";
+        return currentState.current.props.activeTab == names.storages_tab;
     }
     function IsAddingStorage() {
         return document.activeElement.id == names.add_storage_barcode_input || document.activeElement.id == names.add_storage_name_input;
     }
     function isEditingStorage() {
-        return currentState.current.props.activeTab == "storages_tab" && currentState.current.editModalFadingClass == "fadeIn";
+        return currentState.current.props.activeTab == names.storages_tab && currentState.current.editModalFadingClass == "fadeIn";
     }
 
     return (
-        <div id="storages-tab" style={localStyle} className="StoragesComponent">
+        <div id={names.storages_tab} style={localStyle} className="StoragesComponent">
             <InfoModalComponent
                 mainWindowClassName={`modal-delete-window ${deleteModalFadingClass}`}
                 mainWindowTopBarClassName="modal-delete-top-bar"
@@ -204,8 +203,7 @@ function StoragesComponent(props) {
                 ContentClassName="modal-edit-content"
                 title={captions.message_storage_edit}
                 text=""
-                contentLine1={nameTextBoxComponent}
-                contentLine2={barcodeTextBoxComponent}
+                contentLines={[nameTextBoxComponent, barcodeTextBoxComponent]}
                 button1Text={captions.message_cancel}
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}

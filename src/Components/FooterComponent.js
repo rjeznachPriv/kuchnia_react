@@ -19,16 +19,18 @@ function FooterComponent(props) {
     const SUPPLIES_CAPTION = captions.title_supplies;
     const CATEGORIES_CAPTION = captions.title_categories;
     const STORAGES_CAPTION = captions.title_storages;
+    const GENERATOR_CAPTION = captions.title_generator;
+    const SHOPPING_CAPTION = captions.title_shopping;
 
     return (
         <footer id="app-footer">
-            <BottomButtonComponent icon={<MdCategory />} caption={CATEGORIES_CAPTION} active={props.activeTab === 'categories_tab'} footerProps={props} id={names.categories_tab_button} enableTab="categories_tab" />
-            <BottomButtonComponent icon={<FaAppleAlt />} caption={PRODUCTS_CAPTION} active={props.activeTab === 'products_tab'} footerProps={props} id={names.products_tab_button} enableTab="products_tab"/>
-            <BottomButtonComponent icon={<MdShelves />} caption={STORAGES_CAPTION} active={props.activeTab === 'storages_tab'} footerProps={props} id={names.storages_tab_button} enableTab="storages_tab" />
-            <BottomButtonComponent icon={<FaCamera />} caption="" footerProps={props} active={props.activeTab === 'camera_tab'} id={names.camera_tab_button} enableTab="camera_tab" />
-            <BottomButtonComponent icon={<MdForklift />} caption={SUPPLIES_CAPTION} active={props.activeTab === 'supplies_tab'} footerProps={props} id={names.supplies_tab_button} enableTab="supplies_tab" />
-            <BottomButtonComponent icon={<FaBarcode />} caption="Generator" footerProps={props} active={props.activeTab === 'barcode_generator_tab'} id="" enableTab="barcode_generator_tab" />
-            <BottomButtonComponent icon={<FaList />} caption="Zakupy" footerProps={props} active={props.activeTab === 'grocery_list_tab'} id="" enableTab="grocery_list_tab" />
+            <BottomButtonComponent icon={<MdCategory />} caption={CATEGORIES_CAPTION} active={props.activeTab === names.categories_tab} footerProps={props} id={names.categories_tab_button} enableTab={names.categories_tab} />
+            <BottomButtonComponent icon={<FaAppleAlt />} caption={PRODUCTS_CAPTION} active={props.activeTab === names.products_tab} footerProps={props} id={names.products_tab_button} enableTab={names.products_tab} />
+            <BottomButtonComponent icon={<MdShelves />} caption={STORAGES_CAPTION} active={props.activeTab === names.storages_tab} footerProps={props} id={names.storages_tab_button} enableTab={names.storages_tab} />
+            <BottomButtonComponent icon={<FaCamera />} caption="" footerProps={props} active={props.activeTab === names.camera_tab} id={names.camera_tab_button} enableTab={names.camera_tab} />
+            <BottomButtonComponent icon={<MdForklift />} caption={SUPPLIES_CAPTION} active={props.activeTab === names.supplies_tab} footerProps={props} id={names.supplies_tab_button} enableTab={names.supplies_tab} />
+            <BottomButtonComponent icon={<FaBarcode />} caption={GENERATOR_CAPTION} footerProps={props} active={props.activeTab === names.barcode_generator_tab} id="" enableTab={names.barcode_generator_tab} />
+            <BottomButtonComponent icon={<FaList />} caption={SHOPPING_CAPTION} footerProps={props} active={props.activeTab === names.grocery_list_tab} id="" enableTab={names.grocery_list_tab} />
         </footer>
     );
 }

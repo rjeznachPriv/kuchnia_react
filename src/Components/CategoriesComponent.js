@@ -179,8 +179,7 @@ function CategoriesComponent(props) {
                 ContentClassName="modal-edit-content"
                 title={captions.message_category_edit}
                 text=""
-                contentLine1={nameTextBoxComponent}
-                contentLine2={alarmTextBoxComponent}
+                contentLines={[nameTextBoxComponent, alarmTextBoxComponent]}
                 button1Text={captions.message_cancel}
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}

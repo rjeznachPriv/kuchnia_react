@@ -4,8 +4,14 @@
   "camera_tab": "camera_tab",
   "supplies_tab": "supplies_tab",
   "products_tab": "products_tab",
+  "barcode_generator_tab": "barcode_generator_tab",
+  "choose_tab": "choose_tab",
 
   "add_storage_name_input": "add_storage_name_input",
-  "add_storage_barcode_input": "add_storage_barcode_input"
+  "add_storage_barcode_input": "add_storage_barcode_input",
+
+  "barcode": "barcode",
+  "camera-component-video": "camera-component-video",
+  "camera-component-canvas": "camera-component-canvas"
 }
 

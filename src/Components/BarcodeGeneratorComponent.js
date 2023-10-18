@@ -1,24 +1,24 @@
-import { useState, useEffect, useRef } from 'react';
-import './../Styles/BarcodeGeneratorComponent.css';
+import { useState, useEffect } from 'react';
 import JsBarcode from "jsbarcode";
 import { AiFillPrinter } from 'react-icons/ai';
 import $ from 'jquery';
+import './../Styles/BarcodeGeneratorComponent.css';
+import names from "./../Configuration/VitalHTMLids.json";
+import { isAlphaNumericKey, printSvg } from './../utils/utils.js';
+import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
 function BarcodeGeneratorComponent(props) {
 
-    var localStyle2 = { display: props.activeTab === 'barcode_generator_tab' ? 'block' : 'none' };  //TODO
-    var newWindowPointer;
+    var localStyle = { display: props.activeTab === names.barcode_generator_tab ? 'block' : 'none' }
 
     useEffect(() => {
-        JsBarcode("#barcode", "Ala ma kota");
-        window.addEventListener("afterprint", () => { });
-        window.onafterprint = () => { newWindowPointer.close(); };
+        JsBarcode(`#${names.barcode}`, captions.message_example_barcode);
     }, []);
 
-    const [code, setCode] = useState("Ala ma kota");
+    const [code, setCode] = useState(captions.message_example_barcode);
 
-    function handleKeyDown(e) {         //move it
-        if (/[0-9a-zA-Z]/i.test(e.key) || [8, 32].some((code) => e.keyCode == code))    // Allow backspace and space
+    function handleKeyDown(e) {
+        if (isAlphaNumericKey(e))
             return;
         e.preventDefault();
     }
@@ -27,38 +27,27 @@ function BarcodeGeneratorComponent(props) {
         e.preventDefault();
         setCode(e.target.value);
         if (e.target.value != '') {
-            JsBarcode("#barcode", e.target.value);
+            JsBarcode(`#${names.barcode}`, e.target.value);
         }
     }
 
     function print() {
-        printSvg('#barcode');
-    }
-
-    function printSvg(selector) {                                   // move it
-        var divContents = $(selector)[0].outerHTML;                 //outerHtml for printing svg as graphics
-        var newWindow = window.open('', '', 'height=500, width=500');
-        newWindowPointer = newWindow;
-        newWindow.document.write('<html>');
-        newWindow.document.write(divContents);
-        newWindow.document.write('</body></html>');
-        newWindow.document.close();
-        newWindow.print();
+        printSvg(`#${names.barcode}`);
     }
 
     return (
-        <div id="barcode-tab" className="BarcodeGeneratorComponent" style={localStyle2}>
-            <span className="info">Kod można wydrukować, a następnie nakleić:
+        <div id={names.barcode_generator_tab} className="BarcodeGeneratorComponent" style={localStyle}>
+            <span className="info">{captions.message_barcode_usage_l1}
                 <ul>
-                    <li>Na schowek, w którym  przechowujemy produkty </li>
-                    <li>Na produkt, który nie ma swojego kodu </li>
+                    <li>{captions.message_barcode_usage_l2}</li>
+                    <li>{captions.message_barcode_usage_l3}</li>
                 </ul>
             </span>
             <div className="data">
                 <div className="dataContent">
                     <span >Kod :</span>
                     <input className="barcodeGenerator"
-                        placeholder="Ala ma kota"
+                        placeholder={captions.message_example_barcode}
                         value={code}
                         onKeyDown={handleKeyDown}
                         onChange={handleChange}
@@ -70,7 +59,7 @@ function BarcodeGeneratorComponent(props) {
                 </div>
             </div>
             <div className="result">
-                <svg id="barcode"></svg>
+                <svg id={ names.barcode}></svg>
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+﻿import React, { useState } from "react";
 import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 import './../Styles/AutocompleteSearchComponent.css';
@@ -15,7 +15,10 @@ function AutocompleteSearchComponent(props) {
 
     function searchList(phrase) {
         var filteredItems = props.items.filter((item) => {
-            return item.name.match(phrase.toLowerCase());       //TODO: nie tylko name!!! np guidy dla referencji ulatwia znacznie robienie linkow
+            return item.name?.match(phrase.toLowerCase())
+                || item.barcode?.match(phrase.toLowerCase())
+                || item[props.filterColumn]?.match(phrase)
+                || item.guid?.match(phrase.toLowerCase()); // ?? siur?
         });
 
         return filteredItems;

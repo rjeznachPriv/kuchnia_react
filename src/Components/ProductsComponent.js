@@ -73,8 +73,6 @@ function ProductsComponent(props) {
     const cameraComponent = (
         <CameraComponent
             quagga={props.quagga}
-            cameraStream={props.cameraStream}
-            setCameraStream={props.setCameraStream}
             onPictureTaken={(data) => setProductToEditPicture(data)}>
         </CameraComponent>
     );
@@ -137,7 +135,7 @@ function ProductsComponent(props) {
     }
 
     function onFiltered(items) {
-        props.setProductsToDisplay(items);
+        setProductsToDisplay(items);
     }
 
     function handleProductEditCategoryChange(e) {
@@ -265,11 +263,7 @@ function ProductsComponent(props) {
                 ContentClassName="modal-edit-content"
                 title={captions.message_product_edit}
                 text=""
-                contentLine1={nameComponent}
-                contentLine2={categoryDropDownComponent}
-                contentLine3={barcodeComponent}
-                contentLine4={alarmComponent}
-                contentLine5={cameraComponent}
+                contentLines={[nameComponent, categoryDropDownComponent, barcodeComponent, alarmComponent, cameraComponent]}
                 button1Text={captions.message_cancel}
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}
@@ -285,6 +279,7 @@ function ProductsComponent(props) {
             <AutocompleteSearchComponent
                 callback={onFiltered}
                 items={props.products}
+                filterColumn="category_id"
             ></AutocompleteSearchComponent>
             <div className="products-table-container">
                 <table>

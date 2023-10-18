@@ -42,13 +42,13 @@ const ScannerTabComponent = props => {
             props.quagga.pause();
 
             runSequence([
-                () => HandleDetectedCode(result),
+                () => PassDetectedCode(result),
                 () => props.quagga.start()],
                 config.scanningPauseAfterScan);
         });
     }
 
-    function HandleDetectedCode(result) {                                       //TODO: rename me, to be without 'handle'
+    function PassDetectedCode(result) {
         if (ValidateDetectedCode(result.codeResult.code, result).valid) {
             beepOkSound.play();
             props.onBarcodeScanned(result.codeResult.code);
@@ -81,7 +81,7 @@ const ScannerTabComponent = props => {
 
         setPictureData(image_data_url);
         props.onPictureTaken(image_data_url);
-        props.activateTabWithId('choose-tab')
+        props.activateTabWithId(names.choose_tab)
     }
 
     function onBarcodeScannedWhenCameraActive(barcode) {
@@ -89,7 +89,7 @@ const ScannerTabComponent = props => {
         runSequence([
             () => setScanClass('fadeInAndOut'),
             () => setScanClass(''),
-            () => props.activateTabWithId('choose-tab')],
+            () => props.activateTabWithId(names.choose_tab)],
             config.flashOverlayTime);
     }
 

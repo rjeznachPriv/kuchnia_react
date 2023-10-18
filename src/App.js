@@ -39,9 +39,6 @@ function App() {
     const [products, setProducts] = useState(data.products);    //TODO: read from common profile?
     const [storages, setStorages] = useState(data.storages);    //TODO: read from individual profile
 
-    const [cameraStream, setCameraStream] = useState();    //TODO: read from individual profile
-
-
     function activateTabWithId(newActiveTab) {
         setActiveTab(newActiveTab);
         cutAllCameraStreams();
@@ -61,7 +58,7 @@ function App() {
             case names.products_tab:
                 setTitle(TITLE_PRODUCTS)
                 break;
-            case 'barcode_generator_tab':
+            case names.barcode_generator_tab:
                 setTitle('Generator kodów');
                 break;
             case 'grocery_list_tab':
@@ -75,12 +72,23 @@ function App() {
     function cutAllCameraStreams() {
         Quagga.CameraAccess.release()
 
-        if (cameraStream) {
-            cameraStream.getTracks().forEach(t => {
-                t.stop();
-                cameraStream.removeTrack(t);
-            });
+        var All_mediaDevices = navigator.mediaDevices;
+        if (!All_mediaDevices || !All_mediaDevices.getUserMedia) {
+            // No devices
+            return;
         }
+        All_mediaDevices.getUserMedia({
+            video: true
+        })
+            .then(function (videoStream) {
+                videoStream.getTracks().forEach(t => {
+                    t.stop();
+                    videoStream.removeTrack(t);
+                });
+            })
+            .catch(function (e) {
+                console.log('error:' + e.message);
+            });
     }
 
     function onBarcodeScanned(code) {
@@ -108,8 +116,7 @@ function App() {
                 mainWindowClassName="IntroBackground"
                 mainWindowTopBarClassName="IntroSpecialModal"
                 topBarXButtonClassName="IntroSpecialModal"
-                ContentClassName="IntroSpecialModal"
-                title="" text="">
+                ContentClassName="IntroSpecialModal">
             </InfoModalComponent>
 
             <HeaderComponent title={title} />
@@ -128,12 +135,10 @@ function App() {
                     <ProductsComponent
                         activeTab={activeTab}
                         activateTabWithId={activateTabWithId}
-                        cameraStream={cameraStream}
                         categories={categories}
                         products={products}
                         quagga={Quagga}
                         registerBarcodeListener={registerBarcodeListener}
-                        setCameraStream={setCameraStream}
                         setProducts={setProducts}
                         onBarcodeScanned={onBarcodeScanned}
                     />
@@ -145,17 +150,6 @@ function App() {
                         setStorages={setStorages}
                     />
 
-                    <ScannerTabComponent
-                        activateTabWithId={activateTabWithId}
-                        cameraStream={cameraStream}
-                        quagga={ Quagga}
-                        registerBarcodeListener={registerBarcodeListener}
-                        onBarcodeScanned={onBarcodeScanned}
-                        onPictureTaken={onPictureTaken}
-                        activeTab={activeTab}
-                    />
-
-
                     <SuppliesComponent
                         activeTab={activeTab}
                         activateTabWithId={activateTabWithId}
@@ -165,8 +159,14 @@ function App() {
                         activeTab={activeTab}
                         activateTabWithId={activateTabWithId}
                     />
-
-
+                    <ScannerTabComponent
+                        activateTabWithId={activateTabWithId}
+                        quagga={Quagga}
+                        registerBarcodeListener={registerBarcodeListener}
+                        onBarcodeScanned={onBarcodeScanned}
+                        onPictureTaken={onPictureTaken}
+                        activeTab={activeTab}
+                    />
                 </main>
             </div>
             <FooterComponent
