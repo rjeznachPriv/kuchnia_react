@@ -22,10 +22,6 @@ const ScannerTabComponent = props => {
 
     var localStyle = { display: props.activeTab === names.camera_tab ? 'block' : 'none' };
 
-    useEffect(() => {
-
-    }, []);
-
     function InitializeQuagga() {
         props.quagga.init(config, err => {
             if (err) {

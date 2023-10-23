@@ -10,3 +10,30 @@
     color: #855;
     position: relative;
 }
+
+a.settings-button {
+    display: block;
+    float: right;
+    width: 14.27%; /* 100%/7 */
+    text-align: center;
+    height: 2em;
+    margin-left: -10em;
+}
+
+    a.settings-button.active {
+        background-color: #a99b;
+    }
+
+    a.settings-button:hover {
+        background-color: #a99b;
+    }
+
+    a.settings-button p.icon {
+        font-size: 1.2em;
+        margin-bottom: 0;
+    }
+
+    a.settings-button p.caption {
+        font-size: 0.3em;
+        margin-top: -4.5em;
+    }

@@ -35,9 +35,10 @@ function App() {
         logoModalReference.current.fadeOut();
     }, []);
 
-    const [categories, setCategories] = useState(data.categories); //TODO: read from individual profile
+    const [categories, setCategories] = useState(data.categories); //TODO: read from common profile?
     const [products, setProducts] = useState(data.products);    //TODO: read from common profile?
     const [storages, setStorages] = useState(data.storages);    //TODO: read from individual profile
+    const [supplies, setSupplies] = useState(data.supplies);    //TODO: read from individual profile
 
     function activateTabWithId(newActiveTab) {
         setActiveTab(newActiveTab);
@@ -78,7 +79,7 @@ function App() {
             return;
         }
         All_mediaDevices.getUserMedia({
-            video: true
+            video: true //?
         })
             .then(function (videoStream) {
                 videoStream.getTracks().forEach(t => {
@@ -145,6 +146,7 @@ function App() {
 
                     <StoragesComponent
                         activeTab={activeTab}
+                        activateTabWithId={activateTabWithId}
                         registerBarcodeListener={registerBarcodeListener}
                         storages={storages}
                         setStorages={setStorages}
@@ -153,6 +155,12 @@ function App() {
                     <SuppliesComponent
                         activeTab={activeTab}
                         activateTabWithId={activateTabWithId}
+                        registerBarcodeListener={registerBarcodeListener}
+                        products={products}
+                        supplies={supplies}
+                        storages={storages}
+                        setSupplies={setSupplies}
+
                     />
 
                     <BarcodeGeneratorComponent

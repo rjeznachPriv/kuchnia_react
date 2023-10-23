@@ -15,10 +15,11 @@ function AutocompleteSearchComponent(props) {
 
     function searchList(phrase) {
         var filteredItems = props.items.filter((item) => {
-            return item.name?.match(phrase.toLowerCase())
-                || item.barcode?.match(phrase.toLowerCase())
-                || item[props.filterColumn]?.match(phrase)
-                || item.guid?.match(phrase.toLowerCase()); // ?? siur?
+            return item.name?.toLowerCase()?.match(phrase.toLowerCase())
+                || item.barcode?.toLowerCase()?.match(phrase.toLowerCase())
+                || props.filterColumns.some((el) => {
+                    return item[el]?.toLowerCase()?.match(phrase.toLowerCase());
+                });
         });
 
         return filteredItems;

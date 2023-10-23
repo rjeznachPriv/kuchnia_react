@@ -60,7 +60,8 @@
     .InfoModalContentContainer .line {
         text-align: left;
         width: 100%;
-        max-width: 70vh;
+        /*max-width: 70vh;*/
+        max-width: 700px;
         float: left;
         height: 5em;
         /*max-height: 5em;*/
@@ -77,11 +78,9 @@
         }
 
         .InfoModalContentContainer .line input {
-           
         }
 
         .InfoModalContentContainer .line p.ValidationMessage {
-      
         }
 
 .InfoModalButtons {
@@ -97,8 +96,21 @@
         background-color: #7D5555;
     }
 
-.modal-delete-x-button {
+.modal-top-bar-x-button {
+    cursor: pointer;
 }
+
+    .modal-top-bar-x-button:hover {
+        background-color: #F0E8D8;
+    }
+
+.InfoModalButtons button {
+    cursor: pointer;
+}
+
+    .InfoModalButtons button:hover {
+        background-color: #F0E8D8;
+    }
 
 .modal-delete-window {
 }

@@ -60,14 +60,14 @@
     {
       "guid": "f8621234-f83b-2374-8847-7536be91afd2",
       "product_id": "f8621234-f73b-2374-8847-7536be91afdf",
-      "valid_until": "16/10/2023",
+      "valid_until": "17/10/2023",
       "storage_id": "bae78c2f-5706-457c-ba7e-fb4afd014e8b",
-      "isOpen": false
+      "isOpen": true
     },
     {
       "guid": "f9621234-f83b-2374-8847-7536be91afd2",
       "product_id": "f8621234-f73b-2374-8847-7536be91af12",
-      "valid_until": "17/10/2023",
+      "valid_until": "18/10/2023",
       "storage_id": "9fd2c13c-9765-48b1-afd7-81cc89a3cd8d",
       "isOpen": false
     }

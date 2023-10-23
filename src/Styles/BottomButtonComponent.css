@@ -1,7 +1,7 @@
 a.bottom-button {
     display: block;
     float: left;
-    width: 14.27%;
+    width: 14.27%;  /* 100%/7 */
     text-align: center;
     height: 2em;
 }

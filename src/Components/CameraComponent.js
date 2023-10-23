@@ -25,7 +25,7 @@ const ScannerTabComponent = props => {
     }, [cameras]);
 
     function ShowLiveCameraPicture() {
-        props.quagga.CameraAccess.release();
+        props.quagga.CameraAccess.release();      //if on android..?
         getConnectedDevices('videoinput', (cameras) => InitializeCamera(cameras));
     }
 
@@ -68,6 +68,9 @@ const ScannerTabComponent = props => {
     }
 
     function handleSwitchCameraButtonClick() {
+        console.log('switch camera');
+        console.log(cameras);
+        console.log(cameraIndex);
         if (cameraIndex + 1 < currentState.current.cameras?.length)
             setCameraIndex(cameraIndex + 1);
         else {

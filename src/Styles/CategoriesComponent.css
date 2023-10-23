@@ -15,30 +15,6 @@
     height: calc(100% - 10px);
 }
 
-.modal-window {
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
-    height: 80%
-}
-
-.modal-top-bar {
-    width: 100%;
-}
-
-.modal-x-button {
-    background-color: yellow;
-}
-
-.modal-delete-content {
-}
-
-    .modal-delete-content h2 {
-    }
-
-    .modal-delete-content p {
-    }
-
 .categories-table-container {
     height: calc(100% - 6em);
     width: 100%;
@@ -46,6 +22,6 @@
 }
 
 .CategoriesComponent table svg {
-    width: 2em;
-    height: 2em;
+    width: 1.2em;
+    height: 1.2em;
 }

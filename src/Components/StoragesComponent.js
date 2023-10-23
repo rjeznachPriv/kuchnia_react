@@ -89,6 +89,10 @@ function StoragesComponent(props) {
         console.log('Move to "Zapasy" with Supplies filtered by storage of id:' + guid);
     }
 
+    function onBarcodeClicked(barcode) {
+        //move to barcode generator with this code
+    }
+
     function onFiltered(items) {
         setStoragesToDisplay(items);
     }
@@ -250,7 +254,7 @@ function StoragesComponent(props) {
                             </th></tr>
                     </thead>
                     <tbody>
-                        {storagesToDisplay.sort((a, b) => { return b.frequency - a.frequency }).map((item) => (     
+                        {storagesToDisplay.sort((a, b) => { return b.frequency - a.frequency }).map((item) => (
                             <tr className="item" key={item.guid}>
                                 <td>
                                     <a key={item.guid}
@@ -258,7 +262,12 @@ function StoragesComponent(props) {
                                         onClick={() => onStorageNameClicked(item.guid)}>
                                         {item.name}
                                     </a></td>
-                                <td>{item.barcode}</td>
+                                <td>
+                                    <a key={item.guid}
+                                        onClick={() => onBarcodeClicked(item.barcode)}>
+                                        {item.barcode}
+                                    </a>
+                                </td>
                                 <td>
                                     <FaEdit role="button" tabIndex="0" onClick={() => showEditModal(item.guid)}></FaEdit>
                                 </td>

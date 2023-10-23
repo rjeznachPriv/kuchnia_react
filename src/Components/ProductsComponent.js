@@ -79,17 +79,17 @@ function ProductsComponent(props) {
 
     useEffect(() => {
         props.registerBarcodeListener(onBarcodeScannedWhenEditingScreenActive);
+        setProductsToDisplay(mapToColumns(props.products));
     }, []);
 
-    useEffect(() => {
-        currentState.current = {
-            'products': props.products,
-            'editModalFadingClass': editModalFadingClass,
-            'props': props
-        };
-    }, [props.products, editModalFadingClass, props]);  // props, props.products
-
     var localStyle = { display: props.activeTab === names.products_tab ? 'block' : 'none' };
+
+    function mapToColumns(items) {
+        return items.map((item) => ({
+            ...item,
+            categoryName: getCategory(item.category_id).name,
+        }));
+    }
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
         //if (isEditingProduct()) {
@@ -108,30 +108,33 @@ function ProductsComponent(props) {
 
     function onProductNameClicked(guid) {   //call also when scanned
 
-        //var _products = products.map((item) => {
-        //    return (item.guid == guid) ?
-        //        { ...item, frequency: item.frequency + 1 } :
-        //        item;
-        //});
+        var _products = props.products.map((item) => {
+            return (item.guid == guid) ?
+                { ...item, frequency: item.frequency + 1 } :
+                item;
+        });
 
-        //setproducts(_products);
-        //setProductsToDisplay(_products);
+        props.setProducts(_products);
+        setProductsToDisplay(mapToColumns(_products));
 
         console.log('Move to "Zapasy" with Supplies filtered by product of id:' + guid);
     }
 
-    function onCategoryClicked(guid) {  //: to jest guid produktu, trzeba znalez item a pozniej category_id
+    function onCategoryClicked(categoryGuid) {
+        var _products = props.products.map((item) => {
+            return (item.category_id == categoryGuid) ?
+                { ...item, frequency: item.frequency + 1 } :
+                item;
+        });
 
-        //var _products = products.map((item) => {
-        //    return (item.guid == guid) ?
-        //        { ...item, frequency: item.frequency + 1 } :
-        //        item;
-        //});
+        props.setProducts(_products);
+        setProductsToDisplay(mapToColumns(_products));
 
-        //setproducts(_products);
-        //setProductsToDisplay(_products);
+        console.log('Move to categories with this selected/ (show only products/supplies of this category) / choose what to do');
+    }
 
-        console.log('Move to Zapasy/Produkty');
+    function onBarcodeClicked(barcode) {
+        // move to barcode generator with this code
     }
 
     function onFiltered(items) {
@@ -161,10 +164,11 @@ function ProductsComponent(props) {
 
     function showEditModal(guid) {
         setProductToEditGuid(guid);
-        setProductToEditBarcode(getproduct({ guid: guid }).barcode);
         setProductToEditName(getproduct({ guid: guid }).name);
-        setProductToEditAlarm(getproduct({ guid: guid }).alarm);
         setProductToEditCategoryId(getproduct({ guid: guid }).category_id);
+        setProductToEditBarcode(getproduct({ guid: guid }).barcode);
+        setProductToEditAlarm(getproduct({ guid: guid }).alarm);
+        
         setEditModalFadingClass("fadeIn");
     }
 
@@ -179,6 +183,10 @@ function ProductsComponent(props) {
         }
 
         return null;
+    }
+
+    function getCategory(categoryGuid) {
+        return props.categories.filter((item) => (item.guid == categoryGuid))[0];
     }
 
     function deleteProduct(guid) {
@@ -278,8 +286,8 @@ function ProductsComponent(props) {
             [Dodac barcode window (male okienko z aparatu)]
             <AutocompleteSearchComponent
                 callback={onFiltered}
-                items={props.products}
-                filterColumn="category_id"
+                items={mapToColumns(props.products)}
+                filterColumns={["categoryName", "category_id"]}
             ></AutocompleteSearchComponent>
             <div className="products-table-container">
                 <table>
@@ -340,10 +348,15 @@ function ProductsComponent(props) {
                                     </a></td>
                                 <td>
                                     <a key={item.guid}
-                                        onClick={() => onCategoryClicked(item.guid)}>
-                                        {props.categories.filter((cat) => (item.category_id == cat.guid))[0]?.name}</a>
+                                        onClick={() => onCategoryClicked(item.category_id)}>
+                                        {item.categoryName}
+                                    </a>
                                 </td>
-                                <td>{item.barcode}</td>
+                                <td>
+                                    <a key={item.guid}
+                                        onClick={() => onBarcodeClicked(item.barcode)}>
+                                        {item.barcode}</a>
+                                </td>
                                 <td>{item.alarm}</td>
                                 <td>img(click)</td>
                                 <td>

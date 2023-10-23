@@ -71,3 +71,27 @@ td, th {
 .IntroSpecialModal {
     opacity:0;
 }
+
+.modal-window {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 80%
+}
+
+.modal-top-bar {
+    width: 100%;
+}
+
+.modal-x-button {
+    background-color: yellow;
+}
+
+.modal-delete-content {
+}
+
+    .modal-delete-content h2 {
+    }
+
+    .modal-delete-content p {
+    }

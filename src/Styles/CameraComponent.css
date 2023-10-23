@@ -8,7 +8,6 @@
 .CameraComponent .container{
     width: 100%;
     height: 100%;
-
 }
 
 #camera-component-video {
@@ -47,11 +46,14 @@
     position: relative;
     display: block;
     bottom: 0vh;
-    color: white;
+    color: #C1C1C1;
     bottom: 6vh;
+    cursor: pointer;
 }
-
-.CameraComponent .take-picture-overlay {
+.CameraComponent div.button:hover {
+    color: white;
+}
+    .CameraComponent .take-picture-overlay {
     background-color: red;
     width: 100%;
     height: 100%;

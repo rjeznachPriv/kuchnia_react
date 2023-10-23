@@ -13,6 +13,7 @@
     "js-barcode": "^0.0.4",
     "quagga": "^0.12.1",
     "react": "^18.2.0",
+    "react-datepicker": "^4.21.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0",
     "react-scripts": "5.0.1",
