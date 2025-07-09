@@ -1,10 +1,19 @@
 {
-  "storages_tab": "storages_tab",
+  "categoriesURL": "/categories",
+  "productsURL": "/products",
+  "storagesURL": "/storages",
+  "cameraURL": "/camera",
+  "suppliesURL": "/supplies",
+  "barcodeGeneratorURL": "/generator",
+  "groceryListURL": "/list",
+
   "categories_tab": "categories_tab",
+  "products_tab": "products_tab",
+  "storages_tab": "storages_tab",
   "camera_tab": "camera_tab",
   "supplies_tab": "supplies_tab",
-  "products_tab": "products_tab",
   "barcode_generator_tab": "barcode_generator_tab",
+  "grocery_list_tab": "grocery_list_tab",
   "choose_tab": "choose_tab",
 
   "add_storage_name_input": "add_storage_name_input",

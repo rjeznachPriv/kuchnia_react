@@ -5,10 +5,10 @@ import { registerLocale, setDefaultLocale } from "react-datepicker";
 import pl from 'date-fns/locale/pl';
 import guidGenerator from 'guid-generator';
 
-import './../Styles/SuppliesComponent.css';
-import names from "./../Configuration/VitalHTMLids.json";
+import './../../Styles/Tabs/SuppliesComponent.css';
+import names from "./../../Configuration/VitalHTMLids.json";
 
-import AutocompleteSearchComponent from './AutocompleteSearchComponent.js';
+import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
 
 import { FaEdit } from 'react-icons/fa';
 import { FaTimes } from 'react-icons/fa';

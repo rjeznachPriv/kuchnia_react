@@ -6,14 +6,14 @@ import { FaEdit } from 'react-icons/fa';
 import { FaTimes } from 'react-icons/fa';
 import { MdAddBox } from 'react-icons/md';
 
-import InfoModalComponent from './InfoModalComponent.js';
-import TextBoxComponent from './TextBoxComponent.js';
-import AutocompleteSearchComponent from './AutocompleteSearchComponent.js';
+import InfoModalComponent from './../InfoModalComponent.js';
+import TextBoxComponent from './../TextBoxComponent.js';
+import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
 
-import './../Styles/ProductsComponent.css';
-import names from "./../Configuration/VitalHTMLids.json";
-import captions from "./../Configuration/LocalizedCaptionsPL.json"
-import DropDownComponent from './DropDownComponent.js';
+import './../../Styles/Tabs/ProductsComponent.css';
+import names from "./../../Configuration/VitalHTMLids.json";
+import captions from "./../../Configuration/LocalizedCaptionsPL.json"
+import DropDownComponent from './../DropDownComponent.js';
 import CameraComponent from './CameraComponent.js';
 
 function ProductsComponent(props) {
@@ -190,6 +190,9 @@ function ProductsComponent(props) {
     }
 
     function deleteProduct(guid) {
+        //TODO: display warning ! IF removed product, then what? Attach all left supplies to some 'uncategorized'? Or delete all supplies?
+        alert('Todo: implement warning window here. Reattach or remove children nodes');
+
         var _products = props.products.filter((item) => item.guid != guid);
         props.setProducts(_products);
         setProductsToDisplay(_products);

@@ -11,11 +11,13 @@
     "guid-generator": "^0.0.1",
     "jquery": "^3.7.1",
     "js-barcode": "^0.0.4",
+    "jsbarcode": "^3.12.1",
     "quagga": "^0.12.1",
     "react": "^18.2.0",
     "react-datepicker": "^4.21.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0",
+    "react-router-dom": "^7.6.3",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },

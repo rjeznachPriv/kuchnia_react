@@ -24,9 +24,14 @@ function ChooseYourActionModalComponent(props) {
 
     }
 
+      function barcodeChangedHandler(e) {
+        e.preventDefault();
+        props.setBarcode(e.target.value);
+    }
+
     return (
         <div id={names.choose_tab} style={localStyle} className="ChooseYourActionModalComponent">
-            <input value={props.barcode}></input>
+            <input value={props.barcode} onChange={barcodeChangedHandler}></input>
             <svg id="scanned-barcode"></svg>
             <img id="taken-photo"></img>
 

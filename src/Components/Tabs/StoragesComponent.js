@@ -6,13 +6,13 @@ import { FaEdit } from 'react-icons/fa';
 import { FaTimes } from 'react-icons/fa';
 import { MdAddBox } from 'react-icons/md';
 
-import InfoModalComponent from './InfoModalComponent.js';
-import TextBoxComponent from './TextBoxComponent.js';
-import AutocompleteSearchComponent from './AutocompleteSearchComponent.js';
+import InfoModalComponent from './../InfoModalComponent.js';
+import TextBoxComponent from './../TextBoxComponent.js';
+import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
 
-import './../Styles/StoragesComponent.css';
-import names from "./../Configuration/VitalHTMLids.json";
-import captions from "./../Configuration/LocalizedCaptionsPL.json"
+import './../../Styles/Tabs/StoragesComponent.css';
+import names from "./../../Configuration/VitalHTMLids.json";
+import captions from "./../../Configuration/LocalizedCaptionsPL.json"
 
 function StoragesComponent(props) {
 
@@ -132,6 +132,9 @@ function StoragesComponent(props) {
     }
 
     function deleteStorage(guid) {
+        //TODO: display warning ! IF removed storage, then what? Attach all left supplies to some 'uncategorized'? Or delete all these supplies?
+        alert('Todo: implement warning window here. Reattach or remove children nodes');
+
         var _storages = props.storages.filter((item) => item.guid != guid);
         props.setStorages(_storages);
         setStoragesToDisplay(_storages);

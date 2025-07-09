@@ -1,14 +1,14 @@
 
 import { useState } from 'react';
 import React, { useEffect } from "react";
-import { runSequence } from './../utils/utils.js';
+import { runSequence } from './../../utils/utils.js';
 import $ from 'jquery';
-import ChooseYourActionModalComponent from './ChooseYourActionModalComponent';
+import ChooseYourActionModalComponent from './../ChooseYourActionModalComponent';
 
-import './../Styles/ScannerTabComponent.css';
-import config from "./../Configuration/scannerComponentConfig.json";
-import names from "./../Configuration/VitalHTMLids.json";
-import captions from "./../Configuration/LocalizedCaptionsPL.json";
+import './../../Styles/Tabs/ScannerTabComponent.css';
+import config from "./../../Configuration/scannerComponentConfig.json";
+import names from "./../../Configuration/VitalHTMLids.json";
+import captions from "./../../Configuration/LocalizedCaptionsPL.json";
 
 const ScannerTabComponent = props => {
     var [takePictureClass, setTakePictureClass] = useState('');
@@ -64,13 +64,15 @@ const ScannerTabComponent = props => {
     }
 
     function handleTakePictureButtonClick() {
+        const canvas = $('#cameraCanvas canvas.drawingBuffer')[0];
+        if (canvas == undefined){return;}
+
         cameraSound.play();
         runSequence([
             () => setTakePictureClass('fadeInAndOut'),
             () => setTakePictureClass('')],
             config.flashOverlayTime);
 
-        const canvas = $('#cameraCanvas canvas.drawingBuffer')[0];
         const video = $('#cameraCanvas video')[0];
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
         let image_data_url = canvas.toDataURL('image/jpeg', config.takenPictureQuality);
@@ -94,6 +96,7 @@ const ScannerTabComponent = props => {
             <ChooseYourActionModalComponent
                 pictureData={pictureData}
                 barcode={barcode}
+                setBarcode={setBarcode}
                 activeTab={props.activeTab}
             ></ChooseYourActionModalComponent>
             <div id="cameraCanvas" style={localStyle} onClick={InitializeQuagga} >

@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
-import { runSequence } from './../utils/utils.js';
+import { runSequence } from './../../utils/utils.js';
 import React from "react";
 import $ from 'jquery';
 import { FaCameraRotate } from "react-icons/fa6";
 import { FaCamera } from "react-icons/fa6";
 
-import config from "./../Configuration/scannerComponentConfig.json";
-import './../Styles/CameraComponent.css';
-import names from "./../Configuration/VitalHTMLids.json";
-import captions from "./../Configuration/LocalizedCaptionsPL.json";
+import config from "./../../Configuration/scannerComponentConfig.json";
+import './../../Styles/Tabs/CameraComponent.css';
+import names from "./../../Configuration/VitalHTMLids.json";
+import captions from "./../../Configuration/LocalizedCaptionsPL.json";
 
 const ScannerTabComponent = props => {
     var [takePictureClass, setTakePictureClass] = useState('');

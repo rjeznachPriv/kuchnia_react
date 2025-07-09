@@ -1,27 +1,44 @@
 import { useEffect, useState, useRef } from "react";
+import { BrowserRouter as Router, useLocation, Routes, Route, Link, useParams, useNavigate  } from "react-router-dom";
+
 import './Styles/App.css';
 import Quagga from "quagga";
 
 import HeaderComponent from './Components/HeaderComponent.js';
 import FooterComponent from './Components/FooterComponent.js';
-import CategoriesComponent from './Components/CategoriesComponent.js';
-import SuppliesComponent from './Components/SuppliesComponent.js';
-import ScannerTabComponent from './Components/ScannerTabComponent.js';
-import StoragesComponent from './Components/StoragesComponent.js';
-import BarcodeGeneratorComponent from './Components/BarcodeGeneratorComponent.js';
+import InfoModalComponent from './Components/InfoModalComponent';
+
+import StoragesComponent from './Components/Tabs/StoragesComponent.js';
+import CategoriesComponent from './Components/Tabs/CategoriesComponent.js';
+import ScannerTabComponent from './Components/Tabs/ScannerTabComponent.js';
+import SuppliesComponent from './Components/Tabs/SuppliesComponent.js';
+import BarcodeGeneratorComponent from './Components/Tabs/BarcodeGeneratorComponent.js';
+import ProductsComponent from "./Components/Tabs/ProductsComponent";
 
 import data from "./Configuration/InitialData.json";
 import captions from "./Configuration/LocalizedCaptionsPL.json"
 import names from "./Configuration/VitalHTMLids.json";
-import InfoModalComponent from './Components/InfoModalComponent';
-import ProductsComponent from "./Components/ProductsComponent";
 
 function App() {
-    const TITLE_STORAGES = captions.title_storages;
-    const TITLE_CATEGORIES = captions.title_categories;
-    const TITLE_CAMERA = captions.title_camera;
-    const TITLE_SUPPLIES = captions.title_supplies;
-    const TITLE_PRODUCTS = captions.title_products;
+    const tabUrlMapping = {
+        [names.categoriesURL] : names.categories_tab,
+        [names.productsURL] : names.products_tab,
+        [names.storagesURL] : names.storages_tab,
+        [names.cameraURL] : names.camera_tab,
+        [names.suppliesURL] : names.supplies_tab,
+        [names.barcodeGeneratorURL] : names.barcode_generator_tab,
+        [names.groceryListURL] : names.grocery_list_tab,
+    };
+
+    const tabTitleMapping = {
+        [names.categories_tab] : captions.title_categories,
+        [names.products_tab] : captions.title_products,
+        [names.storages_tab] : captions.title_storages,
+        [names.camera_tab] : captions.title_camera,
+        [names.supplies_tab] : captions.title_supplies,
+        [names.barcode_generator_tab] : captions.title_generator,
+        [names.grocery_list_tab] : captions.title_shopping,
+    };
 
     const logoModalReference = useRef();
 
@@ -40,34 +57,12 @@ function App() {
     const [storages, setStorages] = useState(data.storages);    //TODO: read from individual profile
     const [supplies, setSupplies] = useState(data.supplies);    //TODO: read from individual profile
 
+    //TODO: implement routing: tab/otherData
+
     function activateTabWithId(newActiveTab) {
         setActiveTab(newActiveTab);
         cutAllCameraStreams();
-        switch (newActiveTab) {
-            case names.storages_tab:
-                setTitle(TITLE_STORAGES)
-                break;
-            case names.categories_tab:
-                setTitle(TITLE_CATEGORIES)
-                break;
-            case names.camera_tab:
-                setTitle(TITLE_CAMERA)
-                break;
-            case names.supplies_tab:
-                setTitle(TITLE_SUPPLIES)
-                break;
-            case names.products_tab:
-                setTitle(TITLE_PRODUCTS)
-                break;
-            case names.barcode_generator_tab:
-                setTitle('Generator kodów');
-                break;
-            case 'grocery_list_tab':
-                setTitle('Lista zakupów');
-                break;
-            default:
-                setTitle('');
-        }
+        setTitle(tabTitleMapping[newActiveTab]);
     }
 
     function cutAllCameraStreams() {
@@ -110,8 +105,16 @@ function App() {
 
     //TODO: register FilterContentMethod: Czyli po przelaczeniu na tab cgcemy by juz wyfiltrowal....
 
+    function AppRouter() {
+        const location = useLocation();
+        const path = location.pathname;
+        let newTabId = tabUrlMapping[path];
+        activateTabWithId(newTabId)
+    }
+
     return (
         <div className="App">
+        <Router> 
             <InfoModalComponent
                 ref={logoModalReference}
                 mainWindowClassName="IntroBackground"
@@ -124,7 +127,9 @@ function App() {
             <div className="main-content">
                 <aside></aside>
                 <main>
-
+                    
+                    <AppRouter/>
+                    
                     <CategoriesComponent
                         activeTab={activeTab}
                         activateTabWithId={activateTabWithId}
@@ -179,7 +184,10 @@ function App() {
             </div>
             <FooterComponent
                 activeTab={activeTab}
-                activateTabWithId={activateTabWithId} />
+                activateTabWithId={activateTabWithId} 
+                />
+
+        </Router>
         </div>
     );
 }

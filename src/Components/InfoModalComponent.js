@@ -1,6 +1,7 @@
 import './../Styles/InfoModalComponent.css';
 import React from 'react';
 import { useState } from 'react';
+import { uuidv4 } from './../utils/utils.js';
 
 const { forwardRef, useRef, useImperativeHandle } = React;
 
@@ -33,7 +34,7 @@ const InfoModalComponent = forwardRef((props, ref) => {
                 <div className="InfoModalContentContainer">
                     <span>{props.text}</span>
                     {props.contentLines?.map((item) => (
-                        <div className="line">{item}</div>
+                        <div className="line" key={uuidv4()}>{item}</div>
                     ))}
                 </div>
                 <div className={`InfoModalButtons ${props.buttonsClass}`}>

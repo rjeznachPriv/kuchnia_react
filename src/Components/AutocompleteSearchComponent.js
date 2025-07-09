@@ -14,10 +14,13 @@ function AutocompleteSearchComponent(props) {
     }
 
     function searchList(phrase) {
+
+        console.log(`phrase: ${phrase}`);    
+
         var filteredItems = props.items.filter((item) => {
             return item.name?.toLowerCase()?.match(phrase.toLowerCase())
                 || item.barcode?.toLowerCase()?.match(phrase.toLowerCase())
-                || props.filterColumns.some((el) => {
+                || props.filterColumns?.some((el) => {
                     return item[el]?.toLowerCase()?.match(phrase.toLowerCase());
                 });
         });

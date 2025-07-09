@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import JsBarcode from "jsbarcode";
 import { AiFillPrinter } from 'react-icons/ai';
 import $ from 'jquery';
-import './../Styles/BarcodeGeneratorComponent.css';
-import names from "./../Configuration/VitalHTMLids.json";
-import { isAlphaNumericKey, printSvg } from './../utils/utils.js';
-import captions from "./../Configuration/LocalizedCaptionsPL.json";
+import './../../Styles/Tabs/BarcodeGeneratorComponent.css';
+import names from "./../../Configuration/VitalHTMLids.json";
+import { isAlphaNumericKey, printSvg } from './../../utils/utils.js';
+import captions from "./../../Configuration/LocalizedCaptionsPL.json";
 
 function BarcodeGeneratorComponent(props) {
 

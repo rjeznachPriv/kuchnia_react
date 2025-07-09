@@ -6,13 +6,13 @@ import { FaEdit } from 'react-icons/fa';
 import { FaTimes } from 'react-icons/fa';
 import { MdAddBox } from 'react-icons/md';
 
-import InfoModalComponent from './InfoModalComponent.js';
-import TextBoxComponent from './TextBoxComponent.js';
-import AutocompleteSearchComponent from './AutocompleteSearchComponent.js';
+import InfoModalComponent from './../InfoModalComponent.js';
+import TextBoxComponent from './../TextBoxComponent.js';
+import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
 
-import './../Styles/CategoriesComponent.css';
-import names from "./../Configuration/VitalHTMLids.json";
-import captions from "./../Configuration/LocalizedCaptionsPL.json"
+import './../../Styles/Tabs/CategoriesComponent.css';
+import names from "./../../Configuration/VitalHTMLids.json";
+import captions from "./../../Configuration/LocalizedCaptionsPL.json"
 
 function CategoriesComponent(props) {
 
@@ -52,6 +52,11 @@ function CategoriesComponent(props) {
     }, []);
 
     useEffect(() => {
+                
+        console.log('categories:');
+        console.log(props.categories);
+
+
         currentState.current = {
             'categories': props.categories,
             'editModalFadingClass': editModalFadingClass,
@@ -76,7 +81,10 @@ function CategoriesComponent(props) {
         setCategoriesToDisplay(_categories);
 
         console.log('Move to Products/Supplies/Chose filtered by category of id:' + guid);
+
         //Pokaz produkty w tej kategorii? a moze zapasy? Albo choose?
+
+        //Raczej takie okienko, gdzie wybiera user, czy chce isc do kategorii albo do zapasów
     }
 
     function onFiltered(items) {
@@ -114,6 +122,9 @@ function CategoriesComponent(props) {
     }
 
     function deleteCategory(guid) {
+        //TODO: display warning ! IF removed categories, then what? Attach all left to some 'uncategorized'? Or delete all children?
+        alert('Todo: implement warning window here. Reattach or remove children nodes');
+
         var _categories = props.categories.filter((item) => item.guid != guid);
         props.setCategories(_categories);
         setCategoriesToDisplay(_categories);
@@ -151,6 +162,7 @@ function CategoriesComponent(props) {
     }
 
     return (
+        //TODO: zaimplementowac uniwerstalny dataatble?
         <div id="categories-tab" style={localStyle} className="CategoriesComponent">
             <InfoModalComponent
                 mainWindowClassName={`modal-delete-window ${deleteModalFadingClass}`}
@@ -230,7 +242,7 @@ function CategoriesComponent(props) {
                             <tr className="item" key={item.guid}>
                                 <td>
                                     <a key={item.guid}
-                                        id={item.id}
+                                        
                                         onClick={() => onCategoryNameClicked(item.guid)}>
                                         {item.name}
                                     </a></td>
