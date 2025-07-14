@@ -24,7 +24,7 @@ function ChooseYourActionModalComponent(props) {
 
     }
 
-      function barcodeChangedHandler(e) {
+    function barcodeChangedHandler(e) {
         e.preventDefault();
         props.setBarcode(e.target.value);
     }

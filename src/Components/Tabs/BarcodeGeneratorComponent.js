@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import JsBarcode from "jsbarcode";
+
+import { ReactBarcode } from 'react-jsbarcode';
+
 import { AiFillPrinter } from 'react-icons/ai';
-import $ from 'jquery';
+import { MdAddBox } from 'react-icons/md';
+import { FaTimes } from 'react-icons/fa';
 import './../../Styles/Tabs/BarcodeGeneratorComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
-import { isAlphaNumericKey, printSvg } from './../../utils/utils.js';
+import { isAlphaNumericKey, printSvg, printSvgS, uuidv4 } from './../../utils/utils.js';
 import captions from "./../../Configuration/LocalizedCaptionsPL.json";
 
 function BarcodeGeneratorComponent(props) {
@@ -12,10 +15,10 @@ function BarcodeGeneratorComponent(props) {
     var localStyle = { display: props.activeTab === names.barcode_generator_tab ? 'block' : 'none' }
 
     useEffect(() => {
-        JsBarcode(`#${names.barcode}`, captions.message_example_barcode);
+
     }, []);
 
-    const [code, setCode] = useState(captions.message_example_barcode);
+    const [codes, setCodes] = useState([captions.message_example_barcode]);
 
     function handleKeyDown(e) {
         if (isAlphaNumericKey(e))
@@ -25,14 +28,25 @@ function BarcodeGeneratorComponent(props) {
 
     function handleChange(e) {
         e.preventDefault();
-        setCode(e.target.value);
-        if (e.target.value != '') {
-            JsBarcode(`#${names.barcode}`, e.target.value);
-        }
+        let index = e.target.id.split(names.barcode_generator_textField)[1];
+        let newCode = e.target.value;
+
+        let updatedCodes = [...codes];
+        updatedCodes[index] = newCode;
+
+        setCodes(updatedCodes);
     }
 
     function print() {
-        printSvg(`#${names.barcode}`);
+        printSvgS(codes.map((item, index) => { return `.${names.barcode}${index}`; }));
+    }
+
+    function addCode() {
+        setCodes(prev => [...prev, "kod"]);
+    }
+
+    function deleteCode(index) {
+        setCodes(prev => prev.filter((_, i) => i !== index));
     }
 
     return (
@@ -45,21 +59,36 @@ function BarcodeGeneratorComponent(props) {
             </span>
             <div className="data">
                 <div className="dataContent">
-                    <span >Kod :</span>
-                    <input className="barcodeGenerator"
-                        placeholder={captions.message_example_barcode}
-                        value={code}
-                        onKeyDown={handleKeyDown}
-                        onChange={handleChange}
-                    />
-                    <span className="printer">
-                        <AiFillPrinter role="button" tabIndex="0" onClick={() => print()}></AiFillPrinter>
-                    </span>
 
+                    {codes.map((item, index) => (
+                        <div className="codeInputRow" key={`${names.barcode_generator_textField}${index}`}>
+                            <input className="barcodeGenerator"
+                                placeholder={captions.message_example_barcode}
+                                value={item}
+                                id={`${names.barcode_generator_textField}${index}`}
+                                onKeyDown={handleKeyDown}
+                                onChange={handleChange}
+                            />
+
+                            {index === codes.length - 1 ?
+                                <MdAddBox className="addCodeButton" role="button" tabIndex="0" onClick={() => addCode()}></MdAddBox> :
+                                <FaTimes className="removeCodeButton" role="button" tabIndex="0" onClick={() => deleteCode(index)}></FaTimes>
+                            }
+                        </div>
+                    ))}
                 </div>
             </div>
             <div className="result">
-                <svg id={ names.barcode}></svg>
+                {codes.map((item, index) => (
+
+                    <ReactBarcode value={item} className={`${names.barcode}${index}`} key={`${names.barcode}${index}`} />
+                ))}
+
+            </div>
+            <div>
+                <span className="printer">
+                    <AiFillPrinter role="button" tabIndex="0" onClick={() => print()}></AiFillPrinter>
+                </span>
             </div>
         </div>
     );

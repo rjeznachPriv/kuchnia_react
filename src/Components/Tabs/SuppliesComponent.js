@@ -7,6 +7,7 @@ import guidGenerator from 'guid-generator';
 
 import './../../Styles/Tabs/SuppliesComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
+import captions from "./../../Configuration/LocalizedCaptionsPL.json"
 
 import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
 
@@ -17,8 +18,8 @@ import { FaAppleAlt } from 'react-icons/fa';
 import { BsApple } from 'react-icons/bs';
 
 function SuppliesComponent(props) {
-    const bittenApple = <BsApple></BsApple>;
-    const apple = <FaAppleAlt></FaAppleAlt>;
+    const bittenApple = <BsApple title={captions.explanation_product_is_open}></BsApple>;
+    const apple = <FaAppleAlt title={captions.explanation_product_is_sealed}></FaAppleAlt>;
 
     registerLocale('pl', pl)
 
@@ -122,13 +123,17 @@ function SuppliesComponent(props) {
         <div id={names.supplies_tab} className="SuppliesComponent" style={localStyle}>
             MODAL
             MODAL
-            Opcja wyswietlania ilosciowego !!!
 
             [Dodac barcode window (male okienko z aparatu)]
+
+            <button>Poni¿ej limitu</button>
+            <button>Blisko daty koñca terminu (i otwarte)</button>
+            <button>Scal te same produkty</button>
+
             <AutocompleteSearchComponent
                 callback={onFiltered}
                 items={mapToColumns(props.supplies)}
-                filterColumns={["productName", "productBarcode","product_id", "storageName", "storage_id" ]}
+                filterColumns={["productName", "productBarcode", "product_id", "storageName", "storage_id"]}
             ></AutocompleteSearchComponent>
             <div className="supplies-table-container">
                 <table>
@@ -154,7 +159,7 @@ function SuppliesComponent(props) {
                                     dateFormat="dd/MM/yyyy"
                                     locale="pl"
                                     showYearDropdown
-                                 />
+                                />
                             </th>
                             <th>
                                 SmartDrop/skan

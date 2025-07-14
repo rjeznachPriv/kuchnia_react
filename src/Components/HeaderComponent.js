@@ -37,7 +37,7 @@ function HeaderComponent(props) {
                 fadeOut="">
             </InfoModalComponent>
         </header>
-  );
+    );
 }
 
 export default HeaderComponent;

@@ -1,31 +1,16 @@
-﻿import React, { useState } from "react";
+﻿import React, { forwardRef, useImperativeHandle, useState } from "react";
 import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 import './../Styles/AutocompleteSearchComponent.css';
 
 function AutocompleteSearchComponent(props) {
-
-    const [searchInput, setSearchInput] = useState("");
-
     function handleChange(e) {
         e.preventDefault();
-        setSearchInput(e.target.value);
-        props.callback(searchList(e.target.value));
-    }
-
-    function searchList(phrase) {
-
-        console.log(`phrase: ${phrase}`);    
-
-        var filteredItems = props.items.filter((item) => {
-            return item.name?.toLowerCase()?.match(phrase.toLowerCase())
-                || item.barcode?.toLowerCase()?.match(phrase.toLowerCase())
-                || props.filterColumns?.some((el) => {
-                    return item[el]?.toLowerCase()?.match(phrase.toLowerCase());
-                });
-        });
-
-        return filteredItems;
+        try {
+            props.onChange(e.target.value);
+        } catch (err) {
+            console.log('Error on Autocomplete component. props.onChange not passed?', err)
+        }
     }
 
     return (
@@ -35,10 +20,23 @@ function AutocompleteSearchComponent(props) {
                 type="search"
                 placeholder={captions.message_search}
                 onChange={handleChange}
-                value={searchInput}
+                value={props.filterPhrase}
             />
         </div>
     );
 }
 
 export default AutocompleteSearchComponent;
+
+export function filterItems(list, phrase, additionalColumns) {
+    var filteredItems = list.filter((item) => {
+
+        return item.name?.toLowerCase()?.match(phrase.toLowerCase())
+            || item.barcode?.toLowerCase()?.match(phrase.toLowerCase())
+            || additionalColumns?.some((el) => {
+                return item[el]?.toLowerCase()?.match(phrase.toLowerCase());
+            });
+    });
+
+    return filteredItems;
+}

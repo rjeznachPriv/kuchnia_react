@@ -13,59 +13,77 @@
     border-radius: 30px;
     width: calc(100% - 10px);
     height: calc(100% - 10px);
+    overflow-y: auto;
 }
 
-.BarcodeGeneratorComponent .info {
-    color: #825555;
-    font-size: 0.7em;
-    background-color: #F0E8D8;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    border-radius: 10px;
-    display: block;
-    height: auto;
-    padding: 1em;
-
-    width: fit-content;
-    margin: auto;
-}
+    .BarcodeGeneratorComponent .info {
+        color: #825555;
+        font-size: 0.7em;
+        background-color: #F0E8D8;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        border-radius: 10px;
+        display: block;
+        height: auto;
+        padding: 1em;
+        width: fit-content;
+        margin: auto;
+    }
 
     .BarcodeGeneratorComponent .info ul {
         margin: auto;
     }
+
     .BarcodeGeneratorComponent .data {
-    color: #825555;
-    width: 100%;
-    height: 2.5em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        color: #825555;
+        width: 100%;
+        /*height: 2.5em;*/
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
     .BarcodeGeneratorComponent .data div.dataContent {
         width: 100%;
         max-width: 40em;
     }
 
-.BarcodeGeneratorComponent .barcodeGenerator {
-    width: 13em;
-}
+    .BarcodeGeneratorComponent .barcodeGenerator {
+        width: 13em;
+        vertical-align: top;
+    }
 
 
-.BarcodeGeneratorComponent .data .printer {
-    font-size: 2.5em;
-    /*margin-top: 0.5em;*/
-    vertical-align: middle;
-}
+    .BarcodeGeneratorComponent .printer {
+        font-size: 2.5em;
+        color: #825555;
+        /*margin-top: 0.5em;*/
+        vertical-align: middle;
+        background-color: #fff7;
+    }
 
-.BarcodeGeneratorComponent .result {
-    width: 100%;
-    height: auto;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .BarcodeGeneratorComponent .codeInputRow svg {
+        vertical-align: top;
+        margin-top: 0.1em;
+    }
+
+    .BarcodeGeneratorComponent .addCodeButton, .removeCodeButton {
+        /*display:block;*/
+        font-size: 2em;
+    }
+
+    .BarcodeGeneratorComponent .printer :hover {
+        background-color: #a99b;
+    }
+
+    .BarcodeGeneratorComponent .result {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
     .BarcodeGeneratorComponent .result svg#barcode {
         position: absolute;

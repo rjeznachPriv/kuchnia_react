@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, useLocation, Routes, Route, Link, useParams, useNavigate  } from "react-router-dom";
+import { BrowserRouter as Router, useLocation, Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
 
 import './Styles/App.css';
 import Quagga from "quagga";
@@ -21,26 +21,26 @@ import names from "./Configuration/VitalHTMLids.json";
 
 function App() {
     const tabUrlMapping = {
-        [names.categoriesURL] : names.categories_tab,
-        [names.productsURL] : names.products_tab,
-        [names.storagesURL] : names.storages_tab,
-        [names.cameraURL] : names.camera_tab,
-        [names.suppliesURL] : names.supplies_tab,
-        [names.barcodeGeneratorURL] : names.barcode_generator_tab,
-        [names.groceryListURL] : names.grocery_list_tab,
+        [names.categoriesURL]: names.categories_tab,
+        [names.productsURL]: names.products_tab,
+        [names.storagesURL]: names.storages_tab,
+        [names.cameraURL]: names.camera_tab,
+        [names.suppliesURL]: names.supplies_tab,
+        [names.barcodeGeneratorURL]: names.barcode_generator_tab,
+        [names.groceryListURL]: names.grocery_list_tab,
     };
 
     const tabTitleMapping = {
-        [names.categories_tab] : captions.title_categories,
-        [names.products_tab] : captions.title_products,
-        [names.storages_tab] : captions.title_storages,
-        [names.camera_tab] : captions.title_camera,
-        [names.supplies_tab] : captions.title_supplies,
-        [names.barcode_generator_tab] : captions.title_generator,
-        [names.grocery_list_tab] : captions.title_shopping,
+        [names.categories_tab]: captions.title_categories,
+        [names.products_tab]: captions.title_products,
+        [names.storages_tab]: captions.title_storages,
+        [names.camera_tab]: captions.title_camera,
+        [names.supplies_tab]: captions.title_supplies,
+        [names.barcode_generator_tab]: captions.title_generator,
+        [names.grocery_list_tab]: captions.title_shopping,
     };
 
-    const logoModalReference = useRef();
+    const childRef = useRef();
 
     const [title, setTitle] = useState(captions.default_app_title);
     const [activeTab, setActiveTab] = useState('');
@@ -49,7 +49,7 @@ function App() {
 
     useEffect(() => {
         //logoModalReference.current.fadeOutSlow();
-        logoModalReference.current.fadeOut();
+        childRef.current.fadeOut();
     }, []);
 
     const [categories, setCategories] = useState(data.categories); //TODO: read from common profile?
@@ -114,80 +114,83 @@ function App() {
 
     return (
         <div className="App">
-        <Router> 
-            <InfoModalComponent
-                ref={logoModalReference}
-                mainWindowClassName="IntroBackground"
-                mainWindowTopBarClassName="IntroSpecialModal"
-                topBarXButtonClassName="IntroSpecialModal"
-                ContentClassName="IntroSpecialModal">
-            </InfoModalComponent>
+            <Router>
+                <InfoModalComponent
+                    ref={childRef}
+                    mainWindowClassName="IntroBackground"
+                    mainWindowTopBarClassName="IntroSpecialModal"
+                    topBarXButtonClassName="IntroSpecialModal"
+                    ContentClassName="IntroSpecialModal">
+                </InfoModalComponent>
 
-            <HeaderComponent title={title} />
-            <div className="main-content">
-                <aside></aside>
-                <main>
-                    
-                    <AppRouter/>
-                    
-                    <CategoriesComponent
-                        activeTab={activeTab}
-                        activateTabWithId={activateTabWithId}
-                        categories={categories}
-                        setCategories={setCategories}
-                        registerBarcodeListener={registerBarcodeListener}
-                        onBarcodeScanned={onBarcodeScanned}
-                    />
-                    <ProductsComponent
-                        activeTab={activeTab}
-                        activateTabWithId={activateTabWithId}
-                        categories={categories}
-                        products={products}
-                        quagga={Quagga}
-                        registerBarcodeListener={registerBarcodeListener}
-                        setProducts={setProducts}
-                        onBarcodeScanned={onBarcodeScanned}
-                    />
+                <HeaderComponent title={title} />
+                <div className="main-content">
+                    <aside></aside>
+                    <main>
 
-                    <StoragesComponent
-                        activeTab={activeTab}
-                        activateTabWithId={activateTabWithId}
-                        registerBarcodeListener={registerBarcodeListener}
-                        storages={storages}
-                        setStorages={setStorages}
-                    />
+                        <AppRouter />
 
-                    <SuppliesComponent
-                        activeTab={activeTab}
-                        activateTabWithId={activateTabWithId}
-                        registerBarcodeListener={registerBarcodeListener}
-                        products={products}
-                        supplies={supplies}
-                        storages={storages}
-                        setSupplies={setSupplies}
+                        <CategoriesComponent
+                            activeTab={activeTab}
+                            activateTabWithId={activateTabWithId}
+                            categories={categories}
+                            setCategories={setCategories}
+                            products={products}
+                            setProducts={setProducts}
+                            registerBarcodeListener={registerBarcodeListener}
+                            onBarcodeScanned={onBarcodeScanned}
+                            appChildRef={childRef}
+                        />
+                        <ProductsComponent
+                            activeTab={activeTab}
+                            activateTabWithId={activateTabWithId}
+                            categories={categories}
+                            products={products}
+                            setProducts={setProducts}
+                            quagga={Quagga}
+                            registerBarcodeListener={registerBarcodeListener}
+                            onBarcodeScanned={onBarcodeScanned}
+                        />
 
-                    />
+                        <StoragesComponent
+                            activeTab={activeTab}
+                            activateTabWithId={activateTabWithId}
+                            registerBarcodeListener={registerBarcodeListener}
+                            storages={storages}
+                            setStorages={setStorages}
+                        />
 
-                    <BarcodeGeneratorComponent
-                        activeTab={activeTab}
-                        activateTabWithId={activateTabWithId}
-                    />
-                    <ScannerTabComponent
-                        activateTabWithId={activateTabWithId}
-                        quagga={Quagga}
-                        registerBarcodeListener={registerBarcodeListener}
-                        onBarcodeScanned={onBarcodeScanned}
-                        onPictureTaken={onPictureTaken}
-                        activeTab={activeTab}
-                    />
-                </main>
-            </div>
-            <FooterComponent
-                activeTab={activeTab}
-                activateTabWithId={activateTabWithId} 
+                        <SuppliesComponent
+                            activeTab={activeTab}
+                            activateTabWithId={activateTabWithId}
+                            registerBarcodeListener={registerBarcodeListener}
+                            products={products}
+                            supplies={supplies}
+                            storages={storages}
+                            setSupplies={setSupplies}
+
+                        />
+
+                        <BarcodeGeneratorComponent
+                            activeTab={activeTab}
+                            activateTabWithId={activateTabWithId}
+                        />
+                        <ScannerTabComponent
+                            activateTabWithId={activateTabWithId}
+                            quagga={Quagga}
+                            registerBarcodeListener={registerBarcodeListener}
+                            onBarcodeScanned={onBarcodeScanned}
+                            onPictureTaken={onPictureTaken}
+                            activeTab={activeTab}
+                        />
+                    </main>
+                </div>
+                <FooterComponent
+                    activeTab={activeTab}
+                    activateTabWithId={activateTabWithId}
                 />
 
-        </Router>
+            </Router>
         </div>
     );
 }

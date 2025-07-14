@@ -9,6 +9,9 @@
   "title_generator": "Generator",
   "title_shopping": "Zakupy",
 
+  "explanation_product_is_open": "Produkt jest otwarty",
+  "explanation_product_is_sealed": "Produkt jest zapieczętowany",
+
   "camera_scanner_activate": "Uderz, by uruchomić aparat",
   "camera_scanner_info": "Kod kreskowy zostanie zeskanowany samoczynnie",
 

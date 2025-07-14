@@ -8,7 +8,7 @@ import { MdAddBox } from 'react-icons/md';
 
 import InfoModalComponent from './../InfoModalComponent.js';
 import TextBoxComponent from './../TextBoxComponent.js';
-import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
+import AutocompleteSearchComponent, { filterItems } from './../AutocompleteSearchComponent.js';
 
 import './../../Styles/Tabs/ProductsComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
@@ -18,9 +18,11 @@ import CameraComponent from './CameraComponent.js';
 
 function ProductsComponent(props) {
 
-    const [productsToDisplay, setProductsToDisplay] = useState(props.products);
+    //const [productsToDisplay, setProductsToDisplay] = useState(props.products);
 
     const [productToDeleteGuid, setproductToDeleteGuid] = useState();
+
+    const [filterPhrase, setFilterPhrase] = useState("");
 
     const [productToEditGuid, setProductToEditGuid] = useState();
     const [productToEditName, setProductToEditName] = useState();
@@ -79,7 +81,6 @@ function ProductsComponent(props) {
 
     useEffect(() => {
         props.registerBarcodeListener(onBarcodeScannedWhenEditingScreenActive);
-        setProductsToDisplay(mapToColumns(props.products));
     }, []);
 
     var localStyle = { display: props.activeTab === names.products_tab ? 'block' : 'none' };
@@ -87,7 +88,7 @@ function ProductsComponent(props) {
     function mapToColumns(items) {
         return items.map((item) => ({
             ...item,
-            categoryName: getCategory(item.category_id).name,
+            categoryName: getCategory(item.category_id)?.name,
         }));
     }
 
@@ -115,7 +116,6 @@ function ProductsComponent(props) {
         });
 
         props.setProducts(_products);
-        setProductsToDisplay(mapToColumns(_products));
 
         console.log('Move to "Zapasy" with Supplies filtered by product of id:' + guid);
     }
@@ -128,7 +128,6 @@ function ProductsComponent(props) {
         });
 
         props.setProducts(_products);
-        setProductsToDisplay(mapToColumns(_products));
 
         console.log('Move to categories with this selected/ (show only products/supplies of this category) / choose what to do');
     }
@@ -137,8 +136,11 @@ function ProductsComponent(props) {
         // move to barcode generator with this code
     }
 
-    function onFiltered(items) {
-        setProductsToDisplay(items);
+    function onFiltered(phrase) {
+        setFilterPhrase(phrase);
+    }
+    function filteredProducts() {
+        return filterItems(mapToColumns(props.products), filterPhrase, ["alarm", "categoryName"]);
     }
 
     function handleProductEditCategoryChange(e) {
@@ -168,7 +170,7 @@ function ProductsComponent(props) {
         setProductToEditCategoryId(getproduct({ guid: guid }).category_id);
         setProductToEditBarcode(getproduct({ guid: guid }).barcode);
         setProductToEditAlarm(getproduct({ guid: guid }).alarm);
-        
+
         setEditModalFadingClass("fadeIn");
     }
 
@@ -195,7 +197,7 @@ function ProductsComponent(props) {
 
         var _products = props.products.filter((item) => item.guid != guid);
         props.setProducts(_products);
-        setProductsToDisplay(_products);
+        //setProductsToDisplay(_products);
         setDeleteModalFadingClass("fadeOut");
     }
 
@@ -212,7 +214,7 @@ function ProductsComponent(props) {
 
         props.setProducts(_products);
         setEditModalFadingClass('fadeOut');
-        setProductsToDisplay(_products);
+        //   setProductsToDisplay(_products);
     }
 
     function addproduct() {
@@ -230,7 +232,7 @@ function ProductsComponent(props) {
         setProductToAddName('');
         setProductToAddBarcode('');
         setProductToAddAlarm(0);
-        setProductsToDisplay(_products);
+        //setProductsToDisplay(_products);
     }
 
     function IsProductsTabActive() {
@@ -288,7 +290,7 @@ function ProductsComponent(props) {
             </InfoModalComponent>
             [Dodac barcode window (male okienko z aparatu)]
             <AutocompleteSearchComponent
-                callback={onFiltered}
+                onChange={onFiltered}
                 items={mapToColumns(props.products)}
                 filterColumns={["categoryName", "category_id"]}
             ></AutocompleteSearchComponent>
@@ -342,7 +344,7 @@ function ProductsComponent(props) {
                             </th></tr>
                     </thead>
                     <tbody>
-                        {productsToDisplay.sort((a, b) => { return b.frequency - a.frequency }).map((item) => (
+                        {filteredProducts(mapToColumns(props.products)).sort((a, b) => { return b.frequency - a.frequency }).map((item) => (
                             <tr className="item" key={item.guid}>
                                 <td>
                                     <a key={item.guid}

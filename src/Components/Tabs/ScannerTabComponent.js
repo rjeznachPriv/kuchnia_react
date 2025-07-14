@@ -27,7 +27,7 @@ const ScannerTabComponent = props => {
             if (err) {
                 console.log(err, "error msg");
             }
-     
+
             props.quagga.start();
             return () => { props.quagga.stop() }
         });
@@ -65,7 +65,7 @@ const ScannerTabComponent = props => {
 
     function handleTakePictureButtonClick() {
         const canvas = $('#cameraCanvas canvas.drawingBuffer')[0];
-        if (canvas == undefined){return;}
+        if (canvas == undefined) { return; }
 
         cameraSound.play();
         runSequence([

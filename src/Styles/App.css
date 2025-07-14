@@ -6,11 +6,11 @@ svg[role="button"] {
     text-align: center;
     background-image: url('./../img/background.png');
     height: 100%;
-    width:100%;
+    width: 100%;
     min-height: 200px;
     min-width: 200px;
     overflow: hidden;
-    position:relative;
+    position: relative;
 }
 
     .App .main-content {
@@ -45,11 +45,13 @@ table {
     margin-left: auto;
     margin-right: auto;
 }
-table th {
-    position: sticky;
-    top: 0; /* Don't forget this, required for the stickiness */
-    background-color: #D7C28D;
-}
+
+    table th {
+        position: sticky;
+        top: 0; /* Don't forget this, required for the stickiness */
+        background-color: #D7C28D;
+    }
+
 td, th {
     border-color: #DDCBA0;
     border-style: solid;
@@ -62,14 +64,14 @@ td, th {
     width: 60%;
     top: 5%;
     background-size: cover;
-    background-position:center;
+    background-position: center;
     border-radius: 120px;
     aspect-ratio: 1 / 1;
     background-image: url('./../img/logo1b.png');
 }
 
 .IntroSpecialModal {
-    opacity:0;
+    opacity: 0;
 }
 
 .modal-window {
@@ -95,3 +97,7 @@ td, th {
 
     .modal-delete-content p {
     }
+
+.clickable {
+    cursor: pointer;
+}

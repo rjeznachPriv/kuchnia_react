@@ -62,8 +62,8 @@
         width: 100%;
         /*max-width: 70vh;*/
         max-width: 700px;
-        float: left;
-        height: 5em;
+        /*float: left;*/
+        /*height: 5em;*/
         /*max-height: 5em;*/
     }
 
@@ -237,4 +237,24 @@
         display: none;
         opacity: 0;
     }
+}
+
+/*.InfoModalContentContainer input[type=checkbox] {
+    width: auto;
+}
+
+.InfoModalContentContainer .form-line ul {*/
+ /*   list-style-type: none;*/
+/*}*/
+.InfoModalContentContainer ul {
+    height: auto;
+    display:block;
+}
+
+.InfoModalContentContainer ul.form-lines {
+    list-style-type: none;
+}
+
+.InfoModalContentContainer .form-line input {
+    width: auto;
 }

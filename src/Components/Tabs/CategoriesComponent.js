@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
 import guidGenerator from 'guid-generator';
 
 import { FaEdit } from 'react-icons/fa';
@@ -8,15 +8,15 @@ import { MdAddBox } from 'react-icons/md';
 
 import InfoModalComponent from './../InfoModalComponent.js';
 import TextBoxComponent from './../TextBoxComponent.js';
-import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
+import AutocompleteSearchComponent, { filterItems } from './../AutocompleteSearchComponent.js';
+
+import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js';
 
 import './../../Styles/Tabs/CategoriesComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
 
 function CategoriesComponent(props) {
-
-    const [categoriesToDisplay, setCategoriesToDisplay] = useState(props.categories);
 
     const [categoryToDeleteGuid, setCategoryToDeleteGuid] = useState();
     const [categoryToEditGuid, setCategoryToEditGuid] = useState();
@@ -25,12 +25,19 @@ function CategoriesComponent(props) {
     const [categoryToAddName, setCategoryToAddName] = useState();
     const [categoryToAddAlarm, setCategoryToAddAlarm] = useState();
 
+    const [categoryClicked, setCategoryClicked] = useState({ name: "" });
+
+    const [filterPhrase, setFilterPhrase] = useState("");
+
     const [deleteModalFadingClass, setDeleteModalFadingClass] = useState('fadeOut');
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
+    const [chooseClickedModalFadingClass, setChooseClickedModalFadingClass] = useState('fadeOut');
 
-    const currentState = useRef();
+    const [deleteAssignedProductsFlag, setDeleteAssignedProductsFlag] = useState(false);
 
-    const nameTextBoxComponent = (
+    const navigate = useNavigate();
+
+    const editNameTextBoxComponent = (
         <TextBoxComponent
             label={`${captions.field_category_name}:`}
             value={categoryToEditName}
@@ -38,36 +45,26 @@ function CategoriesComponent(props) {
         ></TextBoxComponent>
     );
 
-    const alarmTextBoxComponent = (
+    const editAlarmTextBoxComponent = (
         <TextBoxComponent
             label={`${captions.field_category_alarm}:`}
             type="number"
             value={categoryToEditAlarm}
             onChangeValue={(e) => { setCategoryToEditAlarm(e.target.value) }}
+            min={0}
         ></TextBoxComponent>
     );
+
+    const deleteCategoryFormItems = [(<span><input type="checkbox" checked={deleteAssignedProductsFlag} onChange={() => setDeleteAssignedProductsFlag(!deleteAssignedProductsFlag)}></input> Usuń też przypisane produkty</span>)];
 
     useEffect(() => {
         props.registerBarcodeListener(onBarcodeScannedWhenEditingScreenActive);
     }, []);
 
-    useEffect(() => {
-                
-        console.log('categories:');
-        console.log(props.categories);
-
-
-        currentState.current = {
-            'categories': props.categories,
-            'editModalFadingClass': editModalFadingClass,
-            'props': props
-        };
-    }, [props.categories, editModalFadingClass, props]);
-
     var localStyle = { display: props.activeTab === names.categories_tab ? 'block' : 'none' };
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
-        // categories nioe ma barcode. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zas�b?)
+        // categories nioe ma barcode. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
     }
 
     function onCategoryNameClicked(guid) {
@@ -78,19 +75,15 @@ function CategoriesComponent(props) {
         });
 
         props.setCategories(_categories);
-        setCategoriesToDisplay(_categories);
 
-        console.log('Move to Products/Supplies/Chose filtered by category of id:' + guid);
-
-        //Pokaz produkty w tej kategorii? a moze zapasy? Albo choose?
-
-        //Raczej takie okienko, gdzie wybiera user, czy chce isc do kategorii albo do zapas�w
+        let clickedCategory = props.categories.filter((item) => { return item.guid == guid; })[0];
+        setCategoryClicked(clickedCategory);
+        setChooseClickedModalFadingClass('fadeIn');
     }
 
-    function onFiltered(items) {
-        setCategoriesToDisplay(items);
+    function onFiltered(phrase) {
+        setFilterPhrase(phrase)
     }
-
 
     function hideDeleteModal() {
         setDeleteModalFadingClass("fadeOut");
@@ -98,6 +91,10 @@ function CategoriesComponent(props) {
 
     function hideEditModal() {
         setEditModalFadingClass('fadeOut');
+    }
+
+    function hideChooseModal() {
+        setChooseClickedModalFadingClass('fadeOut');
     }
 
     function showDeleteModal(guid) {
@@ -121,13 +118,15 @@ function CategoriesComponent(props) {
         return null;
     }
 
-    function deleteCategory(guid) {
-        //TODO: display warning ! IF removed categories, then what? Attach all left to some 'uncategorized'? Or delete all children?
-        alert('Todo: implement warning window here. Reattach or remove children nodes');
+    function deleteCategory(category_guid) {
+        if (deleteAssignedProductsFlag) {
+            let productsToDelete = props.products.filter((item) => (item.category_id == category_guid));
+            let _products = props.products.filter(item => !productsToDelete.some(toRemove => toRemove.category_id == item.category_id));
+            props.setProducts(_products);
+        }
 
-        var _categories = props.categories.filter((item) => item.guid != guid);
+        var _categories = props.categories.filter((item) => item.guid != category_guid);
         props.setCategories(_categories);
-        setCategoriesToDisplay(_categories);
         setDeleteModalFadingClass("fadeOut");
     }
 
@@ -142,7 +141,6 @@ function CategoriesComponent(props) {
 
         props.setCategories(_categories);
         setEditModalFadingClass('fadeOut');
-        setCategoriesToDisplay(_categories);
     }
 
     function addCategory() {
@@ -158,11 +156,13 @@ function CategoriesComponent(props) {
 
         setCategoryToAddName('');
         setCategoryToAddAlarm(0);
-        setCategoriesToDisplay(_categories);
+    }
+
+    function filteredCategories() {
+        return filterItems(props.categories, filterPhrase);
     }
 
     return (
-        //TODO: zaimplementowac uniwerstalny dataatble?
         <div id="categories-tab" style={localStyle} className="CategoriesComponent">
             <InfoModalComponent
                 mainWindowClassName={`modal-delete-window ${deleteModalFadingClass}`}
@@ -170,8 +170,9 @@ function CategoriesComponent(props) {
                 topBarXButtonClassName="modal-delete-x-button"
                 ContentClassName="modal-delete-content"
                 title={captions.message_removing_category}
-                text={`${captions.message_are_you_sure_to_remove_category}: ${getCategory({ guid: categoryToDeleteGuid })?.name}?`}
-                content=""
+                text={`${captions.message_are_you_sure_to_remove_category}: ${getCategory({ guid: categoryToDeleteGuid })?.name}? Produkty z wciąż przypisaną kategorią:`}
+                contentLines={props.products.filter((item) => (item.category_id == categoryToDeleteGuid)).map((item) => (item.name))}
+                formLines={deleteCategoryFormItems}
                 button1Text={captions.message_no}
                 button1Class="modal-delete-button1"
                 button1Action={() => setDeleteModalFadingClass("fadeOut")}
@@ -191,7 +192,7 @@ function CategoriesComponent(props) {
                 ContentClassName="modal-edit-content"
                 title={captions.message_category_edit}
                 text=""
-                contentLines={[nameTextBoxComponent, alarmTextBoxComponent]}
+                contentLines={[editNameTextBoxComponent, editAlarmTextBoxComponent]}
                 button1Text={captions.message_cancel}
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}
@@ -203,10 +204,24 @@ function CategoriesComponent(props) {
                 button3Action=""
                 fadeOut={hideEditModal}>
             </InfoModalComponent>
+
+            <ChooseWhereToGoModalComponent
+                mainWindowClassName={`modal-where-to-go ${chooseClickedModalFadingClass}`}
+                button1Text={`Pokaż produkty w ${categoryClicked.name}`}
+                button1Action={() => { navigate(`/products?category=${categoryClicked.guid}`); }}
+                button2Text={`Pokaż zapasy w ${categoryClicked.name}`}
+                button2Action={() => { navigate(`/categories/${categoryClicked.guid}`); }}
+                button3Class="none"
+                fadeOut={hideChooseModal}
+
+            ></ChooseWhereToGoModalComponent>
+
             <AutocompleteSearchComponent
-                callback={onFiltered}
+                onChange={onFiltered}
+                value={filterPhrase}
                 items={props.categories}
             ></AutocompleteSearchComponent>
+
             <div className="categories-table-container">
                 <table>
                     <thead>
@@ -230,6 +245,7 @@ function CategoriesComponent(props) {
                                     value={categoryToAddAlarm}
                                     placeholder={captions.field_category_alarm}
                                     onChangeValue={(e) => { setCategoryToAddAlarm(e.target.value) }}
+                                    min={0}
                                 ></TextBoxComponent>
                             </th>
                             <th></th>
@@ -238,16 +254,15 @@ function CategoriesComponent(props) {
                             </th></tr>
                     </thead>
                     <tbody>
-                        {categoriesToDisplay.sort((a, b) => { return b.frequency - a.frequency }).map((item) => (
+                        {filteredCategories().sort((a, b) => { return b.frequency - a.frequency }).map((item) => (
                             <tr className="item" key={item.guid}>
                                 <td>
-                                    <a key={item.guid}
-                                        
-                                        onClick={() => onCategoryNameClicked(item.guid)}>
+                                    <span key={item.guid} onClick={() => onCategoryNameClicked(item.guid)} className="clickable">
                                         {item.name}
-                                    </a></td>
+                                    </span>
+                                </td>
                                 <td>
-                                    <span>{ item.alarm}</span>
+                                    <span>{item.alarm}</span>
                                 </td>
                                 <td>
 

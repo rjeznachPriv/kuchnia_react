@@ -14,11 +14,15 @@ export function isAlphaNumericKey(e) {
     return /[0-9a-zA-Z]/i.test(e.key) || [8, 32].some((code) => e.keyCode == code)
 }
 
-export function printSvg(selector) {
-    var content = $(selector)[0].outerHTML;                         //outerHtml for printing svg as graphics
-    var newWindow = window.open('', '', 'height=800, width=800');   //TODO: 800 x 800 magic number
+export function printSvgS(selectors) {
+    let elements = selectors.map((selector) => { return $(selector)[0]; });
+
+    var newWindow = window.open('', '', `height=${window.screen.height}, width=${window.screen.height}`);   //TODO: 800 x 800 magic number
     newWindow.document.write('<html>');
-    newWindow.document.write(content);
+    elements.forEach((element) => {
+        newWindow.document.write(element.outerHTML);
+    });
+
     newWindow.document.write('</html>');
     newWindow.document.close();
     newWindow.print();

@@ -9,9 +9,9 @@ function TextBoxComponent(props) {
                 placeholder={props.placeholder}
                 id={props.id}
                 value={props.value}
-                min="0"
+                min={props.min}
                 onChange={(e) => props.onChangeValue(e)}></input>
-            <p className="ValidationMessage">validation msg</p>
+            <p className="ValidationMessage">{props.validationMessage}</p>
         </div>
     );
 }
