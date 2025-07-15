@@ -7,7 +7,7 @@ import { MdAddBox } from 'react-icons/md';
 import { FaTimes } from 'react-icons/fa';
 import './../../Styles/Tabs/BarcodeGeneratorComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
-import { isAlphaNumericKey, printSvg, printSvgS, uuidv4 } from './../../utils/utils.js';
+import { isAlphaNumericKey, printSvgS } from './../../utils/utils.js';
 import captions from "./../../Configuration/LocalizedCaptionsPL.json";
 
 function BarcodeGeneratorComponent(props) {

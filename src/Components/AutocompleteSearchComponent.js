@@ -1,4 +1,4 @@
-﻿import React, { forwardRef, useImperativeHandle, useState } from "react";
+﻿import React from "react";
 import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 import './../Styles/AutocompleteSearchComponent.css';
@@ -31,10 +31,10 @@ export default AutocompleteSearchComponent;
 export function filterItems(list, phrase, additionalColumns) {
     var filteredItems = list.filter((item) => {
 
-        return item.name?.toLowerCase()?.match(phrase.toLowerCase())
-            || item.barcode?.toLowerCase()?.match(phrase.toLowerCase())
-            || additionalColumns?.some((el) => {
-                return item[el]?.toLowerCase()?.match(phrase.toLowerCase());
+        return item.name?.toLowerCase()?.match(phrase?.toLowerCase())
+            || item.barcode?.toLowerCase()?.match(phrase?.toLowerCase())
+            || additionalColumns?.some((column) => {
+                return item[column]?.toString().toLowerCase()?.match(phrase?.toLowerCase());
             });
     });
 

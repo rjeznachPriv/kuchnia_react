@@ -34,7 +34,7 @@ function StoragesComponent(props) {
         <TextBoxComponent
             label={`${captions.field_storage_name}:`}
             value={storageToEditName}
-            onChangeValue={(e) => { setStorageToEditName(e.target.value) }}
+            onChange={(e) => { setStorageToEditName(e.target.value) }}
         ></TextBoxComponent>
     );
 
@@ -42,7 +42,7 @@ function StoragesComponent(props) {
         <TextBoxComponent
             label={`${captions.field_barcode}:`}
             value={storageToEditBarcode}
-            onChangeValue={(e) => { setStorageToEditBarcode(e.target.value) }}
+            onChange={(e) => { setStorageToEditBarcode(e.target.value) }}
         ></TextBoxComponent>
     );
 
@@ -240,7 +240,7 @@ function StoragesComponent(props) {
                                     id={names.add_storage_name_input}
                                     value={storageToAddName}
                                     placeholder={captions.field_storage_name}
-                                    onChangeValue={(e) => { setStorageToAddName(e.target.value) }}
+                                    onChange={(e) => { setStorageToAddName(e.target.value) }}
                                 ></TextBoxComponent>
                             </th>
                             <th>
@@ -248,7 +248,7 @@ function StoragesComponent(props) {
                                     id={names.add_storage_barcode_input}
                                     value={storageToAddBarcode}
                                     placeholder={captions.field_barcode}
-                                    onChangeValue={(e) => { setStorageToAddBarcode(e.target.value) }}
+                                    onChange={(e) => { setStorageToAddBarcode(e.target.value) }}
                                 ></TextBoxComponent>
                             </th>
                             <th></th>

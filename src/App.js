@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router, useLocation, Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
 
+import { saveState, loadState } from './utils/dataManager.js';
+
 import './Styles/App.css';
 import Quagga from "quagga";
 
@@ -15,7 +17,6 @@ import SuppliesComponent from './Components/Tabs/SuppliesComponent.js';
 import BarcodeGeneratorComponent from './Components/Tabs/BarcodeGeneratorComponent.js';
 import ProductsComponent from "./Components/Tabs/ProductsComponent";
 
-import data from "./Configuration/InitialData.json";
 import captions from "./Configuration/LocalizedCaptionsPL.json"
 import names from "./Configuration/VitalHTMLids.json";
 
@@ -29,7 +30,6 @@ function App() {
         [names.barcodeGeneratorURL]: names.barcode_generator_tab,
         [names.groceryListURL]: names.grocery_list_tab,
     };
-
     const tabTitleMapping = {
         [names.categories_tab]: captions.title_categories,
         [names.products_tab]: captions.title_products,
@@ -40,24 +40,34 @@ function App() {
         [names.grocery_list_tab]: captions.title_shopping,
     };
 
-    const childRef = useRef();
+    const logoModalReference = useRef();
+
+    var barcodeListeners = [];
+
+    const [categories, setCategories] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [storages, setStorages] = useState([]);
+    const [supplies, setSupplies] = useState([]);
 
     const [title, setTitle] = useState(captions.default_app_title);
     const [activeTab, setActiveTab] = useState('');
 
-    var barcodeListeners = [];
-
     useEffect(() => {
+        let data = loadState();
+        setCategories(data.categories);
+        setProducts(data.products);
+        setStorages(data.storages);
+        setSupplies(data.supplies);
+
         //logoModalReference.current.fadeOutSlow();
-        childRef.current.fadeOut();
+        logoModalReference.current.fadeOut();
     }, []);
 
-    const [categories, setCategories] = useState(data.categories); //TODO: read from common profile?
-    const [products, setProducts] = useState(data.products);    //TODO: read from common profile?
-    const [storages, setStorages] = useState(data.storages);    //TODO: read from individual profile
-    const [supplies, setSupplies] = useState(data.supplies);    //TODO: read from individual profile
+    useEffect(() => {
+        saveState({ categories: categories, products: products, storages: storages, supplies: supplies });
+    }, [categories, products, storages, supplies]);
 
-    //TODO: implement routing: tab/otherData
+    //TODO: implement routing: tab/otherData (search query, specific item by id)
 
     function activateTabWithId(newActiveTab) {
         setActiveTab(newActiveTab);
@@ -88,13 +98,17 @@ function App() {
     }
 
     function onBarcodeScanned(code) {
+        console.log(`barcode scanned (${code}). Listeners:`);
+        console.log(barcodeListeners);
+
         barcodeListeners.forEach((storedCallback) => {
             storedCallback(code);
         });
     }
 
     function onPictureTaken(pictureBlob) {
-
+        console.log('picture taken!');
+        console.log(pictureBlob);
     }
 
     function registerBarcodeListener(listener) {
@@ -116,7 +130,7 @@ function App() {
         <div className="App">
             <Router>
                 <InfoModalComponent
-                    ref={childRef}
+                    ref={logoModalReference}
                     mainWindowClassName="IntroBackground"
                     mainWindowTopBarClassName="IntroSpecialModal"
                     topBarXButtonClassName="IntroSpecialModal"
@@ -139,7 +153,6 @@ function App() {
                             setProducts={setProducts}
                             registerBarcodeListener={registerBarcodeListener}
                             onBarcodeScanned={onBarcodeScanned}
-                            appChildRef={childRef}
                         />
                         <ProductsComponent
                             activeTab={activeTab}

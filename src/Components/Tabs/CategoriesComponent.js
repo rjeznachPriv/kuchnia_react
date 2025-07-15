@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import guidGenerator from 'guid-generator';
 
@@ -22,8 +22,8 @@ function CategoriesComponent(props) {
     const [categoryToEditGuid, setCategoryToEditGuid] = useState();
     const [categoryToEditName, setCategoryToEditName] = useState();
     const [categoryToEditAlarm, setCategoryToEditAlarm] = useState();
-    const [categoryToAddName, setCategoryToAddName] = useState();
-    const [categoryToAddAlarm, setCategoryToAddAlarm] = useState();
+    const [categoryToAddName, setCategoryToAddName] = useState("");
+    const [categoryToAddAlarm, setCategoryToAddAlarm] = useState(0);
 
     const [categoryClicked, setCategoryClicked] = useState({ name: "" });
 
@@ -41,7 +41,7 @@ function CategoriesComponent(props) {
         <TextBoxComponent
             label={`${captions.field_category_name}:`}
             value={categoryToEditName}
-            onChangeValue={(e) => { setCategoryToEditName(e.target.value) }}
+            onChange={(e) => setCategoryToEditName(e.target.value)}
         ></TextBoxComponent>
     );
 
@@ -50,7 +50,7 @@ function CategoriesComponent(props) {
             label={`${captions.field_category_alarm}:`}
             type="number"
             value={categoryToEditAlarm}
-            onChangeValue={(e) => { setCategoryToEditAlarm(e.target.value) }}
+            onChange={(e) => { setCategoryToEditAlarm(e.target.value) }}
             min={0}
         ></TextBoxComponent>
     );
@@ -64,6 +64,7 @@ function CategoriesComponent(props) {
     var localStyle = { display: props.activeTab === names.categories_tab ? 'block' : 'none' };
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
+        console.log('scan', barcode);
         // categories nioe ma barcode. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
     }
 
@@ -159,7 +160,7 @@ function CategoriesComponent(props) {
     }
 
     function filteredCategories() {
-        return filterItems(props.categories, filterPhrase);
+        return filterItems(props.categories, filterPhrase, ["alarm"]);
     }
 
     return (
@@ -235,7 +236,7 @@ function CategoriesComponent(props) {
                                     id={names.add_category_name_input}
                                     value={categoryToAddName}
                                     placeholder={captions.field_category_name}
-                                    onChangeValue={(e) => { setCategoryToAddName(e.target.value) }}
+                                    onChange={(e) => { setCategoryToAddName(e.target.value) }}
                                 ></TextBoxComponent>
                             </th>
                             <th>
@@ -244,7 +245,7 @@ function CategoriesComponent(props) {
                                     type="number"
                                     value={categoryToAddAlarm}
                                     placeholder={captions.field_category_alarm}
-                                    onChangeValue={(e) => { setCategoryToAddAlarm(e.target.value) }}
+                                    onChange={(e) => { setCategoryToAddAlarm(e.target.value) }}
                                     min={0}
                                 ></TextBoxComponent>
                             </th>
@@ -265,7 +266,6 @@ function CategoriesComponent(props) {
                                     <span>{item.alarm}</span>
                                 </td>
                                 <td>
-
                                     <FaEdit role="button" tabIndex="0" onClick={() => showEditModal(item.guid)}></FaEdit>
                                 </td>
                                 <td>

@@ -258,3 +258,7 @@
 .InfoModalContentContainer .form-line input {
     width: auto;
 }
+
+.InfoModalContentContainer .CameraComponent canvas {
+    display: none;
+}

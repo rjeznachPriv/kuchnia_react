@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+Ôªøimport { useState, useEffect, useRef } from 'react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
@@ -22,7 +22,6 @@ function SuppliesComponent(props) {
     const apple = <FaAppleAlt title={captions.explanation_product_is_sealed}></FaAppleAlt>;
 
     registerLocale('pl', pl)
-
 
     const [suppliesToDisplay, setSuppliesToDisplay] = useState(props.supplies);
 
@@ -126,8 +125,8 @@ function SuppliesComponent(props) {
 
             [Dodac barcode window (male okienko z aparatu)]
 
-            <button>Poniøej limitu</button>
-            <button>Blisko daty koÒca terminu (i otwarte)</button>
+            <button>Poni≈ºej limitu</button>
+            <button>Blisko daty ko≈Ñca terminu (i otwarte)</button>
             <button>Scal te same produkty</button>
 
             <AutocompleteSearchComponent

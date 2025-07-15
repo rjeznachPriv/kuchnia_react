@@ -37,7 +37,7 @@
 }
 
 .CameraComponent div.switch-camera {
-    left: 3em;
+    left: 5em;
     width: 1.5em;
     height: 1.5em;
 }
@@ -47,7 +47,7 @@
     display: block;
     bottom: 0vh;
     color: #C1C1C1;
-    bottom: 6vh;
+    bottom: 12vh;
     cursor: pointer;
 }
 .CameraComponent div.button:hover {

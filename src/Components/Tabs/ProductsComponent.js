@@ -17,9 +17,6 @@ import DropDownComponent from './../DropDownComponent.js';
 import CameraComponent from './CameraComponent.js';
 
 function ProductsComponent(props) {
-
-    //const [productsToDisplay, setProductsToDisplay] = useState(props.products);
-
     const [productToDeleteGuid, setproductToDeleteGuid] = useState();
 
     const [filterPhrase, setFilterPhrase] = useState("");
@@ -45,7 +42,7 @@ function ProductsComponent(props) {
         <TextBoxComponent
             label={`${captions.field_product_name}:`}
             value={productToEditName}
-            onChangeValue={(e) => { setProductToEditName(e.target.value) }}
+            onChange={(e) => { setProductToEditName(e.target.value) }}
         ></TextBoxComponent>
     );
     const categoryDropDownComponent = (
@@ -60,7 +57,7 @@ function ProductsComponent(props) {
         <TextBoxComponent
             label={captions.field_barcode}
             value={productToEditBarcode}
-            onChangeValue={(e) => { setProductToEditBarcode(e.target.value) }
+            onChange={(e) => { setProductToEditBarcode(e.target.value) }
             }
         ></TextBoxComponent>
     );
@@ -69,7 +66,7 @@ function ProductsComponent(props) {
             label={captions.field_alarm}
             value={productToEditAlarm}
             type="number"
-            onChangeValue={(e) => { setProductToEditAlarm(e.target.value) }}
+            onChange={(e) => { setProductToEditAlarm(e.target.value) }}
         ></TextBoxComponent>
     );
     const cameraComponent = (
@@ -276,7 +273,7 @@ function ProductsComponent(props) {
                 ContentClassName="modal-edit-content"
                 title={captions.message_product_edit}
                 text=""
-                contentLines={[nameComponent, categoryDropDownComponent, barcodeComponent, alarmComponent, cameraComponent]}
+                contentLines={[cameraComponent, nameComponent, categoryDropDownComponent, barcodeComponent, alarmComponent]}
                 button1Text={captions.message_cancel}
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}
@@ -292,7 +289,6 @@ function ProductsComponent(props) {
             <AutocompleteSearchComponent
                 onChange={onFiltered}
                 items={mapToColumns(props.products)}
-                filterColumns={["categoryName", "category_id"]}
             ></AutocompleteSearchComponent>
             <div className="products-table-container">
                 <table>
@@ -310,7 +306,7 @@ function ProductsComponent(props) {
                                     id={names.add_product_name_input}
                                     value={productToAddName}
                                     placeholder={captions.field_product_name}
-                                    onChangeValue={(e) => { setProductToAddName(e.target.value) }}
+                                    onChange={(e) => { setProductToAddName(e.target.value) }}
                                 ></TextBoxComponent>
                             </th>
                             <th>
@@ -325,7 +321,7 @@ function ProductsComponent(props) {
                                     id={names.add_product_barcode_input}
                                     value={productToAddBarcode}
                                     placeholder={captions.field_barcode}
-                                    onChangeValue={(e) => { setProductToAddBarcode(e.target.value) }}
+                                    onChange={(e) => { setProductToAddBarcode(e.target.value) }}
                                 ></TextBoxComponent>
                             </th>
                             <th>
@@ -334,7 +330,7 @@ function ProductsComponent(props) {
                                     type="number"
                                     value={productToAddAlarm}
                                     placeholder={captions.field_product_alarm}
-                                    onChangeValue={(e) => { setProductToAddAlarm(e.target.value) }}
+                                    onChange={(e) => { setProductToAddAlarm(e.target.value) }}
                                 ></TextBoxComponent>
                             </th>
                             <th>aparacik</th>
