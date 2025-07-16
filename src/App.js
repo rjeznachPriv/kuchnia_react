@@ -1,5 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router, useLocation, Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import { saveState, loadState } from './utils/dataManager.js';
 
@@ -51,6 +54,7 @@ function App() {
 
     const [title, setTitle] = useState(captions.default_app_title);
     const [activeTab, setActiveTab] = useState('');
+    const [filterPhrase, setFilterPhrase] = useState('');
 
     useEffect(() => {
         let data = loadState();
@@ -69,10 +73,12 @@ function App() {
 
     //TODO: implement routing: tab/otherData (search query, specific item by id)
 
-    function activateTabWithId(newActiveTab) {
+    function activateTabWithId(newActiveTab, newFilterPhrase) {
+        console.log(newActiveTab, newFilterPhrase);
         setActiveTab(newActiveTab);
         cutAllCameraStreams();
         setTitle(tabTitleMapping[newActiveTab]);
+        setFilterPhrase(newFilterPhrase);
     }
 
     function cutAllCameraStreams() {
@@ -117,14 +123,31 @@ function App() {
 
     //TODO: register PictureTakenListener?
 
-    //TODO: register FilterContentMethod: Czyli po przelaczeniu na tab cgcemy by juz wyfiltrowal....
-
     function AppRouter() {
         const location = useLocation();
         const path = location.pathname;
-        let newTabId = tabUrlMapping[path];
-        activateTabWithId(newTabId)
+
+        useEffect(() => {
+            let pathArr = path.split('/');
+            let segment1 = `/${pathArr[1]}`;
+            let newTabId = tabUrlMapping[segment1];
+            let newFilterPhrase = "";
+            if (pathArr.length > 2) {
+                newFilterPhrase = pathArr.pop();
+            }
+
+            activateTabWithId(newTabId, newFilterPhrase);
+        }, [path]);
+
+        return null;
     }
+
+    //function AppRouter() {
+    //    const location = useLocation();
+    //    const path = location.pathname;
+    //    let newTabId = tabUrlMapping[path];
+    //    activateTabWithId(newTabId)
+    //}
 
     return (
         <div className="App">
@@ -153,6 +176,8 @@ function App() {
                             setProducts={setProducts}
                             registerBarcodeListener={registerBarcodeListener}
                             onBarcodeScanned={onBarcodeScanned}
+                            filterPhrase={filterPhrase}
+                            setFilterPhrase={setFilterPhrase}
                         />
                         <ProductsComponent
                             activeTab={activeTab}
@@ -163,6 +188,7 @@ function App() {
                             quagga={Quagga}
                             registerBarcodeListener={registerBarcodeListener}
                             onBarcodeScanned={onBarcodeScanned}
+                            filterPhrase={filterPhrase}
                         />
 
                         <StoragesComponent

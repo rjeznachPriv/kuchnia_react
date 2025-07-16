@@ -33,6 +33,11 @@
   "message_removing_category": "Usuwanie kategorii",
   "message_removing_product": "Usuwanie produktu",
 
+  "message_remove_also_attached": "Usuń też przypisane",
+
+  "message_products": "produkty",
+
+
   "message_storage_edit": "Edycja schowka",
   "message_category_edit": "Edycja kategorii",
   "message_product_edit": "Edycja produktu",
@@ -48,6 +53,7 @@
   "message_example_barcode": "Kod",
   "message_barcode_usage_l1": "Kod można wydrukować, a następnie nakleić:",
   "message_barcode_usage_l2": "Na schowek, w którym  przechowujemy produkty",
-  "message_barcode_usage_l3": "Na produkt, który nie ma swojego kodu"
+  "message_barcode_usage_l3": "Na produkt, który nie ma swojego kodu",
 
+  "message_products_with_category_still_attached": "Produkty z wciąż przypisaną kategorią"
 }

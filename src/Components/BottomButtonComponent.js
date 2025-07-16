@@ -12,10 +12,10 @@ function BottomButtonComponent(props) {
 
     return (
 
-        <a className={className} onClick={handleClick}>
+        <span className={className} onClick={handleClick}>
             <p className="icon">{props.icon}</p>
             <p className="caption">{props.caption}</p>
-        </a>
+        </span>
     );
 }
 

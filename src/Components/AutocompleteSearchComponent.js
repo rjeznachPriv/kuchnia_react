@@ -4,6 +4,7 @@ import captions from "./../Configuration/LocalizedCaptionsPL.json"
 import './../Styles/AutocompleteSearchComponent.css';
 
 function AutocompleteSearchComponent(props) {
+
     function handleChange(e) {
         e.preventDefault();
         try {
@@ -20,7 +21,7 @@ function AutocompleteSearchComponent(props) {
                 type="search"
                 placeholder={captions.message_search}
                 onChange={handleChange}
-                value={props.filterPhrase}
+                value={props.value}
             />
         </div>
     );

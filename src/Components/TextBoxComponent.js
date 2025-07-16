@@ -2,7 +2,7 @@ import './../Styles/TextBoxComponent.css';
 
 function TextBoxComponent(props) {
     return (
-        <div>
+        <div className={props.className}>
             <label htmlFor={props.id}>{props.label}</label>
             <input
                 type={props.type ? props.type : "text"}

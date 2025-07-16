@@ -1,24 +1,25 @@
-a.bottom-button {
+span.bottom-button {
     display: block;
     float: left;
     width: 14.27%; /* 100%/7 */
     text-align: center;
     height: 2em;
+    cursor: pointer;
 }
 
-    a.bottom-button.active {
+    span.bottom-button.active {
         background-color: #a99b;
     }
 
-    a.bottom-button:hover {
+    span.bottom-button:hover {
         background-color: #a99b;
     }
 
-    a.bottom-button p.icon {
+    span.bottom-button p.icon {
         font-size: 1.2em;
     }
 
-    a.bottom-button p.caption {
+    span.bottom-button p.caption {
         font-size: 0.3em;
         margin-top: -2.5em;
     }

@@ -8,7 +8,7 @@ import { MdAddBox } from 'react-icons/md';
 
 import InfoModalComponent from './../InfoModalComponent.js';
 import TextBoxComponent from './../TextBoxComponent.js';
-import AutocompleteSearchComponent, { filterItems } from './../AutocompleteSearchComponent.js';
+import AutocompleteSearchComponent, { filterItems, filterItems2 } from './../AutocompleteSearchComponent.js';
 
 import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js';
 
@@ -17,17 +17,17 @@ import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
 
 function CategoriesComponent(props) {
-
     const [categoryToDeleteGuid, setCategoryToDeleteGuid] = useState();
     const [categoryToEditGuid, setCategoryToEditGuid] = useState();
-    const [categoryToEditName, setCategoryToEditName] = useState();
-    const [categoryToEditAlarm, setCategoryToEditAlarm] = useState();
+    const [categoryToEditName, setCategoryToEditName] = useState("");
+    const [categoryToEditAlarm, setCategoryToEditAlarm] = useState(0);
     const [categoryToAddName, setCategoryToAddName] = useState("");
     const [categoryToAddAlarm, setCategoryToAddAlarm] = useState(0);
 
     const [categoryClicked, setCategoryClicked] = useState({ name: "" });
 
     const [filterPhrase, setFilterPhrase] = useState("");
+    const [searchComponentTouched, setSearchComponentTouched] = useState(false);
 
     const [deleteModalFadingClass, setDeleteModalFadingClass] = useState('fadeOut');
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
@@ -36,26 +36,6 @@ function CategoriesComponent(props) {
     const [deleteAssignedProductsFlag, setDeleteAssignedProductsFlag] = useState(false);
 
     const navigate = useNavigate();
-
-    const editNameTextBoxComponent = (
-        <TextBoxComponent
-            label={`${captions.field_category_name}:`}
-            value={categoryToEditName}
-            onChange={(e) => setCategoryToEditName(e.target.value)}
-        ></TextBoxComponent>
-    );
-
-    const editAlarmTextBoxComponent = (
-        <TextBoxComponent
-            label={`${captions.field_category_alarm}:`}
-            type="number"
-            value={categoryToEditAlarm}
-            onChange={(e) => { setCategoryToEditAlarm(e.target.value) }}
-            min={0}
-        ></TextBoxComponent>
-    );
-
-    const deleteCategoryFormItems = [(<span><input type="checkbox" checked={deleteAssignedProductsFlag} onChange={() => setDeleteAssignedProductsFlag(!deleteAssignedProductsFlag)}></input> Usuń też przypisane produkty</span>)];
 
     useEffect(() => {
         props.registerBarcodeListener(onBarcodeScannedWhenEditingScreenActive);
@@ -82,32 +62,39 @@ function CategoriesComponent(props) {
         setChooseClickedModalFadingClass('fadeIn');
     }
 
+    function onHeaderClicked(header) {
+        console.log('header clicked!', header);
+    }
+
     function onFiltered(phrase) {
-        setFilterPhrase(phrase)
+        setFilterPhrase(phrase);
+        setSearchComponentTouched(true);
     }
-
-    function hideDeleteModal() {
-        setDeleteModalFadingClass("fadeOut");
-    }
-
-    function hideEditModal() {
-        setEditModalFadingClass('fadeOut');
-    }
-
-    function hideChooseModal() {
-        setChooseClickedModalFadingClass('fadeOut');
-    }
-
-    function showDeleteModal(guid) {
+    function onDeleteCategoryClicked(guid) {
         setCategoryToDeleteGuid(guid);
         setDeleteModalFadingClass("fadeIn");
     }
 
-    function showEditModal(guid) {
+    function onEditCategoryClicked(guid) {
         setCategoryToEditGuid(guid);
         setCategoryToEditName(getCategory({ guid: guid }).name);
         setCategoryToEditAlarm(getCategory({ guid: guid }).alarm);
         setEditModalFadingClass("fadeIn");
+    }
+
+    function onAddCategoryClicked() {
+        var _categories = props.categories.slice();
+        _categories.push({
+            guid: guidGenerator(),
+            name: categoryToAddName,
+            alarm: categoryToAddAlarm,
+            frequency: 0
+        });
+
+        props.setCategories(_categories);
+
+        setCategoryToAddName('');
+        setCategoryToAddAlarm(0);
     }
 
     function getCategory({ guid = null } = {}) {
@@ -144,23 +131,12 @@ function CategoriesComponent(props) {
         setEditModalFadingClass('fadeOut');
     }
 
-    function addCategory() {
-        var _categories = props.categories.slice();
-        _categories.push({
-            guid: guidGenerator(),
-            name: categoryToAddName,
-            alarm: categoryToAddAlarm,
-            frequency: 0
-        });
-
-        props.setCategories(_categories);
-
-        setCategoryToAddName('');
-        setCategoryToAddAlarm(0);
+    function filteredCategories() {
+        return filterItems(props.categories, calculateFilterPhrase(), ["alarm"]);
     }
 
-    function filteredCategories() {
-        return filterItems(props.categories, filterPhrase, ["alarm"]);
+    function calculateFilterPhrase() {
+        return searchComponentTouched ? filterPhrase : props.filterPhrase;
     }
 
     return (
@@ -171,9 +147,14 @@ function CategoriesComponent(props) {
                 topBarXButtonClassName="modal-delete-x-button"
                 ContentClassName="modal-delete-content"
                 title={captions.message_removing_category}
-                text={`${captions.message_are_you_sure_to_remove_category}: ${getCategory({ guid: categoryToDeleteGuid })?.name}? Produkty z wciąż przypisaną kategorią:`}
+                text={`${captions.message_are_you_sure_to_remove_category}: ${getCategory({ guid: categoryToDeleteGuid })?.name}? ${captions.message_products_with_category_still_attached}:`}
                 contentLines={props.products.filter((item) => (item.category_id == categoryToDeleteGuid)).map((item) => (item.name))}
-                formLines={deleteCategoryFormItems}
+                formLines={[(
+                    <span>
+                        <input type="checkbox" checked={deleteAssignedProductsFlag} onChange={() => setDeleteAssignedProductsFlag(!deleteAssignedProductsFlag)}>
+                        </input> {captions.message_remove_also_attached} {captions.message_products}
+                    </span>
+                )]}
                 button1Text={captions.message_no}
                 button1Class="modal-delete-button1"
                 button1Action={() => setDeleteModalFadingClass("fadeOut")}
@@ -183,7 +164,7 @@ function CategoriesComponent(props) {
                 button3Text=""
                 button3Class="none"
                 button3Action=""
-                fadeOut={hideDeleteModal}>
+                fadeOut={() => setDeleteModalFadingClass("fadeOut")} >
             </InfoModalComponent>
 
             <InfoModalComponent
@@ -193,7 +174,20 @@ function CategoriesComponent(props) {
                 ContentClassName="modal-edit-content"
                 title={captions.message_category_edit}
                 text=""
-                contentLines={[editNameTextBoxComponent, editAlarmTextBoxComponent]}
+                contentLines={[
+                    <TextBoxComponent
+                        label={`${captions.field_category_name}:`}
+                        value={categoryToEditName}
+                        onChange={(e) => setCategoryToEditName(e.target.value)}
+                    ></TextBoxComponent>,
+                    <TextBoxComponent
+                        label={`${captions.field_category_alarm}:`}
+                        type="number"
+                        value={categoryToEditAlarm}
+                        onChange={(e) => { setCategoryToEditAlarm(e.target.value) }}
+                        min={0}
+                    ></TextBoxComponent>]
+                }
                 button1Text={captions.message_cancel}
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}
@@ -203,7 +197,7 @@ function CategoriesComponent(props) {
                 button3Text=""
                 button3Class="none"
                 button3Action=""
-                fadeOut={hideEditModal}>
+                fadeOut={() => { setEditModalFadingClass('fadeOut') }}>
             </InfoModalComponent>
 
             <ChooseWhereToGoModalComponent
@@ -213,13 +207,12 @@ function CategoriesComponent(props) {
                 button2Text={`Pokaż zapasy w ${categoryClicked.name}`}
                 button2Action={() => { navigate(`/categories/${categoryClicked.guid}`); }}
                 button3Class="none"
-                fadeOut={hideChooseModal}
+                fadeOut={() => { setChooseClickedModalFadingClass('fadeOut') }}
 
             ></ChooseWhereToGoModalComponent>
-
             <AutocompleteSearchComponent
                 onChange={onFiltered}
-                value={filterPhrase}
+                value={calculateFilterPhrase()}
                 items={props.categories}
             ></AutocompleteSearchComponent>
 
@@ -227,8 +220,12 @@ function CategoriesComponent(props) {
                 <table>
                     <thead>
                         <tr className="table-header">
-                            <th>{captions.field_category_name}</th>
-                            <th>{captions.field_category_alarm}</th>
+                            <th>
+                                <span onClick={() => onHeaderClicked("categoryName")} className="clickable"> {captions.field_category_name}</span>
+                            </th>
+                            <th>
+                                <span onClick={() => onHeaderClicked("categoryAlarm")} className="clickable"> {captions.field_category_alarm}</span>
+                            </th>
                         </tr>
                         <tr className="table-header">
                             <th>
@@ -251,7 +248,7 @@ function CategoriesComponent(props) {
                             </th>
                             <th></th>
                             <th>
-                                <MdAddBox role="button" tabIndex="0" onClick={() => addCategory()}></MdAddBox>
+                                <MdAddBox role="button" tabIndex="0" onClick={() => onAddCategoryClicked()}></MdAddBox>
                             </th></tr>
                     </thead>
                     <tbody>
@@ -266,10 +263,10 @@ function CategoriesComponent(props) {
                                     <span>{item.alarm}</span>
                                 </td>
                                 <td>
-                                    <FaEdit role="button" tabIndex="0" onClick={() => showEditModal(item.guid)}></FaEdit>
+                                    <FaEdit role="button" tabIndex="0" onClick={() => onEditCategoryClicked(item.guid)}></FaEdit>
                                 </td>
                                 <td>
-                                    <FaTimes role="button" tabIndex="0" onClick={() => showDeleteModal(item.guid)}></FaTimes>
+                                    <FaTimes role="button" tabIndex="0" onClick={() => onDeleteCategoryClicked(item.guid)}></FaTimes>
                                 </td>
                             </tr>
                         ))}

@@ -12,3 +12,7 @@ input {
     color: red;
     margin-bottom: 0;
 }
+
+.inline-block {
+    display: inline-block;
+}

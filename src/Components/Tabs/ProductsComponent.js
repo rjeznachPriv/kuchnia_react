@@ -2,8 +2,7 @@ import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import guidGenerator from 'guid-generator';
 
-import { FaEdit } from 'react-icons/fa';
-import { FaTimes } from 'react-icons/fa';
+import { FaEdit, FaCamera, FaTimes } from 'react-icons/fa';
 import { MdAddBox } from 'react-icons/md';
 
 import InfoModalComponent from './../InfoModalComponent.js';
@@ -22,14 +21,14 @@ function ProductsComponent(props) {
     const [filterPhrase, setFilterPhrase] = useState("");
 
     const [productToEditGuid, setProductToEditGuid] = useState();
-    const [productToEditName, setProductToEditName] = useState();
-    const [productToEditBarcode, setProductToEditBarcode] = useState();
-    const [productToEditAlarm, setProductToEditAlarm] = useState();
+    const [productToEditName, setProductToEditName] = useState("");
+    const [productToEditBarcode, setProductToEditBarcode] = useState("");
+    const [productToEditAlarm, setProductToEditAlarm] = useState(0);
     const [productToEditCategoryId, setProductToEditCategoryId] = useState();
     const [productToEditPicture, setProductToEditPicture] = useState();
 
-    const [productToAddName, setProductToAddName] = useState();
-    const [productToAddBarcode, setProductToAddBarcode] = useState();
+    const [productToAddName, setProductToAddName] = useState("");
+    const [productToAddBarcode, setProductToAddBarcode] = useState("");
     const [productToAddAlarm, setProductToAddAlarm] = useState();
     const [productToAddCategoryId, setProductToAddCategoryId] = useState();
 
@@ -90,6 +89,7 @@ function ProductsComponent(props) {
     }
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
+        console.log('barcode scanned on products tab', barcode);
         //if (isEditingProduct()) {
         //    setproductToEditBarcode(barcode);
         //} else if (IsAddingProduct()) {
@@ -244,6 +244,11 @@ function ProductsComponent(props) {
         return currentState.current.props.activeTab == "products_tab" && currentState.current.editModalFadingClass == "fadeIn";
     }
 
+    function openScannerToAddProductCode() {
+    }
+    function openCameraToAddProductPicture() {
+    }
+
     return (
         <div id="products-tab" style={localStyle} className="ProductsComponent">
             <InfoModalComponent
@@ -318,11 +323,13 @@ function ProductsComponent(props) {
                             </th>
                             <th>
                                 <TextBoxComponent
+                                    className="inline-block"
                                     id={names.add_product_barcode_input}
                                     value={productToAddBarcode}
                                     placeholder={captions.field_barcode}
                                     onChange={(e) => { setProductToAddBarcode(e.target.value) }}
                                 ></TextBoxComponent>
+                                <FaCamera role="button" tabIndex="0" onClick={() => openScannerToAddProductCode()}></FaCamera>
                             </th>
                             <th>
                                 <TextBoxComponent
@@ -333,7 +340,9 @@ function ProductsComponent(props) {
                                     onChange={(e) => { setProductToAddAlarm(e.target.value) }}
                                 ></TextBoxComponent>
                             </th>
-                            <th>aparacik</th>
+                            <th>
+                                <FaCamera role="button" tabIndex="0" onClick={() => openCameraToAddProductPicture()}></FaCamera>
+                            </th>
                             <th></th>
                             <th>
                                 <MdAddBox role="button" tabIndex="0" onClick={() => addproduct()}></MdAddBox>
