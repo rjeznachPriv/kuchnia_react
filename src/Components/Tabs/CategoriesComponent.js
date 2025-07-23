@@ -26,6 +26,14 @@ function CategoriesComponent(props) {
         // categories nioe ma barcode. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
     }
 
+    function onCategoryClicked(category, columnName){
+        console.log('category clicked inside dataTable');
+        console.log(category);
+
+        //TODO:
+        console.log('do wyboru: pokaz owoce:produkty, pokaz zapasy (owoce), cps innego?');
+    }
+
     return (
         <div id="categories-tab" style={localStyle} className="CategoriesComponent">
 
@@ -41,6 +49,7 @@ function CategoriesComponent(props) {
             ></ChooseWhereToGoModalComponent>
 
             <MyDataTable
+                onResourceClicked = {onCategoryClicked}
                 columns={[
                     { name: "guid", type: "text", searchable: true },
                     { name: "frequency", type: "number" },
@@ -51,7 +60,13 @@ function CategoriesComponent(props) {
                         searchable: true,
                         validation: { required: true, required_message: "test1", }
                     },
-                    { name: "alarm", type: "number", displayName: captions.field_category_alarm, min: 0, searchable: true },
+                    {
+                        name: "alarm",
+                        type: "number",
+                        displayName: captions.field_category_alarm,
+                        min: 0,
+                        searchable: true
+                    },
                 ]}
                 resources={props.categories}
                 setResources={props.setCategories}

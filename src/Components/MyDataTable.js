@@ -34,8 +34,6 @@ function MyDataTable(props) {
         Object.fromEntries(props.columns.map(field => [field.name, ""]))
     );
 
-    const [resourceClicked, setResourceClicked] = useState({ name: "" });
-
     const [filterPhrase, setFilterPhrase] = useState("");
     const [searchComponentTouched, setSearchComponentTouched] = useState(false);
 
@@ -53,16 +51,10 @@ function MyDataTable(props) {
         props.setResources(_resources);
 
         let clickedResource = props.resources.filter((item) => { return item.guid == guid; })[0];
-        setResourceClicked(clickedResource);
-        //setChooseClickedModalFadingClass('fadeIn');
-        console.log('show modal with choose options. Clicked resource:', guid, columnName);
-        // tutaj trzeba setterem ustawic przekazany SetCategoryClicked i to pojdzie w zewnetrznym komponencie jako dane wejscioew TODO
+        props.onResourceClicked(clickedResource, columnName);
     }
 
     function onHeaderClicked(header) {
-        //console.log('header clicked!', header);
-
-        //sortColumn == header ?
         setSortDirection(sortColumn == header ? !sortDirection : sortDirection);
         setSortColumn(header);
     }
@@ -126,10 +118,17 @@ function MyDataTable(props) {
     }
 
     function filteredResources() {
-        //TODO: now all values are sorted as strings! ?
         let searchableColumns = props.columns.filter((column) => (column.searchable)).map((column) => (column.name));
         return filterItems(props.resources, calculateFilterPhrase(), searchableColumns).sort((a, b) => {
-            return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
+            let columnType = props.columns.filter((column) => (column.name == sortColumn))[0]?.type || "text";
+            if (columnType == "text") {
+                return sortDirection ? b[sortColumn].localeCompare(a[sortColumn]) : a[sortColumn].localeCompare(b[sortColumn]);
+            }
+            if (columnType == "number") {
+                return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
+            }
+            //TODO: implement here for other types
+            return 0;
         });
     }
 
@@ -139,7 +138,7 @@ function MyDataTable(props) {
 
     function EntityStateValid(entity) {
         let columnsToValidate = props.columns.filter((column) => (column.validation));
-        let validationResult = columnsToValidate.map((column) => ( IsInvalid(column, entity[column.name]) ));
+        let validationResult = columnsToValidate.map((column) => (IsInvalid(column, entity[column.name])));
         return !validationResult.some((item) => (item != false));
     }
 
@@ -213,7 +212,7 @@ function MyDataTable(props) {
                 button1Action={() => setEditModalFadingClass("fadeOut")}
                 button2Text={captions.message_save}
                 button2Class={`modal-edit-button1 ${EntityStateValid(itemToEditValues) ? "" : "disabled"}`}
-                button2Action={() =>  EntityStateValid(itemToEditValues) ? updateResource(resourceToEditGuid) : "" }
+                button2Action={() => EntityStateValid(itemToEditValues) ? updateResource(resourceToEditGuid) : ""}
                 button3Text=""
                 button3Class="none"
                 button3Action=""
@@ -236,7 +235,7 @@ function MyDataTable(props) {
                                         onClick={() => onHeaderClicked(column.name)}
                                         className="clickable">
                                         {column.displayName} {column.name == sortColumn ?
-                                            (sortDirection ? <FaSortUp /> : <FaSortDown />) :
+                                            (sortDirection ? <FaSortDown /> : <FaSortUp />) :
                                             ""}
                                     </span>
                                 </th> : ""
