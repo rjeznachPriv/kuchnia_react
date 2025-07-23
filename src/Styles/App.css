@@ -101,3 +101,8 @@ td, th {
 .clickable {
     cursor: pointer;
 }
+
+.disabled {
+    cursor: default!important;
+    opacity: 0.5;
+}

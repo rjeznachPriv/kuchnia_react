@@ -74,7 +74,6 @@ function App() {
     //TODO: implement routing: tab/otherData (search query, specific item by id)
 
     function activateTabWithId(newActiveTab, newFilterPhrase) {
-        console.log(newActiveTab, newFilterPhrase);
         setActiveTab(newActiveTab);
         cutAllCameraStreams();
         setTitle(tabTitleMapping[newActiveTab]);

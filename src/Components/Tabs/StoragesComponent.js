@@ -16,7 +16,7 @@ import captions from "./../../Configuration/LocalizedCaptionsPL.json"
 
 function StoragesComponent(props) {
 
-    const [storagesToDisplay, setStoragesToDisplay] = useState(props.storages);
+    //const [storagesToDisplay, setStoragesToDisplay] = useState(props.storages);
 
     const [storageToDeleteGuid, setStorageToDeleteGuid] = useState();
     const [storageToEditGuid, setStorageToEditGuid] = useState();
@@ -29,22 +29,6 @@ function StoragesComponent(props) {
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
 
     const currentState = useRef();
-
-    const nameTextBoxComponent = (
-        <TextBoxComponent
-            label={`${captions.field_storage_name}:`}
-            value={storageToEditName}
-            onChange={(e) => { setStorageToEditName(e.target.value) }}
-        ></TextBoxComponent>
-    );
-
-    const barcodeTextBoxComponent = (
-        <TextBoxComponent
-            label={`${captions.field_barcode}:`}
-            value={storageToEditBarcode}
-            onChange={(e) => { setStorageToEditBarcode(e.target.value) }}
-        ></TextBoxComponent>
-    );
 
     useEffect(() => {
         props.registerBarcodeListener(onBarcodeScannedWhenEditingScreenActive);
@@ -84,7 +68,7 @@ function StoragesComponent(props) {
         });
 
         props.setStorages(_storages);
-        setStoragesToDisplay(_storages);
+        //setStoragesToDisplay(_storages);
 
         console.log('Move to "Zapasy" with Supplies filtered by storage of id:' + guid);
     }
@@ -94,9 +78,9 @@ function StoragesComponent(props) {
     }
 
     function onFiltered(items) {
-        setStoragesToDisplay(items);
+        //setStoragesToDisplay(items);
+        console.log('set items', items);
     }
-
 
     function hideDeleteModal() {
         setDeleteModalFadingClass("fadeOut");
@@ -137,7 +121,7 @@ function StoragesComponent(props) {
 
         var _storages = props.storages.filter((item) => item.guid != guid);
         props.setStorages(_storages);
-        setStoragesToDisplay(_storages);
+        //setStoragesToDisplay(_storages);
         setDeleteModalFadingClass("fadeOut");
     }
 
@@ -152,7 +136,7 @@ function StoragesComponent(props) {
 
         props.setStorages(_storages);
         setEditModalFadingClass('fadeOut');
-        setStoragesToDisplay(_storages);
+        //setStoragesToDisplay(_storages);
     }
 
     function addStorage() {
@@ -168,15 +152,17 @@ function StoragesComponent(props) {
 
         setStorageToAddName('');
         setStorageToAddBarcode('');
-        setStoragesToDisplay(_storages);
+        //setStoragesToDisplay(_storages);
     }
 
     function IsStoragesTabActive() {
         return currentState.current.props.activeTab == names.storages_tab;
     }
+
     function IsAddingStorage() {
         return document.activeElement.id == names.add_storage_barcode_input || document.activeElement.id == names.add_storage_name_input;
     }
+
     function isEditingStorage() {
         return currentState.current.props.activeTab == names.storages_tab && currentState.current.editModalFadingClass == "fadeIn";
     }
@@ -210,7 +196,18 @@ function StoragesComponent(props) {
                 ContentClassName="modal-edit-content"
                 title={captions.message_storage_edit}
                 text=""
-                contentLines={[nameTextBoxComponent, barcodeTextBoxComponent]}
+                contentLines={[
+                    <TextBoxComponent
+                        label={`${captions.field_storage_name}:`}
+                        value={storageToEditName}
+                        onChange={(e) => { setStorageToEditName(e.target.value) }}
+                    ></TextBoxComponent>,
+                    <TextBoxComponent
+                        label={`${captions.field_barcode}:`}
+                        value={storageToEditBarcode}
+                        onChange={(e) => { setStorageToEditBarcode(e.target.value) }}
+                    ></TextBoxComponent>
+                ]}
                 button1Text={captions.message_cancel}
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}
@@ -257,7 +254,7 @@ function StoragesComponent(props) {
                             </th></tr>
                     </thead>
                     <tbody>
-                        {storagesToDisplay.sort((a, b) => { return b.frequency - a.frequency }).map((item) => (
+                        {props.storages.sort((a, b) => { return b.frequency - a.frequency }).map((item) => (
                             <tr className="item" key={item.guid}>
                                 <td>
                                     <a key={item.guid}
