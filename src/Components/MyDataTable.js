@@ -4,6 +4,10 @@ import guidGenerator from 'guid-generator';
 
 import { FaEdit } from 'react-icons/fa';
 import { FaTimes } from 'react-icons/fa';
+
+import { FaSortDown } from "react-icons/fa";
+import { FaSortUp } from "react-icons/fa";
+
 import { MdAddBox } from 'react-icons/md';
 
 import TextBoxComponent from './TextBoxComponent.js';
@@ -16,15 +20,17 @@ function MyDataTable(props) {
     const [resourceToDeleteGuid, setResourceToDeleteGuid] = useState();
     const [resourceToEditGuid, setResourceToEditGuid] = useState();
 
+    const [sortColumn, setSortColumn] = useState("frequency");
+    const [sortDirection, setSortDirection] = useState(true);
+
     const [deleteModalFadingClass, setDeleteModalFadingClass] = useState('fadeOut');
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
 
-    //const [resourceToEditName, setResourceToEditName] = useState("");
-    //const [resourceToEditAlarm, setResourceToEditAlarm] = useState(0);
-    //const [resourceToAddName, setResourceToAddName] = useState("");
-    //const [resourceToAddAlarm, setResourceToAddAlarm] = useState(0);
-
     const [itemToAddValues, setItemToAddValues] = useState(() =>
+        Object.fromEntries(props.columns.map(field => [field.name, ""]))
+    );
+
+    const [itemToEditValues, setItemToEditValues] = useState(() =>
         Object.fromEntries(props.columns.map(field => [field.name, ""]))
     );
 
@@ -37,7 +43,7 @@ function MyDataTable(props) {
 
     }, []);
 
-    function onResourceNameClicked(guid) {
+    function onResourceFieldClicked(guid, columnName) {
         var _resources = props.resources.map((item) => {
             return (item.guid == guid) ?
                 { ...item, frequency: item.frequency + 1 } :
@@ -49,11 +55,16 @@ function MyDataTable(props) {
         let clickedResource = props.resources.filter((item) => { return item.guid == guid; })[0];
         setResourceClicked(clickedResource);
         //setChooseClickedModalFadingClass('fadeIn');
-        console.log('show modal with choose options. Clicked resource:', resourceClicked);
+        console.log('show modal with choose options. Clicked resource:', guid, columnName);
+        // tutaj trzeba setterem ustawic przekazany SetCategoryClicked i to pojdzie w zewnetrznym komponencie jako dane wejscioew TODO
     }
 
     function onHeaderClicked(header) {
-        console.log('header clicked!', header);
+        //console.log('header clicked!', header);
+
+        //sortColumn == header ?
+        setSortDirection(sortColumn == header ? !sortDirection : sortDirection);
+        setSortColumn(header);
     }
 
     function onFiltered(phrase) {
@@ -68,12 +79,9 @@ function MyDataTable(props) {
     }
 
     function onEditResourceClicked(guid) {
-        console.log('clicked', guid);
         setResourceToEditGuid(guid);
-        //setResourceToEditName(getResource({ guid: guid }).name);
-        //setResourceToEditAlarm(getResource({ guid: guid }).alarm);
+        setItemToEditValues(getResource(guid));
         setEditModalFadingClass("fadeIn");
-        //console.log('show edit modal');
     }
 
     function onAddResourceClicked() {
@@ -86,16 +94,17 @@ function MyDataTable(props) {
         props.setResources(prev => [...prev, newItem]);
     }
 
-    function getResource({ guid = null } = {}) {
+    function getResource(guid) {
         if (guid) {
             var resource = props.resources.filter((item) => item.guid == guid)[0];
             return resource ? resource : null;
         }
 
-        return null;
+        return { name: "", type: "text" }
     }
 
     function deleteResource(resource_guid) {
+        //TODO:
         //if (deleteAssignedProductsFlag) {
         //    let productsToDelete = props.products.filter((item) => (item.category_id == category_guid));
         //    let _products = props.products.filter(item => !productsToDelete.some(toRemove => toRemove.category_id == item.category_id));
@@ -108,45 +117,39 @@ function MyDataTable(props) {
     }
 
     function updateResource(resourceId) {
+        var _resources = props.resources.map((item) => {
+            return (item.guid == resourceId) ? itemToEditValues : item
+        });
 
-        let resourceToUpdate = props.resources.filter((resource) => (resource.guid == resourceId))[0];
-
-        console.log('to update:', resourceToUpdate);
-
-        //var _resources = props.resources.map((item) => {
-        //    return (item.guid == resourceId) ? {
-        //        name: categoryToEditName,
-        //        alarm: categoryToEditAlarm,
-        //        guid: categoryToEditGuid,
-        //    } : item
-        //});
-
-        //props.setResources(_resources);
-        //setEditModalFadingClass('fadeOut');
-        console.log('hide edit modal');
+        props.setResources(_resources);
+        setEditModalFadingClass('fadeOut');
     }
 
-    function filteredResources() {  //TODO: make sort customizable
-        return filterItems(props.resources, calculateFilterPhrase(), ["alarm"]).sort((a, b) => { return b.frequency - a.frequency });
+    function filteredResources() {
+        //TODO: now all values are sorted as strings! ?
+        let searchableColumns = props.columns.filter((column) => (column.searchable)).map((column) => (column.name));
+        return filterItems(props.resources, calculateFilterPhrase(), searchableColumns).sort((a, b) => {
+            return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
+        });
     }
 
     function calculateFilterPhrase() {
         return searchComponentTouched ? filterPhrase : props.filterPhrase;
     }
 
-    function AllowCreateEntity() {
-        //TODO: make it depends on IsValid
-        let requiredColumnNames = props.columns.filter((col) => (col.required)).map((col) => (col.name));
-        let hasEmptyRequired = requiredColumnNames.some(
-            (key) => !itemToAddValues[key]
-        );
-
-        return !hasEmptyRequired;
+    function EntityStateValid(entity) {
+        let columnsToValidate = props.columns.filter((column) => (column.validation));
+        let validationResult = columnsToValidate.map((column) => ( IsInvalid(column, entity[column.name]) ));
+        return !validationResult.some((item) => (item != false));
     }
 
-    function IsValid(column, value) {
-        if (column.required && !value) return false;
-        return true;
+    function IsInvalid(column, value) {
+        if (column.validation?.required && !value) return column.validation?.required_message;
+        return false;
+    }
+
+    function columnsToShow() {
+        return props.columns.filter((column) => (column.displayName));
     }
 
     return (
@@ -158,7 +161,7 @@ function MyDataTable(props) {
                 topBarXButtonClassName="modal-delete-x-button"
                 ContentClassName="modal-delete-content"
                 title={props.deleteWindowTitle}
-                text={props.deleteWindowText}
+                text={`${props.deleteWindowText} ${getResource(resourceToDeleteGuid)?.name}?`}
                 contentLines={props.resources.filter((item) => (item.category_id == resourceToDeleteGuid)).map((item) => (item.name))}
                 formLines={
                     [
@@ -187,29 +190,30 @@ function MyDataTable(props) {
                 mainWindowTopBarClassName="modal-edit-top-bar"
                 topBarXButtonClassName="modal-edit-x-button"
                 ContentClassName="modal-edit-content"
-                title={captions.message_category_edit}
+                title={props.editWindowTitle}
                 text=""
-                contentLines={[
-                    //<TextBoxComponent
-                    //    label={`${captions.field_category_name}:`}
-                    //    value={categoryToEditName}
-                    //    onChange={(e) => setCategoryToEditName(e.target.value)}
-                    //></TextBoxComponent>,
-                    //<TextBoxComponent
-                    //    label={`${captions.field_category_alarm}:`}
-                    //    type="number"
-                    //    value={categoryToEditAlarm}
-                    //    onChange={(e) => { setCategoryToEditAlarm(e.target.value) }}
-                    //    min={0}
-                    //></TextBoxComponent>
-                ]
+                contentLines={
+                    columnsToShow().map((column) => (
+                        <TextBoxComponent
+                            label={column.displayName}
+                            value={itemToEditValues[column.name]}
+                            type={column.type}
+                            min={column.min}
+                            validationMessage={IsInvalid(column, itemToEditValues[column.name])}
+                            onChange={(e) => {
+                                const newValue = e.target.value;
+                                setItemToEditValues(prev => ({ ...prev, [column.name]: newValue }));
+                            }}
+                        >
+                        </TextBoxComponent>
+                    ))
                 }
                 button1Text={captions.message_cancel}
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}
                 button2Text={captions.message_save}
-                button2Class="modal-edit-button1"
-                button2Action={() => { updateResource(resourceToEditGuid) }}
+                button2Class={`modal-edit-button1 ${EntityStateValid(itemToEditValues) ? "" : "disabled"}`}
+                button2Action={() =>  EntityStateValid(itemToEditValues) ? updateResource(resourceToEditGuid) : "" }
                 button3Text=""
                 button3Class="none"
                 button3Action=""
@@ -228,7 +232,13 @@ function MyDataTable(props) {
                         <tr className="table-header">
                             {props.columns.map((column) => (column.displayName ?
                                 <th key={column.displayName}>
-                                    <span onClick={() => onHeaderClicked(column.name)} className="clickable"> {column.displayName}</span>
+                                    <span
+                                        onClick={() => onHeaderClicked(column.name)}
+                                        className="clickable">
+                                        {column.displayName} {column.name == sortColumn ?
+                                            (sortDirection ? <FaSortUp /> : <FaSortDown />) :
+                                            ""}
+                                    </span>
                                 </th> : ""
                             ))}
                         </tr>
@@ -244,7 +254,7 @@ function MyDataTable(props) {
                                             const newValue = e.target.value;
                                             setItemToAddValues(prev => ({ ...prev, [column.name]: newValue }));
                                         }}
-                                        validationMessage={IsValid(column, itemToAddValues[column.name]) ? "" : "Validation Message! TODO"}
+                                        validationMessage={IsInvalid(column, itemToAddValues[column.name])}
                                     />
                                 </th> : ""
                             ))}
@@ -254,8 +264,8 @@ function MyDataTable(props) {
                                 <MdAddBox
                                     role="button"
                                     tabIndex="0"
-                                    onClick={() => AllowCreateEntity() ? onAddResourceClicked() : ""}
-                                    className={AllowCreateEntity() ? "" : "disabled"}>
+                                    onClick={() => EntityStateValid(itemToAddValues) ? onAddResourceClicked() : ""}
+                                    className={EntityStateValid(itemToAddValues) ? "" : "disabled"}>
                                 </MdAddBox>
                             </th>
                         </tr>
@@ -263,14 +273,13 @@ function MyDataTable(props) {
                     <tbody>
                         {filteredResources().map((item) => (
                             <tr className="item" key={item.guid}>
-                                <td>
-                                    <span key={item.guid} onClick={() => onResourceNameClicked(item.guid)} className="clickable">
-                                        {item.name}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span>{item.alarm}</span>
-                                </td>
+                                {columnsToShow().map((column) => (
+                                    <td key={column.name}>
+                                        <span onClick={() => onResourceFieldClicked(item.guid, column.name)} className="clickable">
+                                            {item[column.name]}
+                                        </span>
+                                    </td>
+                                ))}
                                 <td>
                                     <FaEdit role="button" tabIndex="0" onClick={() => onEditResourceClicked(item.guid)}></FaEdit>
                                 </td>

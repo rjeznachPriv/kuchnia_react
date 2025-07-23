@@ -32,8 +32,7 @@ export default AutocompleteSearchComponent;
 export function filterItems(list, phrase, additionalColumns) {
     var filteredItems = list.filter((item) => {
 
-        return item.name?.toLowerCase()?.match(phrase?.toLowerCase())
-            || item.barcode?.toLowerCase()?.match(phrase?.toLowerCase())
+        return item.barcode?.toLowerCase()?.match(phrase?.toLowerCase())
             || additionalColumns?.some((column) => {
                 return item[column]?.toString().toLowerCase()?.match(phrase?.toLowerCase());
             });

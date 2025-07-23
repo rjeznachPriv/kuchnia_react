@@ -11,9 +11,6 @@ import MyDataTable from '../MyDataTable.js';
 function CategoriesComponent(props) {
     const [categoryClicked, setCategoryClicked] = useState({ name: "" });
 
-    const [filterPhrase, setFilterPhrase] = useState("");
-    const [searchComponentTouched, setSearchComponentTouched] = useState(false);
-
     const [chooseClickedModalFadingClass, setChooseClickedModalFadingClass] = useState('fadeOut');
 
     const navigate = useNavigate();
@@ -27,10 +24,6 @@ function CategoriesComponent(props) {
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
         console.log('scan', barcode);
         // categories nioe ma barcode. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
-    }
-
-    function calculateFilterPhrase() {
-        return searchComponentTouched ? filterPhrase : props.filterPhrase;
     }
 
     return (
@@ -49,18 +42,26 @@ function CategoriesComponent(props) {
 
             <MyDataTable
                 columns={[
-                    { name: "guid", type: "text" },
-                    { name: "name", type: "text", displayName: captions.field_category_name, required: true },
-                    { name: "alarm", type: "number", displayName: captions.field_category_alarm },
+                    { name: "guid", type: "text", searchable: true },
                     { name: "frequency", type: "number" },
+                    {
+                        name: "name",
+                        type: "text",
+                        displayName: captions.field_category_name,
+                        searchable: true,
+                        validation: { required: true, required_message: "test1", }
+                    },
+                    { name: "alarm", type: "number", displayName: captions.field_category_alarm, min: 0, searchable: true },
                 ]}
                 resources={props.categories}
                 setResources={props.setCategories}
-                filterPhrase={calculateFilterPhrase()}
+                filterPhrase={props.filterPhrase}
                 resourceName={"categories"}
 
                 deleteWindowTitle={captions.message_removing_category}
                 deleteWindowText={captions.message_are_you_sure_to_remove_category}
+
+                editWindowTitle={captions.message_category_edit }
             ></MyDataTable>
 
         </div>
