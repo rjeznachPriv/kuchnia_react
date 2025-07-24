@@ -95,8 +95,8 @@ function SuppliesComponent(props) {
     function mapToColumns(items) {
         return items.map((item) => ({
             ...item,
-            productName: getProduct(item.product_id).name,
-            productBarcode: getProduct(item.product_id).barcode,
+            productName: getProduct(item.product_id)?.name,
+            productBarcode: getProduct(item.product_id)?.barcode,
             storageName: getStorage(item.storage_id).name
         }));
     }

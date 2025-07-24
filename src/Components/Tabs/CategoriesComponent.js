@@ -26,16 +26,19 @@ function CategoriesComponent(props) {
         // categories nioe ma barcode. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
     }
 
-    function onCategoryClicked(category, columnName){
+    function onCategoryClicked(category, columnName) {
+        setCategoryClicked(category);
+        setChooseClickedModalFadingClass('fadeIn')
         console.log('category clicked inside dataTable');
         console.log(category);
+        console.log(columnName);
 
         //TODO:
         console.log('do wyboru: pokaz owoce:produkty, pokaz zapasy (owoce), cps innego?');
     }
 
     return (
-        <div id="categories-tab" style={localStyle} className="CategoriesComponent">
+        <div id={names.categories_tab} style={localStyle} className="CategoriesComponent">
 
             <ChooseWhereToGoModalComponent
                 mainWindowClassName={`modal-where-to-go ${chooseClickedModalFadingClass}`}
@@ -49,7 +52,7 @@ function CategoriesComponent(props) {
             ></ChooseWhereToGoModalComponent>
 
             <MyDataTable
-                onResourceClicked = {onCategoryClicked}
+                onResourceClicked={onCategoryClicked}
                 columns={[
                     { name: "guid", type: "text", searchable: true },
                     { name: "frequency", type: "number" },
@@ -58,25 +61,29 @@ function CategoriesComponent(props) {
                         type: "text",
                         displayName: captions.field_category_name,
                         searchable: true,
-                        validation: { required: true, required_message: "test1", }
+                        validation: { required: true, required_message: captions.message_validation_required, }
                     },
                     {
                         name: "alarm",
                         type: "number",
                         displayName: captions.field_category_alarm,
                         min: 0,
-                        searchable: true
+                        searchable: true,
+                        validation: { min: 0, min_message: "TODO min is 0", }
                     },
                 ]}
                 resources={props.categories}
                 setResources={props.setCategories}
-                filterPhrase={props.filterPhrase}
+                initialFilterPhrase={props.filterPhrase}
                 resourceName={"categories"}
+
+                dependantResources={[{ resource: "products", column: "category_id", data: props.products, setter: props.setProducts }]}
+                dependantResourcesNames={[captions.message_products]}
 
                 deleteWindowTitle={captions.message_removing_category}
                 deleteWindowText={captions.message_are_you_sure_to_remove_category}
 
-                editWindowTitle={captions.message_category_edit }
+                editWindowTitle={captions.message_category_edit}
             ></MyDataTable>
 
         </div>

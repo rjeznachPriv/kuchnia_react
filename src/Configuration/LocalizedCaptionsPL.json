@@ -36,7 +36,7 @@
   "message_remove_also_attached": "Usuń też przypisane",
 
   "message_products": "produkty",
-
+  "message_supplies": "zapasy",
 
   "message_storage_edit": "Edycja schowka",
   "message_category_edit": "Edycja kategorii",
@@ -55,5 +55,7 @@
   "message_barcode_usage_l2": "Na schowek, w którym  przechowujemy produkty",
   "message_barcode_usage_l3": "Na produkt, który nie ma swojego kodu",
 
-  "message_products_with_category_still_attached": "Produkty z wciąż przypisaną kategorią"
+  "message_products_with_category_still_attached": "Produkty z wciąż przypisaną kategorią",
+
+  "message_validation_required":  "Pole jest wymagane"
 }

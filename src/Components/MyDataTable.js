@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import guidGenerator from 'guid-generator';
 
-import { FaEdit } from 'react-icons/fa';
-import { FaTimes } from 'react-icons/fa';
-
-import { FaSortDown } from "react-icons/fa";
-import { FaSortUp } from "react-icons/fa";
+import { FaEdit, FaTimes, FaSortDown, FaSortUp, FaCamera } from 'react-icons/fa';
 
 import { MdAddBox } from 'react-icons/md';
 
@@ -22,6 +18,8 @@ function MyDataTable(props) {
 
     const [sortColumn, setSortColumn] = useState("frequency");
     const [sortDirection, setSortDirection] = useState(true);
+
+    const [deleteAssignedResourcesFlag, setDeleteAssignedResourcesFlag] = useState(false);
 
     const [deleteModalFadingClass, setDeleteModalFadingClass] = useState('fadeOut');
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
@@ -67,7 +65,6 @@ function MyDataTable(props) {
     function onDeleteResourceClicked(guid) {
         setResourceToDeleteGuid(guid);
         setDeleteModalFadingClass("fadeIn");
-        console.log('show delete modal', resourceToDeleteGuid);
     }
 
     function onEditResourceClicked(guid) {
@@ -96,12 +93,11 @@ function MyDataTable(props) {
     }
 
     function deleteResource(resource_guid) {
-        //TODO:
-        //if (deleteAssignedProductsFlag) {
-        //    let productsToDelete = props.products.filter((item) => (item.category_id == category_guid));
-        //    let _products = props.products.filter(item => !productsToDelete.some(toRemove => toRemove.category_id == item.category_id));
-        //    props.setProducts(_products);
-        //}
+        if (deleteAssignedResourcesFlag) {
+            for (var dependantResourcesType of props.dependantResources) {
+                dependantResourcesType.setter(dependantResourcesType.data.filter((ent) => (ent[dependantResourcesType.column] != resource_guid)));
+            }
+        }
 
         var _resources = props.resources.filter((item) => item.guid != resource_guid);
         props.setResources(_resources);
@@ -133,7 +129,7 @@ function MyDataTable(props) {
     }
 
     function calculateFilterPhrase() {
-        return searchComponentTouched ? filterPhrase : props.filterPhrase;
+        return searchComponentTouched ? filterPhrase : props.initialFilterPhrase;
     }
 
     function EntityStateValid(entity) {
@@ -144,6 +140,8 @@ function MyDataTable(props) {
 
     function IsInvalid(column, value) {
         if (column.validation?.required && !value) return column.validation?.required_message;
+        if (typeof column.validation?.min !== 'undefined' && value < column.validation.min) return column.validation?.min_message;
+        if (typeof column.validation?.max !== 'undefined' && value > column.validation.max) return column.validation?.max_message;
         return false;
     }
 
@@ -161,15 +159,18 @@ function MyDataTable(props) {
                 ContentClassName="modal-delete-content"
                 title={props.deleteWindowTitle}
                 text={`${props.deleteWindowText} ${getResource(resourceToDeleteGuid)?.name}?`}
-                contentLines={props.resources.filter((item) => (item.category_id == resourceToDeleteGuid)).map((item) => (item.name))}
                 formLines={
                     [
-                        //(
-                        //    <span>
-                        //        <input type="checkbox" checked={deleteAssignedProductsFlag} onChange={() => setDeleteAssignedProductsFlag(!deleteAssignedProductsFlag)}>
-                        //        </input> {captions.message_remove_also_attached} {captions.message_products}
-                        //    </span>
-                        //)
+                        props.dependantResources ? 
+                        (
+                            <span>
+                                    <input
+                                        type="checkbox"
+                                        checked={deleteAssignedResourcesFlag}
+                                        onChange={() => setDeleteAssignedResourcesFlag(!deleteAssignedResourcesFlag)}>
+                                    </input> {captions.message_remove_also_attached} {props.dependantResourcesNames.join(", ")}
+                            </span>
+                        ) : ""
                     ]
                 }
                 button1Text={captions.message_no}
@@ -248,13 +249,18 @@ function MyDataTable(props) {
                                         id={`column-${column.name}-header`}
                                         value={itemToAddValues[column.name]}
                                         type={column.type}
+                                        min={column.min}
                                         placeholder={`dodaj ${column.displayName}`}
                                         onChange={(e) => {
                                             const newValue = e.target.value;
                                             setItemToAddValues(prev => ({ ...prev, [column.name]: newValue }));
                                         }}
                                         validationMessage={IsInvalid(column, itemToAddValues[column.name])}
+                                        className={column.scannable ? "inline-table" : ""}
                                     />
+                                    {column.scannable ?
+                                        <FaCamera role="button" tabIndex="0" onClick={() => props.onScannerIconClicked()}></FaCamera> :
+                                        ""}
                                 </th> : ""
                             ))}
 

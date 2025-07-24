@@ -16,3 +16,7 @@ input {
 .inline-block {
     display: inline-block;
 }
+
+.inline-table {
+    display: inline-table;
+}

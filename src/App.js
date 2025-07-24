@@ -196,6 +196,8 @@ function App() {
                             registerBarcodeListener={registerBarcodeListener}
                             storages={storages}
                             setStorages={setStorages}
+                            supplies={supplies}
+                            setSupplies={setSupplies}
                         />
 
                         <SuppliesComponent

@@ -290,7 +290,7 @@ function ProductsComponent(props) {
                 button3Action=""
                 fadeOut={hideEditModal}>
             </InfoModalComponent>
-            [Dodac barcode window (male okienko z aparatu)]
+            [Wstgawic okienko ze skanerem!]
             <AutocompleteSearchComponent
                 onChange={onFiltered}
                 items={mapToColumns(props.products)}
@@ -323,7 +323,7 @@ function ProductsComponent(props) {
                             </th>
                             <th>
                                 <TextBoxComponent
-                                    className="inline-block"
+                                    className="inline-table"
                                     id={names.add_product_barcode_input}
                                     value={productToAddBarcode}
                                     placeholder={captions.field_barcode}
