@@ -49,6 +49,7 @@
   "message_edit": "Edytuj",
   "message_delete": "Usuń",
   "message_search": "Wyszukiwanie",
+  "message_choose": "Wybierz",
   "message_no_camera_available": "Brak dostępu do obrazu z kamery",
   "message_example_barcode": "Kod",
   "message_barcode_usage_l1": "Kod można wydrukować, a następnie nakleić:",

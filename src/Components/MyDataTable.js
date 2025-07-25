@@ -7,6 +7,7 @@ import { FaEdit, FaTimes, FaSortDown, FaSortUp, FaCamera } from 'react-icons/fa'
 import { MdAddBox } from 'react-icons/md';
 
 import TextBoxComponent from './TextBoxComponent.js';
+import DropDownComponent, { getSelectableFieldLabel } from './DropDownComponent.js';
 import AutocompleteSearchComponent, { filterItems } from './AutocompleteSearchComponent.js';
 import InfoModalComponent from './InfoModalComponent.js';
 
@@ -53,6 +54,7 @@ function MyDataTable(props) {
     }
 
     function onHeaderClicked(header) {
+        // TODO: introduce another column field (sortable)
         setSortDirection(sortColumn == header ? !sortDirection : sortDirection);
         setSortColumn(header);
     }
@@ -115,7 +117,12 @@ function MyDataTable(props) {
 
     function filteredResources() {
         let searchableColumns = props.columns.filter((column) => (column.searchable)).map((column) => (column.name));
-        return filterItems(props.resources, calculateFilterPhrase(), searchableColumns).sort((a, b) => {
+        let columnWithDataSource = props.columns.filter((column) => (column.dataSource))[0];    //TODO: what if more columns? : push more to keyPhrase
+
+        let extendedResources = props.resources.map((item) => ({ ...item, keyPhrase: getSelectableFieldLabel(columnWithDataSource, item) }));
+        searchableColumns.push("keyPhrase");
+
+        return filterItems(extendedResources, calculateFilterPhrase(), searchableColumns).sort((a, b) => {
             let columnType = props.columns.filter((column) => (column.name == sortColumn))[0]?.type || "text";
             if (columnType == "text") {
                 return sortDirection ? b[sortColumn].localeCompare(a[sortColumn]) : a[sortColumn].localeCompare(b[sortColumn]);
@@ -142,11 +149,79 @@ function MyDataTable(props) {
         if (column.validation?.required && !value) return column.validation?.required_message;
         if (typeof column.validation?.min !== 'undefined' && value < column.validation.min) return column.validation?.min_message;
         if (typeof column.validation?.max !== 'undefined' && value > column.validation.max) return column.validation?.max_message;
+        // TODO: implement here for other types
+        // TODO: sum messages, rather than returning separately
         return false;
     }
 
     function columnsToShow() {
         return props.columns.filter((column) => (column.displayName));
+    }
+
+    function valuesToSearchFor() {
+        let searchableColumns = props.columns.filter((col) => (col.searchable == true));
+
+        let results = [];
+        for (var column of searchableColumns) {
+            results.push(...(props.resources.map((item) => (item[column.name]))));
+            if (column.dataSource) {
+                results.push(...(column.dataSource.map((row) => (row.name))));
+            }
+        }
+
+        return results;
+    }
+
+    function renderFieldComponent(column, value, valueSetter, withLabel = false) {
+        function scannableButton(column) {
+            return column.scannable ? (
+                <FaCamera role="button" tabIndex="0" onClick={() => props.onScannerIconClicked()}></FaCamera>
+            ) : "";
+        };
+
+        function setValue(newValue) {
+            valueSetter(prev => ({ ...prev, [column.name]: newValue }));
+        };
+
+        const commonProps = {
+            value: value,
+            validationMessage: IsInvalid(column, value),
+            label: withLabel ? column.displayName : "",
+            onChange: (e) => setValue(e.target.value),
+        };
+
+
+        switch (column.type) {
+            case "text":
+            case "number":
+                return (
+                    <span>
+                        <TextBoxComponent
+                            {...commonProps}
+                            placeholder={`TODO dodaj ${column.displayName}`}
+                            type={column.type}
+                            min={column.min}
+                            max={column.max}
+                            className={column.scannable ? "inline-table" : ""}
+                        />
+                        {scannableButton(column)}
+                    </span>
+                );
+
+            case "select":
+                return (
+                    <DropDownComponent
+                        {...commonProps}
+                        handleChange={(e) => setValue(e.target.value)}
+                        options={column.dataSource}
+                        selectedId={value}
+                    ></DropDownComponent>
+                );
+            //TODO: implement here for other types
+
+            default:
+                return <div>Nieobs³ugiwany typ: {column.type}</div>;
+        }
     }
 
     return (
@@ -161,16 +236,16 @@ function MyDataTable(props) {
                 text={`${props.deleteWindowText} ${getResource(resourceToDeleteGuid)?.name}?`}
                 formLines={
                     [
-                        props.dependantResources ? 
-                        (
-                            <span>
+                        props.dependantResources ?
+                            (
+                                <span>
                                     <input
                                         type="checkbox"
                                         checked={deleteAssignedResourcesFlag}
                                         onChange={() => setDeleteAssignedResourcesFlag(!deleteAssignedResourcesFlag)}>
                                     </input> {captions.message_remove_also_attached} {props.dependantResourcesNames.join(", ")}
-                            </span>
-                        ) : ""
+                                </span>
+                            ) : ""
                     ]
                 }
                 button1Text={captions.message_no}
@@ -194,18 +269,7 @@ function MyDataTable(props) {
                 text=""
                 contentLines={
                     columnsToShow().map((column) => (
-                        <TextBoxComponent
-                            label={column.displayName}
-                            value={itemToEditValues[column.name]}
-                            type={column.type}
-                            min={column.min}
-                            validationMessage={IsInvalid(column, itemToEditValues[column.name])}
-                            onChange={(e) => {
-                                const newValue = e.target.value;
-                                setItemToEditValues(prev => ({ ...prev, [column.name]: newValue }));
-                            }}
-                        >
-                        </TextBoxComponent>
+                        renderFieldComponent(column, itemToEditValues[column.name], setItemToEditValues, true)
                     ))
                 }
                 button1Text={captions.message_cancel}
@@ -223,7 +287,7 @@ function MyDataTable(props) {
             <AutocompleteSearchComponent
                 onChange={onFiltered}
                 value={calculateFilterPhrase()}
-                items={props.resources}
+                items={valuesToSearchFor()}
             ></AutocompleteSearchComponent>
 
             <div className="resources-table-container">
@@ -245,22 +309,7 @@ function MyDataTable(props) {
                         <tr className="table-header">
                             {props.columns.map((column) => (column.displayName ?
                                 <th key={column.name}>
-                                    <TextBoxComponent
-                                        id={`column-${column.name}-header`}
-                                        value={itemToAddValues[column.name]}
-                                        type={column.type}
-                                        min={column.min}
-                                        placeholder={`dodaj ${column.displayName}`}
-                                        onChange={(e) => {
-                                            const newValue = e.target.value;
-                                            setItemToAddValues(prev => ({ ...prev, [column.name]: newValue }));
-                                        }}
-                                        validationMessage={IsInvalid(column, itemToAddValues[column.name])}
-                                        className={column.scannable ? "inline-table" : ""}
-                                    />
-                                    {column.scannable ?
-                                        <FaCamera role="button" tabIndex="0" onClick={() => props.onScannerIconClicked()}></FaCamera> :
-                                        ""}
+                                    {renderFieldComponent(column, itemToAddValues[column.name], setItemToAddValues)}
                                 </th> : ""
                             ))}
 
@@ -281,8 +330,20 @@ function MyDataTable(props) {
                                 {columnsToShow().map((column) => (
                                     <td key={column.name}>
                                         <span onClick={() => onResourceFieldClicked(item.guid, column.name)} className="clickable">
-                                            {item[column.name]}
+                                            {["text", "number"].includes(column.type) && (
+                                                <span> {item[column.name]}</span>
+                                            )}
+                                            {column.type === "select" && (
+                                                <span>{getSelectableFieldLabel(column, item)}</span>
+                                            )}
+                                            {column.type === "img" && (
+                                                <img
+                                                    src={item.img}
+                                                    alt={item.name}
+                                                ></img>
+                                            )}
                                         </span>
+
                                     </td>
                                 ))}
                                 <td>

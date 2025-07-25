@@ -71,8 +71,6 @@ function App() {
         saveState({ categories: categories, products: products, storages: storages, supplies: supplies });
     }, [categories, products, storages, supplies]);
 
-    //TODO: implement routing: tab/otherData (search query, specific item by id)
-
     function activateTabWithId(newActiveTab, newFilterPhrase) {
         setActiveTab(newActiveTab);
         cutAllCameraStreams();
@@ -140,13 +138,6 @@ function App() {
 
         return null;
     }
-
-    //function AppRouter() {
-    //    const location = useLocation();
-    //    const path = location.pathname;
-    //    let newTabId = tabUrlMapping[path];
-    //    activateTabWithId(newTabId)
-    //}
 
     return (
         <div className="App">
