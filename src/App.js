@@ -179,6 +179,7 @@ function App() {
                             registerBarcodeListener={registerBarcodeListener}
                             onBarcodeScanned={onBarcodeScanned}
                             filterPhrase={filterPhrase}
+                            setFilterPhrase={setFilterPhrase}
                         />
 
                         <StoragesComponent
@@ -189,6 +190,8 @@ function App() {
                             setStorages={setStorages}
                             supplies={supplies}
                             setSupplies={setSupplies}
+                            filterPhrase={filterPhrase}
+                            setFilterPhrase={setFilterPhrase}
                         />
 
                         <SuppliesComponent
@@ -199,7 +202,8 @@ function App() {
                             supplies={supplies}
                             storages={storages}
                             setSupplies={setSupplies}
-
+                            filterPhrase={filterPhrase}
+                            setFilterPhrase={setFilterPhrase}
                         />
 
                         <BarcodeGeneratorComponent

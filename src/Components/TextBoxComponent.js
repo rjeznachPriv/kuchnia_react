@@ -11,6 +11,7 @@ function TextBoxComponent(props) {
                 value={props.value}
                 min={props.min}
                 onChange={props.onChange}></input>
+            <span>{props.additional}</span>
             <p className="ValidationMessage">{props.validationMessage}</p>
         </div>
     );

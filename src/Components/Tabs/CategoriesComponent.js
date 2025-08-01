@@ -69,7 +69,7 @@ function CategoriesComponent(props) {
                         displayName: captions.field_category_alarm,
                         min: 0,
                         searchable: true,
-                        validation: { min: 0, min_message: "TODO min is 0", }
+                        validation: { min: 0, min_message: `${captions.message_validation_minimum_is} 0`, }
                     },
                 ]}
                 resources={props.categories}

@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react';
-
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import guidGenerator from 'guid-generator';
+import { parse, isValid, format } from "date-fns";
+
+import pl from "date-fns/locale/pl";
 
 import { FaEdit, FaTimes, FaSortDown, FaSortUp, FaCamera } from 'react-icons/fa';
+import { CiBarcode } from "react-icons/ci";
 
 import { MdAddBox } from 'react-icons/md';
 
 import TextBoxComponent from './TextBoxComponent.js';
 import DropDownComponent, { getSelectableFieldLabel } from './DropDownComponent.js';
+import CheckBoxComponent from './CheckBoxComponent.js';
 import AutocompleteSearchComponent, { filterItems } from './AutocompleteSearchComponent.js';
+import SmartDropDownComponent, { getSmartSelectableFieldLabel } from './SmartDropDownComponent.js';
 import InfoModalComponent from './InfoModalComponent.js';
 
 import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
+import noImagePath from "./../img/noImage.png";
+
 function MyDataTable(props) {
+    let dateFormat = "dd/MM/yyyy";  //TODO: take from locale settings!
+
     const [resourceToDeleteGuid, setResourceToDeleteGuid] = useState();
     const [resourceToEditGuid, setResourceToEditGuid] = useState();
 
@@ -37,26 +48,26 @@ function MyDataTable(props) {
     const [searchComponentTouched, setSearchComponentTouched] = useState(false);
 
     useEffect(() => {
-
+        registerLocale("pl", pl);
     }, []);
 
     function onResourceFieldClicked(guid, columnName) {
         var _resources = props.resources.map((item) => {
             return (item.guid == guid) ?
-                { ...item, frequency: item.frequency + 1 } :
+                { ...item, frequency: (item.frequency || 0) + 1 } :
                 item;
         });
-
         props.setResources(_resources);
 
         let clickedResource = props.resources.filter((item) => { return item.guid == guid; })[0];
         props.onResourceClicked(clickedResource, columnName);
     }
 
-    function onHeaderClicked(header) {
-        // TODO: introduce another column field (sortable)
-        setSortDirection(sortColumn == header ? !sortDirection : sortDirection);
-        setSortColumn(header);
+    function onHeaderClicked(column) {
+        if (column.sortable) {
+            setSortDirection(sortColumn == column.name ? !sortDirection : sortDirection);
+            setSortColumn(column.name);
+        }
     }
 
     function onFiltered(phrase) {
@@ -130,6 +141,17 @@ function MyDataTable(props) {
             if (columnType == "number") {
                 return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
             }
+            if (columnType == "bool") {
+                return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
+            }
+            if (columnType == "datetime") {
+                const aDate = parse(a[sortColumn], dateFormat, new Date());
+                const bDate = parse(b[sortColumn], dateFormat, new Date());
+                return sortDirection ?
+
+                    new Date(bDate - aDate) :
+                    new Date(aDate - bDate);
+            }
             //TODO: implement here for other types
             return 0;
         });
@@ -146,12 +168,12 @@ function MyDataTable(props) {
     }
 
     function IsInvalid(column, value) {
+        let validatoinMessage = "";
         if (column.validation?.required && !value) return column.validation?.required_message;
-        if (typeof column.validation?.min !== 'undefined' && value < column.validation.min) return column.validation?.min_message;
-        if (typeof column.validation?.max !== 'undefined' && value > column.validation.max) return column.validation?.max_message;
+        if (typeof column.validation?.min !== 'undefined' && value < column.validation.min) validatoinMessage += column.validation?.min_message;
+        if (typeof column.validation?.max !== 'undefined' && value > column.validation.max) validatoinMessage += column.validation?.max_message;
         // TODO: implement here for other types
-        // TODO: sum messages, rather than returning separately
-        return false;
+        return validatoinMessage;
     }
 
     function columnsToShow() {
@@ -172,10 +194,15 @@ function MyDataTable(props) {
         return results;
     }
 
+    function safeDate(value) {
+        const parsedDate = parse(value, dateFormat, new Date());
+        return isValid(parsedDate) ? parsedDate : null
+    }
+
     function renderFieldComponent(column, value, valueSetter, withLabel = false) {
         function scannableButton(column) {
             return column.scannable ? (
-                <FaCamera role="button" tabIndex="0" onClick={() => props.onScannerIconClicked()}></FaCamera>
+                <CiBarcode className="font-size-large" role="button" tabIndex="0" onClick={() => props.onScannerIconClicked()}></CiBarcode>
             ) : "";
         };
 
@@ -190,24 +217,34 @@ function MyDataTable(props) {
             onChange: (e) => setValue(e.target.value),
         };
 
-
         switch (column.type) {
             case "text":
             case "number":
                 return (
-                    <span>
+                    <span className="display-flex">
                         <TextBoxComponent
                             {...commonProps}
-                            placeholder={`TODO dodaj ${column.displayName}`}
+                            placeholder={`${captions.message_add} ${column.displayName}`}
                             type={column.type}
                             min={column.min}
                             max={column.max}
-                            className={column.scannable ? "inline-table" : ""}
+                            additional={scannableButton(column)}
                         />
-                        {scannableButton(column)}
                     </span>
                 );
-
+            case "smartselect":
+                return (
+                    <span className="display-flex">
+                        <SmartDropDownComponent
+                            {...commonProps}
+                            options={column.dataSource}
+                            onSelect={(selectedItem) => {
+                                setValue(selectedItem.guid);
+                            }}
+                            additional={scannableButton(column)}
+                        />
+                    </span>
+                );
             case "select":
                 return (
                     <DropDownComponent
@@ -217,10 +254,39 @@ function MyDataTable(props) {
                         selectedId={value}
                     ></DropDownComponent>
                 );
+            case "img":
+                return (
+                    <div>
+                        <label>{column.displayName}</label>
+                        <FaCamera role="button" tabIndex="0" onClick={() => props.onCameraIconClicked()}></FaCamera>
+                    </div>
+
+                );
+            case "datetime":
+                return (
+                    <div>
+                        <label>{withLabel ? column.displayName : ""}</label>
+                        <DatePicker
+                            selected={safeDate(value)}
+                            onChange={(date) => { setValue(format(date, dateFormat)); }}
+                            validationMessage={IsInvalid(column, value)}
+                            dateFormat={dateFormat}
+                            locale="pl"
+                            showYearDropdown
+                        />
+                    </div>
+                );
+            case "bool":
+                return (
+                    <CheckBoxComponent
+                        {...commonProps}
+                        onChange={(e) => { setValue(!value); }}
+                    ></CheckBoxComponent>
+                );
             //TODO: implement here for other types
 
             default:
-                return <div>Nieobs³ugiwany typ: {column.type}</div>;
+                return <div>{captions.message_unhandled_type} {column.type}</div>;
         }
     }
 
@@ -233,18 +299,16 @@ function MyDataTable(props) {
                 topBarXButtonClassName="modal-delete-x-button"
                 ContentClassName="modal-delete-content"
                 title={props.deleteWindowTitle}
-                text={`${props.deleteWindowText} ${getResource(resourceToDeleteGuid)?.name}?`}
+                text={`${props.deleteWindowText} ${getResource(resourceToDeleteGuid)?.name || ""}?`}
                 formLines={
                     [
                         props.dependantResources ?
                             (
-                                <span>
-                                    <input
-                                        type="checkbox"
-                                        checked={deleteAssignedResourcesFlag}
-                                        onChange={() => setDeleteAssignedResourcesFlag(!deleteAssignedResourcesFlag)}>
-                                    </input> {captions.message_remove_also_attached} {props.dependantResourcesNames.join(", ")}
-                                </span>
+                                <CheckBoxComponent
+                                    value={deleteAssignedResourcesFlag}
+                                    onChange={() => setDeleteAssignedResourcesFlag(!deleteAssignedResourcesFlag)}
+                                    label={`${captions.message_remove_also_attached} ${props.dependantResourcesNames.join(", ")}`}
+                                ></CheckBoxComponent>
                             ) : ""
                     ]
                 }
@@ -297,8 +361,8 @@ function MyDataTable(props) {
                             {props.columns.map((column) => (column.displayName ?
                                 <th key={column.displayName}>
                                     <span
-                                        onClick={() => onHeaderClicked(column.name)}
-                                        className="clickable">
+                                        onClick={() => onHeaderClicked(column)}
+                                        className={column.sortable ? "clickable" : ""} >
                                         {column.displayName} {column.name == sortColumn ?
                                             (sortDirection ? <FaSortDown /> : <FaSortUp />) :
                                             ""}
@@ -336,11 +400,26 @@ function MyDataTable(props) {
                                             {column.type === "select" && (
                                                 <span>{getSelectableFieldLabel(column, item)}</span>
                                             )}
+                                            {column.type === "smartselect" && (
+                                                <span title={item[column.name]}>{getSmartSelectableFieldLabel(column, item)}</span>
+                                            )}
                                             {column.type === "img" && (
-                                                <img
+                                                (item.img ? <img
                                                     src={item.img}
                                                     alt={item.name}
-                                                ></img>
+                                                ></img> : <img
+                                                    src={noImagePath}
+                                                    alt={item.name}
+                                                ></img>)
+
+                                            )}
+                                            {column.type === "datetime" && (
+                                                <span> {item[column.name]?.toString() || "date error"}</span>
+                                            )}
+                                            {column.type === "bool" && (
+                                                <span>
+                                                    {item[column.name] ? column.trueData : column.falseData}
+                                                </span>
                                             )}
                                         </span>
 

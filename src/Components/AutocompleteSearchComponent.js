@@ -58,7 +58,7 @@ export function filterItems(list, phrase, additionalColumns) {
 
         return item.barcode?.toLowerCase()?.match(phrase?.toLowerCase())
             || additionalColumns?.some((column) => {
-                return item[column]?.toString().toLowerCase()?.match(phrase.toString()?.toLowerCase());
+                return item[column]?.toString().toLowerCase()?.match(phrase?.toString()?.toLowerCase());
             });
     });
 

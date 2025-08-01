@@ -26,8 +26,8 @@ const ChooseWhereToGoModalComponent = (props, ref) => {
                 mainWindowTopBarClassName="modal-choose-action-top-bar"
                 topBarXButtonClassName="modal-choose-action-x-button"
                 ContentClassName="modal-choose-action-content"
-                title="TODO: wybierz akcjê"
-                text="TODO: Co chcesz zrobiæ?"
+                title={captions.message_choose_action}
+                text={captions.message_choose_what_to_do}
                 content=""
                 button1Text={props.Button1Text}
                 button1Class="modal-choose-action-button1"

@@ -16,7 +16,7 @@
   "camera_scanner_info": "Kod kreskowy zostanie zeskanowany samoczynnie",
 
   "field_storage_name": "Nazwa schowka",
-  "field_product_name": "Nazwa",
+  "field_product_name": "Nazwa produktu",
 
   "field_category_name": "Kategoria",
   "field_category_alarm": "Alarm",
@@ -24,14 +24,19 @@
   "field_alarm": "Alarm",
   "field_barcode": "Kod",
   "field_img": "Zdjęcie",
+  "field_exp_date": "Data przydatności",
+  "field_storage": "Schowek",
+  "field_isOpen": "Otwarto?",
 
   "message_are_you_sure_to_remove_storage": "Czy na pewno chcesz usunąć schowek",
   "message_are_you_sure_to_remove_category": "Czy na pewno chcesz usunąć kategorię",
   "message_are_you_sure_to_remove_product": "Czy na pewno chcesz usunąć produkt",
+  "message_are_you_sure_to_remove_supply": "Czy na pewno chcesz usunąć zasób",
 
   "message_removing_storage": "Usuwanie schowka",
   "message_removing_category": "Usuwanie kategorii",
   "message_removing_product": "Usuwanie produktu",
+  "message_removing_supply": "Usuwanie zasobu",
 
   "message_remove_also_attached": "Usuń też przypisane",
 
@@ -41,6 +46,7 @@
   "message_storage_edit": "Edycja schowka",
   "message_category_edit": "Edycja kategorii",
   "message_product_edit": "Edycja produktu",
+  "message_supply_edit": "Edycja zasobu",
 
   "message_yes": "Tak",
   "message_no": "Nie",
@@ -50,7 +56,11 @@
   "message_delete": "Usuń",
   "message_search": "Wyszukiwanie",
   "message_choose": "Wybierz",
+  "message_add": "Dodaj",
+  "message_choose_action": "Wybierz akcję",
+  "message_choose_what_to_do": "Co chcesz zrobić?",
   "message_no_camera_available": "Brak dostępu do obrazu z kamery",
+  "message_unhandled_type": "Nieobsługiwany typ:",
   "message_example_barcode": "Kod",
   "message_barcode_usage_l1": "Kod można wydrukować, a następnie nakleić:",
   "message_barcode_usage_l2": "Na schowek, w którym  przechowujemy produkty",
@@ -58,5 +68,7 @@
 
   "message_products_with_category_still_attached": "Produkty z wciąż przypisaną kategorią",
 
-  "message_validation_required":  "Pole jest wymagane"
+  "message_validation_required": "Pole jest wymagane",
+  "message_validation_minimum_is": "Minimalna wartość to",
+  "message_validation_maximumm_is": "Maksymalna wartość to"
 }

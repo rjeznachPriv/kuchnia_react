@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+ï»¿import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js';
@@ -23,7 +23,7 @@ function ProductsComponent(props) {
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
         console.log('scan', barcode);
-        // Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
+        // Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasÃ³b?)
     }
 
     function onProductClicked(product, columnName) {
@@ -39,6 +39,10 @@ function ProductsComponent(props) {
 
     function openScanner() {
         console.log('open scanner here');
+    }
+
+    function openCamera() {
+        console.log('open camera here');
     }
 
     //function onBarcodeScannedWhenEditingScreenActive(barcode) {
@@ -62,9 +66,9 @@ function ProductsComponent(props) {
             [Wstgawic okienko ze skanerem!]
             <ChooseWhereToGoModalComponent
                 mainWindowClassName={`modal-where-to-go ${chooseClickedModalFadingClass}`}
-                button1Text={`Poka¿ produkty w ${productClicked.name}`}
+                button1Text={`PokaÅ¼ produkty w ${productClicked.name}`}
                 button1Action={() => { navigate(`/products?product=${productClicked.guid}`); }}
-                button2Text={`Poka¿ zapasy w ${productClicked.name}`}
+                button2Text={`PokaÅ¼ zapasy w ${productClicked.name}`}
                 button2Action={() => { navigate(`/products/${productClicked.guid}`); }}
                 button3Class="none"
                 fadeOut={() => { setChooseClickedModalFadingClass('fadeOut') }}
@@ -74,6 +78,7 @@ function ProductsComponent(props) {
             <MyDataTable
                 onResourceClicked={onProductClicked}
                 onScannerIconClicked={openScanner}
+                onCameraIconClicked={openCamera}
                 columns={[
                     { name: "guid", type: "text", searchable: true },
                     { name: "frequency", type: "number" },
@@ -105,7 +110,7 @@ function ProductsComponent(props) {
                         displayName: captions.field_category_alarm,
                         min: 0,
                         searchable: true,
-                        validation: { min: 0, min_message: "TODO min is 0", }
+                        validation: { min: 0, min_message: `${captions.message_validation_minimum_is} 0`, }
                     },
                     {
                         name: "img",

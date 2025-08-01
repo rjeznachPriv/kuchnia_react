@@ -1,0 +1,14 @@
+select {
+    border-style: none;
+    border-radius: 10px;
+    padding: 5px;
+    width: calc(100% - 1em);
+    background-color: #F1E8D8;
+    margin: 2px;
+}
+
+.ValidationMessage {
+    font-size: 0.7em;
+    color: red;
+    margin-bottom: 0;
+}
