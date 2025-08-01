@@ -73,7 +73,7 @@ function SmartDropDownComponent({ options, onSelect, label, className, additiona
             <input
                 className="searchBox"
                 type="text"
-                placeholder={options[0]?.name || captions.message_search}
+                placeholder={validationMessage ? options[0]?.name || captions.message_search : ""}
                 value={inputValue}
                 onKeyDown={handleKeyDown}
                 onChange={(e) => setInputValue(e.target.value)}

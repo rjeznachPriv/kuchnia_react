@@ -414,7 +414,7 @@ function MyDataTable(props) {
 
                                             )}
                                             {column.type === "datetime" && (
-                                                <span> {item[column.name]?.toString() || "date error"}</span>
+                                                <span> {item[column.name]?.toString() || ""}</span>
                                             )}
                                             {column.type === "bool" && (
                                                 <span>

@@ -175,6 +175,8 @@ function App() {
                             categories={categories}
                             products={products}
                             setProducts={setProducts}
+                            supplies={supplies}
+                            setSupplies={setSupplies}
                             quagga={Quagga}
                             registerBarcodeListener={registerBarcodeListener}
                             onBarcodeScanned={onBarcodeScanned}
