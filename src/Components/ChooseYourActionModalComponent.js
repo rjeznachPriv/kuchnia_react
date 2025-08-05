@@ -4,6 +4,7 @@ import $ from 'jquery';
 import names from "./../Configuration/VitalHTMLids.json";
 import './../Styles/ChooseYourActionModalComponent.css';
 
+// this should? appear after takin photo/scanning some code?
 function ChooseYourActionModalComponent(props) {
 
     var localStyle = { display: props.activeTab === names.choose_tab ? 'block' : 'none' };

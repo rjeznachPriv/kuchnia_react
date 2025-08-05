@@ -22,7 +22,7 @@ function ProductsComponent(props) {
     var localStyle = { display: props.activeTab === names.products_tab ? 'block' : 'none' };
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
-        console.log('scan', barcode);
+        console.log('products scan', barcode);
         // Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
     }
 
@@ -35,14 +35,6 @@ function ProductsComponent(props) {
 
         //TODO:
         console.log('do wyboru....');
-    }
-
-    function openScanner() {
-        console.log('open scanner here');
-    }
-
-    function openCamera() {
-        console.log('open camera here');
     }
 
     //function onBarcodeScannedWhenEditingScreenActive(barcode) {
@@ -77,8 +69,7 @@ function ProductsComponent(props) {
 
             <MyDataTable
                 onResourceClicked={onProductClicked}
-                onScannerIconClicked={openScanner}
-                onCameraIconClicked={openCamera}
+                quagga={ props.quagga}
                 columns={[
                     { name: "guid", type: "text", searchable: true },
                     { name: "frequency", type: "number" },

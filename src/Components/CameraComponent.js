@@ -1,16 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { runSequence } from './../../utils/utils.js';
+import { runSequence } from './../utils/utils.js';
 import React from "react";
 import $ from 'jquery';
 import { FaCameraRotate } from "react-icons/fa6";
 import { FaCamera } from "react-icons/fa6";
+import { IoMdCloseCircle } from "react-icons/io";
 
-import config from "./../../Configuration/scannerComponentConfig.json";
-import './../../Styles/Tabs/CameraComponent.css';
-import names from "./../../Configuration/VitalHTMLids.json";
-import captions from "./../../Configuration/LocalizedCaptionsPL.json";
+import config from "./../Configuration/scannerComponentConfig.json";
+import './../Styles/CameraComponent.css';
+import names from "./../Configuration/VitalHTMLids.json";
+import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
-const ScannerTabComponent = props => {
+const CameraComponent = props => {
     var [takePictureClass, setTakePictureClass] = useState('');
     var [cameras, setCameras] = useState();
     var [cameraIndex, setCameraIndex] = useState(0);
@@ -25,6 +26,7 @@ const ScannerTabComponent = props => {
     }, [cameras]);
 
     function ShowLiveCameraPicture() {
+        props.quagga.pause();
         props.quagga.CameraAccess.release();      //if on android..?
         getConnectedDevices('videoinput', (cameras) => InitializeCamera(cameras));
     }
@@ -54,11 +56,17 @@ const ScannerTabComponent = props => {
             .then(function (videoStream) {
                 var video = document.getElementById(names["camera-component-video"]);
                 if ("srcObject" in video) {
+                    console.log('set src1');
+                    console.log(videoStream);
                     video.srcObject = videoStream;
+                    video.play();
                 } else {
+                    console.log('set src2');
                     video.src = window.URL.createObjectURL(videoStream);
                 }
                 video.onloadedmetadata = function (e) {
+                    console.log(video);
+                    console.log('play');
                     video.play();
                 };
             })
@@ -97,24 +105,33 @@ const ScannerTabComponent = props => {
         // overwrite video content with taken picture? or hide video, leave just canvas
     }
 
+    function handleCloseCameraButtonClick() {
+        props.setClassName('fadeOut');
+    }
+
     return (
-        <div className="CameraComponent">
+        <div className={`CameraComponent ${props.className}`}>
             <div className="container">
                 <video
                     id={names["camera-component-video"]}
                     onClick={ShowLiveCameraPicture}>
                 </video>
                 <div className={`${takePictureClass} take-picture-overlay`}></div>
+
+                <div className="top-bar-x-button" onClick={handleCloseCameraButtonClick}>
+                    <IoMdCloseCircle></IoMdCloseCircle>
+                </div>
                 <div className="take-picture button" onClick={handleTakePictureButtonClick}>
                     <FaCamera></FaCamera>
                 </div>
                 <div className="switch-camera button" onClick={handleSwitchCameraButtonClick}>
                     <FaCameraRotate></FaCameraRotate>
                 </div>
+
                 <canvas id={names["camera-component-canvas"]}></canvas>
             </div>
         </div>
     );
 };
 
-export default ScannerTabComponent;
+export default CameraComponent;

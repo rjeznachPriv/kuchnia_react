@@ -22,7 +22,7 @@ function StoragesComponent(props) {
     var localStyle = { display: props.activeTab === names.storages_tab ? 'block' : 'none' };
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
-        console.log('scan', barcode);
+        console.log('storages scan', barcode);
         // Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
     }
 

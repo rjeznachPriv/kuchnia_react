@@ -21,7 +21,10 @@ import InfoModalComponent from './InfoModalComponent.js';
 import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 import noImagePath from "./../img/noImage.png";
+import CameraComponent from './CameraComponent.js';
+import CameraComponent2 from './CameraComponent2.js';
 
+let imgSetter;
 function MyDataTable(props) {
     let dateFormat = "dd/MM/yyyy";  //TODO: take from locale settings!
 
@@ -35,6 +38,10 @@ function MyDataTable(props) {
 
     const [deleteModalFadingClass, setDeleteModalFadingClass] = useState('fadeOut');
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
+    const [cameraModalFadingClass, setCameraModalFadingClass] = useState('fadeOut');
+
+    //const [imgSetter, setImgSetter] = useState();
+
 
     const [itemToAddValues, setItemToAddValues] = useState(() =>
         Object.fromEntries(props.columns.map(field => [field.name, ""]))
@@ -96,6 +103,16 @@ function MyDataTable(props) {
         props.setResources(prev => [...prev, newItem]);
     }
 
+    function onCameraIconClicked(column, setter) {
+        setCameraModalFadingClass("fadeIn");
+        //console.log(column.name);
+        //console.log('use proper setter here, to know in which context clicked: "itemToEditValues" or "itemToAddValues" ');
+        //setImgSetter(setter);
+        imgSetter = setter;
+        //console.log(setter);
+        //console.log(imgSetter);
+    }
+
     function getResource(guid) {
         if (guid) {
             var resource = props.resources.filter((item) => item.guid == guid)[0];
@@ -135,16 +152,16 @@ function MyDataTable(props) {
 
         return filterItems(extendedResources, calculateFilterPhrase(), searchableColumns).sort((a, b) => {
             let columnType = props.columns.filter((column) => (column.name == sortColumn))[0]?.type || "text";
-            if (columnType == "text") {
+            if (columnType === "text") {
                 return sortDirection ? b[sortColumn].localeCompare(a[sortColumn]) : a[sortColumn].localeCompare(b[sortColumn]);
             }
-            if (columnType == "number") {
+            if (columnType === "number") {
                 return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
             }
-            if (columnType == "bool") {
+            if (columnType === "bool") {
                 return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
             }
-            if (columnType == "datetime") {
+            if (columnType === "datetime") {
                 const aDate = parse(a[sortColumn], dateFormat, new Date());
                 const bDate = parse(b[sortColumn], dateFormat, new Date());
                 return sortDirection ?
@@ -197,6 +214,13 @@ function MyDataTable(props) {
     function safeDate(value) {
         const parsedDate = parse(value, dateFormat, new Date());
         return isValid(parsedDate) ? parsedDate : null
+    }
+
+    function pictureTakenCallback(picture) {
+        //console.log('outside',picture);
+        console.log(picture);
+        console.log(imgSetter);
+        imgSetter(picture);
     }
 
     function renderFieldComponent(column, value, valueSetter, withLabel = false) {
@@ -257,9 +281,23 @@ function MyDataTable(props) {
             case "img":
                 return (
                     <div>
-                        <label>{column.displayName}</label>
-                        <FaCamera role="button" tabIndex="0" onClick={() => props.onCameraIconClicked()}></FaCamera>
+                        <label>{withLabel ? column.displayName : ""}</label>
+                        <FaCamera role="button" tabIndex="0" onClick={() => onCameraIconClicked(column, setValue)}></FaCamera>
+                        <img alt="aa bb" src={ value}></img>
                     </div>
+
+                //         {
+                //    column.type === "img" && (
+                //        (item.img ? <img
+                //            src={item.img}
+                //            alt={item.name}
+                //        ></img> : <img
+                //            src={noImagePath}
+                //            alt={item.name}
+                //        ></img>)
+
+                //    )
+                //}
 
                 );
             case "datetime":
@@ -292,6 +330,12 @@ function MyDataTable(props) {
 
     return (
         <div id={`${props.resourceName}-table`} className={`${props.resourceName}Component`}>
+
+            <CameraComponent2
+                className={cameraModalFadingClass}
+                setClassName={setCameraModalFadingClass}
+                callback={pictureTakenCallback}
+            ></CameraComponent2>
 
             <InfoModalComponent
                 mainWindowClassName={`modal-delete-window ${deleteModalFadingClass}`}

@@ -22,7 +22,7 @@ function CategoriesComponent(props) {
     var localStyle = { display: props.activeTab === names.categories_tab ? 'block' : 'none' };
 
     function onBarcodeScannedWhenEditingScreenActive(barcode) {
-        console.log('scan', barcode);
+        console.log('categories scan', barcode);
         // categories nioe ma barcode. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac produkt/zasób?)
     }
 

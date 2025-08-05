@@ -56,6 +56,7 @@ function App() {
     const [activeTab, setActiveTab] = useState('');
     const [filterPhrase, setFilterPhrase] = useState('');
 
+
     useEffect(() => {
         let data = loadState();
         setCategories(data.categories);
@@ -138,6 +139,8 @@ function App() {
 
         return null;
     }
+
+
 
     return (
         <div className="App">

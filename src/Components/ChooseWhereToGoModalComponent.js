@@ -7,7 +7,6 @@ import names from "./../Configuration/VitalHTMLids.json";
 import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
 // a ten modal pojawia sie po kliknieciu w link
-
 const ChooseWhereToGoModalComponent = (props, ref) => {
     let [chooseActionModalFadingClass, setChooseActionModalFadingClass] = useState(props.chooseClickedModalFadingClass);
 
