@@ -1,0 +1,29 @@
+.resources-table-container .TakenPictureThumbnailContainer div.button {
+    left: calc(50% + 0.5em);
+    display: block;
+    color: #4444;
+    cursor: pointer;
+    top: 0.5em;
+    position: absolute;
+    font-size: 2em;
+}
+
+.modal-edit-window .TakenPictureThumbnailContainer div.button {
+    color: #4444;
+    cursor: pointer;
+    font-size: 2em;
+    color: #4444;
+    position: relative;
+    bottom: 120px;
+    left: 80px;
+}
+
+.TakenPictureThumbnailContainer .TakenPictureThumbnail {
+    width: 120px;
+    height: 120px;
+}
+
+.resources-table-container .tableRowImage {
+    width: 120px;
+    height: 120px;
+}

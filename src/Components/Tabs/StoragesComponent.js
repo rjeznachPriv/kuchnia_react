@@ -82,6 +82,7 @@ function StoragesComponent(props) {
                         type: "text",
                         displayName: captions.field_storage_name,
                         validation: { required: true, required_message: captions.message_validation_required, },
+                        sortable: true,
                         searchable: true,
                     },
                     {
@@ -90,6 +91,7 @@ function StoragesComponent(props) {
                         displayName: captions.field_barcode,
                         validation: { required: true, required_message: captions.message_validation_required, },
                         searchable: true,
+                        sortable: true,
                         scannable: true,
                     },
                 ]}

@@ -79,6 +79,7 @@ function ProductsComponent(props) {
                         displayName: captions.field_product_name,
                         validation: { required: true, required_message: captions.message_validation_required, },
                         searchable: true,
+                        sortable: true,
                     },
                     {
                         name: "category_id",
@@ -93,6 +94,7 @@ function ProductsComponent(props) {
                         displayName: captions.field_barcode,
                         validation: { required: true, required_message: captions.message_validation_required, },
                         searchable: true,
+                        sortable: true,
                         scannable: true,
                     },
                     {
@@ -101,6 +103,7 @@ function ProductsComponent(props) {
                         displayName: captions.field_category_alarm,
                         min: 0,
                         searchable: true,
+                        sortable: true,
                         validation: { min: 0, min_message: `${captions.message_validation_minimum_is} 0`, }
                     },
                     {

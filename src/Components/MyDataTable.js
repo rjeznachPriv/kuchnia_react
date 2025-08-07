@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import guidGenerator from 'guid-generator';
+import "./../Styles/MyDataTable.css";
 import { parse, isValid, format } from "date-fns";
 
 import pl from "date-fns/locale/pl";
 
 import { FaEdit, FaTimes, FaSortDown, FaSortUp, FaCamera } from 'react-icons/fa';
 import { CiBarcode } from "react-icons/ci";
-
 import { MdAddBox } from 'react-icons/md';
+import { IoMdCloseCircle } from "react-icons/io";
+
+import { } from './../utils/utils';
+import { Create, Read, Update, Delete, filteredResources, EntityStateValid, IsInvalid } from './../utils/crud';
 
 import TextBoxComponent from './TextBoxComponent.js';
 import DropDownComponent, { getSelectableFieldLabel } from './DropDownComponent.js';
@@ -21,7 +24,6 @@ import InfoModalComponent from './InfoModalComponent.js';
 import captions from "./../Configuration/LocalizedCaptionsPL.json"
 
 import noImagePath from "./../img/noImage.png";
-import CameraComponent from './CameraComponent.js';
 import CameraComponent2 from './CameraComponent2.js';
 
 let imgSetter;
@@ -39,9 +41,6 @@ function MyDataTable(props) {
     const [deleteModalFadingClass, setDeleteModalFadingClass] = useState('fadeOut');
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
     const [cameraModalFadingClass, setCameraModalFadingClass] = useState('fadeOut');
-
-    //const [imgSetter, setImgSetter] = useState();
-
 
     const [itemToAddValues, setItemToAddValues] = useState(() =>
         Object.fromEntries(props.columns.map(field => [field.name, ""]))
@@ -77,11 +76,6 @@ function MyDataTable(props) {
         }
     }
 
-    function onFiltered(phrase) {
-        setFilterPhrase(phrase);
-        setSearchComponentTouched(true);
-    }
-
     function onDeleteResourceClicked(guid) {
         setResourceToDeleteGuid(guid);
         setDeleteModalFadingClass("fadeIn");
@@ -89,108 +83,26 @@ function MyDataTable(props) {
 
     function onEditResourceClicked(guid) {
         setResourceToEditGuid(guid);
-        setItemToEditValues(getResource(guid));
+        setItemToEditValues(Read(props.resources, guid));
         setEditModalFadingClass("fadeIn");
     }
 
-    function onAddResourceClicked() {
-        let newItem = {
-            ...itemToAddValues,
-            guid: guidGenerator(),
-            frequency: 0,
-        };
-
-        props.setResources(prev => [...prev, newItem]);
-    }
-
-    function onCameraIconClicked(column, setter) {
+    function onCameraIconClicked(setter) {
         setCameraModalFadingClass("fadeIn");
-        //console.log(column.name);
-        //console.log('use proper setter here, to know in which context clicked: "itemToEditValues" or "itemToAddValues" ');
-        //setImgSetter(setter);
         imgSetter = setter;
-        //console.log(setter);
-        //console.log(imgSetter);
     }
 
-    function getResource(guid) {
-        if (guid) {
-            var resource = props.resources.filter((item) => item.guid == guid)[0];
-            return resource ? resource : null;
-        }
-
-        return { name: "", type: "text" }
+    function onRemoveThumbNailButtonClicked(setter) {
+        setter(undefined);
     }
 
-    function deleteResource(resource_guid) {
-        if (deleteAssignedResourcesFlag) {
-            for (var dependantResourcesType of props.dependantResources) {
-                dependantResourcesType.setter(dependantResourcesType.data.filter((ent) => (ent[dependantResourcesType.column] != resource_guid)));
-            }
-        }
-
-        var _resources = props.resources.filter((item) => item.guid != resource_guid);
-        props.setResources(_resources);
-        setDeleteModalFadingClass("fadeOut");
-    }
-
-    function updateResource(resourceId) {
-        var _resources = props.resources.map((item) => {
-            return (item.guid == resourceId) ? itemToEditValues : item
-        });
-
-        props.setResources(_resources);
-        setEditModalFadingClass('fadeOut');
-    }
-
-    function filteredResources() {
-        let searchableColumns = props.columns.filter((column) => (column.searchable)).map((column) => (column.name));
-        let columnWithDataSource = props.columns.filter((column) => (column.dataSource))[0];    //TODO: what if more columns? : push more to keyPhrase
-
-        let extendedResources = props.resources.map((item) => ({ ...item, keyPhrase: getSelectableFieldLabel(columnWithDataSource, item) }));
-        searchableColumns.push("keyPhrase");
-
-        return filterItems(extendedResources, calculateFilterPhrase(), searchableColumns).sort((a, b) => {
-            let columnType = props.columns.filter((column) => (column.name == sortColumn))[0]?.type || "text";
-            if (columnType === "text") {
-                return sortDirection ? b[sortColumn].localeCompare(a[sortColumn]) : a[sortColumn].localeCompare(b[sortColumn]);
-            }
-            if (columnType === "number") {
-                return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
-            }
-            if (columnType === "bool") {
-                return sortDirection ? b[sortColumn] - a[sortColumn] : a[sortColumn] - b[sortColumn];
-            }
-            if (columnType === "datetime") {
-                const aDate = parse(a[sortColumn], dateFormat, new Date());
-                const bDate = parse(b[sortColumn], dateFormat, new Date());
-                return sortDirection ?
-
-                    new Date(bDate - aDate) :
-                    new Date(aDate - bDate);
-            }
-            //TODO: implement here for other types
-            return 0;
-        });
+    function onFiltered(phrase) {
+        setFilterPhrase(phrase);
+        setSearchComponentTouched(true);
     }
 
     function calculateFilterPhrase() {
         return searchComponentTouched ? filterPhrase : props.initialFilterPhrase;
-    }
-
-    function EntityStateValid(entity) {
-        let columnsToValidate = props.columns.filter((column) => (column.validation));
-        let validationResult = columnsToValidate.map((column) => (IsInvalid(column, entity[column.name])));
-        return !validationResult.some((item) => (item != false));
-    }
-
-    function IsInvalid(column, value) {
-        let validatoinMessage = "";
-        if (column.validation?.required && !value) return column.validation?.required_message;
-        if (typeof column.validation?.min !== 'undefined' && value < column.validation.min) validatoinMessage += column.validation?.min_message;
-        if (typeof column.validation?.max !== 'undefined' && value > column.validation.max) validatoinMessage += column.validation?.max_message;
-        // TODO: implement here for other types
-        return validatoinMessage;
     }
 
     function columnsToShow() {
@@ -217,9 +129,6 @@ function MyDataTable(props) {
     }
 
     function pictureTakenCallback(picture) {
-        //console.log('outside',picture);
-        console.log(picture);
-        console.log(imgSetter);
         imgSetter(picture);
     }
 
@@ -282,23 +191,17 @@ function MyDataTable(props) {
                 return (
                     <div>
                         <label>{withLabel ? column.displayName : ""}</label>
-                        <FaCamera role="button" tabIndex="0" onClick={() => onCameraIconClicked(column, setValue)}></FaCamera>
-                        <img alt="aa bb" src={ value}></img>
+                        {
+                            value ?
+                                <div className="TakenPictureThumbnailContainer">
+                                    <img alt="" src={value} className="TakenPictureThumbnail"></img>
+                                    <div className="top-bar-x-button button" onClick={() => onRemoveThumbNailButtonClicked(setValue)}>
+                                        <IoMdCloseCircle></IoMdCloseCircle>
+                                    </div>
+                                </div> :
+                                <FaCamera role="button" tabIndex="0" onClick={() => onCameraIconClicked(setValue)}></FaCamera>
+                        }
                     </div>
-
-                //         {
-                //    column.type === "img" && (
-                //        (item.img ? <img
-                //            src={item.img}
-                //            alt={item.name}
-                //        ></img> : <img
-                //            src={noImagePath}
-                //            alt={item.name}
-                //        ></img>)
-
-                //    )
-                //}
-
                 );
             case "datetime":
                 return (
@@ -343,7 +246,7 @@ function MyDataTable(props) {
                 topBarXButtonClassName="modal-delete-x-button"
                 ContentClassName="modal-delete-content"
                 title={props.deleteWindowTitle}
-                text={`${props.deleteWindowText} ${getResource(resourceToDeleteGuid)?.name || ""}?`}
+                text={`${props.deleteWindowText} ${Read(props.resources,resourceToDeleteGuid)?.name || ""}?`}
                 formLines={
                     [
                         props.dependantResources ?
@@ -361,7 +264,10 @@ function MyDataTable(props) {
                 button1Action={() => setDeleteModalFadingClass("fadeOut")}
                 button2Text={captions.message_yes}
                 button2Class="modal-delete-button1"
-                button2Action={() => { deleteResource(resourceToDeleteGuid) }}
+                button2Action={() => {
+                    Delete(props.resources, props.setResources, resourceToDeleteGuid, deleteAssignedResourcesFlag, props.dependantResources);
+                    setDeleteModalFadingClass("fadeOut");
+                }}
                 button3Text=""
                 button3Class="none"
                 button3Action=""
@@ -384,8 +290,15 @@ function MyDataTable(props) {
                 button1Class="modal-edit-button1"
                 button1Action={() => setEditModalFadingClass("fadeOut")}
                 button2Text={captions.message_save}
-                button2Class={`modal-edit-button1 ${EntityStateValid(itemToEditValues) ? "" : "disabled"}`}
-                button2Action={() => EntityStateValid(itemToEditValues) ? updateResource(resourceToEditGuid) : ""}
+                button2Class={`modal-edit-button1 ${EntityStateValid(itemToEditValues, props.columns) ? "" : "disabled"}`}
+                button2Action={
+                    () => {
+                        if (EntityStateValid(itemToEditValues, props.columns)) {
+                            Update(props.resources, props.setResources, itemToEditValues, resourceToEditGuid);
+                            setEditModalFadingClass('fadeOut');
+                        }
+                    }
+                }
                 button3Text=""
                 button3Class="none"
                 button3Action=""
@@ -426,14 +339,14 @@ function MyDataTable(props) {
                                 <MdAddBox
                                     role="button"
                                     tabIndex="0"
-                                    onClick={() => EntityStateValid(itemToAddValues) ? onAddResourceClicked() : ""}
-                                    className={EntityStateValid(itemToAddValues) ? "" : "disabled"}>
+                                    onClick={() => EntityStateValid(itemToAddValues, props.columns) ? Create(itemToAddValues, setItemToAddValues, props.setResources ) : ""}
+                                    className={EntityStateValid(itemToAddValues, props.columns) ? "" : "disabled"}>
                                 </MdAddBox>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredResources().map((item) => (
+                        {filteredResources(props.resources, props.columns, sortColumn, sortDirection, dateFormat, calculateFilterPhrase()).map((item) => (
                             <tr className="item" key={item.guid}>
                                 {columnsToShow().map((column) => (
                                     <td key={column.name}>
@@ -449,9 +362,11 @@ function MyDataTable(props) {
                                             )}
                                             {column.type === "img" && (
                                                 (item.img ? <img
+                                                    className="tableRowImage"
                                                     src={item.img}
                                                     alt={item.name}
                                                 ></img> : <img
+                                                        className="tableRowImage"
                                                     src={noImagePath}
                                                     alt={item.name}
                                                 ></img>)
