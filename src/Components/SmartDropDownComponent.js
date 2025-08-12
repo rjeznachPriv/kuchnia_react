@@ -108,3 +108,16 @@ export function getSmartSelectableFieldLabel(column, item) {
     let label = column?.dataSource?.filter((dataItem) => (dataItem.guid === item[column.name]))[0]?.name;
     return label;
 }
+
+export function renderSmartDropDownComponent(column, commonProps, onSelect, additional) {
+    return (
+        <span className="display-flex">
+            <SmartDropDownComponent
+                {...commonProps}
+                options={column.dataSource}
+                onSelect={onSelect}
+                additional={additional}
+            />
+        </span>
+    );
+}

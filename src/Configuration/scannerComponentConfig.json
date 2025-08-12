@@ -14,7 +14,8 @@
   },
   "scanningPauseAfterScan": 2000,
   "flashOverlayTime": 500,
-  "errorLimit": 1.45,
-  "takenPictureQuality":  0.3
+  "errorLimit": 1.25,
+  "takenPictureQuality": 0.3,
+  "debounceDelay":  500
 }
 

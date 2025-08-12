@@ -5,7 +5,7 @@ import './../../Styles/Tabs/SuppliesComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
 
-import MyDataTable from '../MyDataTable.js';
+import InteractiveDataTable from './../InteractiveDataTable .js';
 
 import { FaAppleAlt } from 'react-icons/fa';
 import { BsApple } from 'react-icons/bs';
@@ -53,7 +53,8 @@ function SuppliesComponent(props) {
 
             <div className="supplies-table-container">
 
-                <MyDataTable
+                <InteractiveDataTable
+                    quagga={props.quagga}
                     onResourceClicked={onSupplyClicked}
                     onScannerIconClicked={openScanner}
                     columns={[
@@ -101,7 +102,7 @@ function SuppliesComponent(props) {
                     deleteWindowText={captions.message_are_you_sure_to_remove_supply}
 
                     editWindowTitle={captions.message_supply_edit}
-                ></MyDataTable>
+                ></InteractiveDataTable>
             </div>
         </div>
     );

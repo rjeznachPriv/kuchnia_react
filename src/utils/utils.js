@@ -17,7 +17,7 @@ export function isAlphaNumericKey(e) {
 export function printSvgS(selectors) {
     let elements = selectors.map((selector) => { return $(selector)[0]; });
 
-    var newWindow = window.open('', '', `height=${window.screen.height}, width=${window.screen.height}`);   //TODO: 800 x 800 magic number
+    var newWindow = window.open('', '', `height=${window.screen.height}, width=${window.screen.height}`);
     newWindow.document.write('<html>');
     elements.forEach((element) => {
         newWindow.document.write(element.outerHTML);
@@ -31,7 +31,5 @@ export function printSvgS(selectors) {
 }
 
 export function uuidv4() {
-  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
-    (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
-  );
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16));
 }

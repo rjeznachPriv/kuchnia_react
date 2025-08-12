@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./../Styles/MyDataTable.css";
+import "./../Styles/InteractiveDataTable .css";
 import { parse, isValid, format } from "date-fns";
 
 import pl from "date-fns/locale/pl";
@@ -14,21 +14,24 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { } from './../utils/utils';
 import { Create, Read, Update, Delete, filteredResources, EntityStateValid, IsInvalid } from './../utils/crud';
 
-import TextBoxComponent from './TextBoxComponent.js';
-import DropDownComponent, { getSelectableFieldLabel } from './DropDownComponent.js';
-import CheckBoxComponent from './CheckBoxComponent.js';
-import AutocompleteSearchComponent, { filterItems } from './AutocompleteSearchComponent.js';
-import SmartDropDownComponent, { getSmartSelectableFieldLabel } from './SmartDropDownComponent.js';
+import { renderTextBoxComponent } from './TextBoxComponent.js';
+import { getSelectableFieldLabel, renderDropDownComponent } from './DropDownComponent.js';
+import CheckBoxComponent, { renderCheckBoxComponent } from './CheckBoxComponent.js';
+import AutocompleteSearchComponent from './AutocompleteSearchComponent.js';
+import { getSmartSelectableFieldLabel, renderSmartDropDownComponent } from './SmartDropDownComponent.js';
 import InfoModalComponent from './InfoModalComponent.js';
+import JustCameraComponent, { renderThumbnail } from './JustCameraComponent.js';
+import JustScannerComponent from './JustScannerComponent.js';
 
 import captions from "./../Configuration/LocalizedCaptionsPL.json"
-
 import noImagePath from "./../img/noImage.png";
-import CameraComponent2 from './CameraComponent2.js';
+
 
 let imgSetter;
-function MyDataTable(props) {
+let codeSetter;
+function InteractiveDataTable(props) {
     let dateFormat = "dd/MM/yyyy";  //TODO: take from locale settings!
+    let locale = "pl";  //TODO: take from locale settings!
 
     const [resourceToDeleteGuid, setResourceToDeleteGuid] = useState();
     const [resourceToEditGuid, setResourceToEditGuid] = useState();
@@ -41,6 +44,7 @@ function MyDataTable(props) {
     const [deleteModalFadingClass, setDeleteModalFadingClass] = useState('fadeOut');
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
     const [cameraModalFadingClass, setCameraModalFadingClass] = useState('fadeOut');
+    const [scannerModalFadingClass, setScannerModalFadingClass] = useState('fadeOut');
 
     const [itemToAddValues, setItemToAddValues] = useState(() =>
         Object.fromEntries(props.columns.map(field => [field.name, ""]))
@@ -92,6 +96,11 @@ function MyDataTable(props) {
         imgSetter = setter;
     }
 
+    function onScannerIconClicked(setter) {
+        setScannerModalFadingClass("fadeIn");
+        codeSetter = setter;
+    }
+
     function onRemoveThumbNailButtonClicked(setter) {
         setter(undefined);
     }
@@ -129,13 +138,17 @@ function MyDataTable(props) {
     }
 
     function pictureTakenCallback(picture) {
-        imgSetter(picture);
+        imgSetter && imgSetter(picture);
+    }
+
+    function codeScannedCallback(code) {
+        codeSetter && codeSetter(code);
     }
 
     function renderFieldComponent(column, value, valueSetter, withLabel = false) {
         function scannableButton(column) {
             return column.scannable ? (
-                <CiBarcode className="font-size-large" role="button" tabIndex="0" onClick={() => props.onScannerIconClicked()}></CiBarcode>
+                <CiBarcode className="font-size-large" role="button" tabIndex="0" onClick={() => onScannerIconClicked(setValue)}></CiBarcode>
             ) : "";
         };
 
@@ -153,77 +166,30 @@ function MyDataTable(props) {
         switch (column.type) {
             case "text":
             case "number":
-                return (
-                    <span className="display-flex">
-                        <TextBoxComponent
-                            {...commonProps}
-                            placeholder={`${captions.message_add} ${column.displayName}`}
-                            type={column.type}
-                            min={column.min}
-                            max={column.max}
-                            additional={scannableButton(column)}
-                        />
-                    </span>
-                );
+                return renderTextBoxComponent(column, commonProps, captions, scannableButton(column));
             case "smartselect":
-                return (
-                    <span className="display-flex">
-                        <SmartDropDownComponent
-                            {...commonProps}
-                            options={column.dataSource}
-                            onSelect={(selectedItem) => {
-                                setValue(selectedItem.guid);
-                            }}
-                            additional={scannableButton(column)}
-                        />
-                    </span>
-                );
+                return renderSmartDropDownComponent(column, commonProps, (selectedItem) => { setValue(selectedItem.guid); }, scannableButton(column));
             case "select":
-                return (
-                    <DropDownComponent
-                        {...commonProps}
-                        handleChange={(e) => setValue(e.target.value)}
-                        options={column.dataSource}
-                        selectedId={value}
-                    ></DropDownComponent>
-                );
+                return renderDropDownComponent(column, commonProps, value);
             case "img":
-                return (
-                    <div>
-                        <label>{withLabel ? column.displayName : ""}</label>
-                        {
-                            value ?
-                                <div className="TakenPictureThumbnailContainer">
-                                    <img alt="" src={value} className="TakenPictureThumbnail"></img>
-                                    <div className="top-bar-x-button button" onClick={() => onRemoveThumbNailButtonClicked(setValue)}>
-                                        <IoMdCloseCircle></IoMdCloseCircle>
-                                    </div>
-                                </div> :
-                                <FaCamera role="button" tabIndex="0" onClick={() => onCameraIconClicked(setValue)}></FaCamera>
-                        }
-                    </div>
-                );
+                return renderThumbnail(commonProps, value, () => onRemoveThumbNailButtonClicked(setValue), () => onCameraIconClicked(setValue));
             case "datetime":
                 return (
                     <div>
-                        <label>{withLabel ? column.displayName : ""}</label>
+                        <label>{commonProps.label}</label>
                         <DatePicker
                             selected={safeDate(value)}
                             onChange={(date) => { setValue(format(date, dateFormat)); }}
                             validationMessage={IsInvalid(column, value)}
                             dateFormat={dateFormat}
-                            locale="pl"
+                            locale={ locale}
                             showYearDropdown
                         />
                     </div>
                 );
             case "bool":
-                return (
-                    <CheckBoxComponent
-                        {...commonProps}
-                        onChange={(e) => { setValue(!value); }}
-                    ></CheckBoxComponent>
-                );
+                return renderCheckBoxComponent(commonProps, setValue, value);
+
             //TODO: implement here for other types
 
             default:
@@ -234,11 +200,18 @@ function MyDataTable(props) {
     return (
         <div id={`${props.resourceName}-table`} className={`${props.resourceName}Component`}>
 
-            <CameraComponent2
+            <JustCameraComponent
                 className={cameraModalFadingClass}
                 setClassName={setCameraModalFadingClass}
                 callback={pictureTakenCallback}
-            ></CameraComponent2>
+            ></JustCameraComponent>
+
+            <JustScannerComponent
+                className={scannerModalFadingClass}
+                setClassName={setScannerModalFadingClass}
+                callback={codeScannedCallback}
+                quagga={props.quagga}
+            ></JustScannerComponent>
 
             <InfoModalComponent
                 mainWindowClassName={`modal-delete-window ${deleteModalFadingClass}`}
@@ -246,7 +219,7 @@ function MyDataTable(props) {
                 topBarXButtonClassName="modal-delete-x-button"
                 ContentClassName="modal-delete-content"
                 title={props.deleteWindowTitle}
-                text={`${props.deleteWindowText} ${Read(props.resources,resourceToDeleteGuid)?.name || ""}?`}
+                text={`${props.deleteWindowText} ${Read(props.resources, resourceToDeleteGuid)?.name || ""}?`}
                 formLines={
                     [
                         props.dependantResources ?
@@ -339,7 +312,7 @@ function MyDataTable(props) {
                                 <MdAddBox
                                     role="button"
                                     tabIndex="0"
-                                    onClick={() => EntityStateValid(itemToAddValues, props.columns) ? Create(itemToAddValues, setItemToAddValues, props.setResources ) : ""}
+                                    onClick={() => EntityStateValid(itemToAddValues, props.columns) ? Create(itemToAddValues, setItemToAddValues, props.setResources) : ""}
                                     className={EntityStateValid(itemToAddValues, props.columns) ? "" : "disabled"}>
                                 </MdAddBox>
                             </th>
@@ -366,7 +339,7 @@ function MyDataTable(props) {
                                                     src={item.img}
                                                     alt={item.name}
                                                 ></img> : <img
-                                                        className="tableRowImage"
+                                                    className="tableRowImage"
                                                     src={noImagePath}
                                                     alt={item.name}
                                                 ></img>)
@@ -380,6 +353,7 @@ function MyDataTable(props) {
                                                     {item[column.name] ? column.trueData : column.falseData}
                                                 </span>
                                             )}
+                                            {/*TODO: implement here for other types */}
                                         </span>
 
                                     </td>
@@ -399,4 +373,4 @@ function MyDataTable(props) {
     );
 }
 
-export default MyDataTable;
+export default InteractiveDataTable;

@@ -46,11 +46,25 @@ table {
     margin-right: auto;
 }
 
-    table th {
+/*table th {
         position: sticky;
-        top: 0; /* Don't forget this, required for the stickiness */
-        background-color: #D7C28D;
-    }
+        top: 0;*/ /* Don't forget this, required for the stickiness */
+/*background-color: #D7C28D;
+    }*/
+
+thead tr:first-child th {
+    position: sticky;
+    top: 0;
+    background-color: #D7C28D;
+    z-index: 2; /* dla pewnoœci */
+}
+
+thead tr:nth-child(2) th {
+    position: sticky;
+    top: 1.8em; /* wysokoœæ pierwszego wiersza nag³ówka */
+    background-color: #D7C28D;
+    z-index: 1;
+}
 
 td, th {
     border-color: #DDCBA0;
@@ -103,7 +117,7 @@ td, th {
 }
 
 .disabled {
-    cursor: default!important;
+    cursor: default !important;
     opacity: 0.5;
 }
 

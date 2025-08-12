@@ -167,6 +167,7 @@ function App() {
                             setCategories={setCategories}
                             products={products}
                             setProducts={setProducts}
+                            quagga={Quagga}
                             registerBarcodeListener={registerBarcodeListener}
                             onBarcodeScanned={onBarcodeScanned}
                             filterPhrase={filterPhrase}
@@ -195,6 +196,7 @@ function App() {
                             setStorages={setStorages}
                             supplies={supplies}
                             setSupplies={setSupplies}
+                            quagga={Quagga}
                             filterPhrase={filterPhrase}
                             setFilterPhrase={setFilterPhrase}
                         />
@@ -207,6 +209,7 @@ function App() {
                             supplies={supplies}
                             storages={storages}
                             setSupplies={setSupplies}
+                            quagga={Quagga}
                             filterPhrase={filterPhrase}
                             setFilterPhrase={setFilterPhrase}
                         />

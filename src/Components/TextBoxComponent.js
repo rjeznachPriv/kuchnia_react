@@ -18,3 +18,18 @@ function TextBoxComponent(props) {
 }
 
 export default TextBoxComponent;
+
+export function renderTextBoxComponent(column, commonProps, captions, additional) {
+    return (
+        <span className="display-flex">
+            <TextBoxComponent
+                {...commonProps}
+                placeholder={`${captions.message_add} ${column.displayName}`}
+                type={column.type}
+                min={column.min}
+                max={column.max}
+                additional={additional}
+            />
+        </span>
+    );
+}

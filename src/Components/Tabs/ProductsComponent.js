@@ -6,7 +6,7 @@ import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js
 import './../../Styles/Tabs/ProductsComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
-import MyDataTable from '../MyDataTable.js';
+import InteractiveDataTable from './../InteractiveDataTable .js';
 
 function ProductsComponent(props) {
     const [productClicked, setProductClicked] = useState({ name: "" });
@@ -53,9 +53,8 @@ function ProductsComponent(props) {
     //}
 
     return (
-        <div id={names.products_tab} style={localStyle} className="ProductsComponent">
+        <div id={names.products_tab} style={localStyle} className="ProductsComponent products-table-container">
 
-            [Wstgawic okienko ze skanerem!]
             <ChooseWhereToGoModalComponent
                 mainWindowClassName={`modal-where-to-go ${chooseClickedModalFadingClass}`}
                 button1Text={`Pokaż produkty w ${productClicked.name}`}
@@ -67,7 +66,7 @@ function ProductsComponent(props) {
 
             ></ChooseWhereToGoModalComponent>
 
-            <MyDataTable
+            <InteractiveDataTable
                 onResourceClicked={onProductClicked}
                 quagga={ props.quagga}
                 columns={[
@@ -124,7 +123,7 @@ function ProductsComponent(props) {
                 deleteWindowText={captions.message_are_you_sure_to_remove_product}
 
                 editWindowTitle={captions.message_product_edit}
-            ></MyDataTable>
+            ></InteractiveDataTable>
 
         </div>
     );

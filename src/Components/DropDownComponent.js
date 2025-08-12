@@ -23,3 +23,14 @@ export function getSelectableFieldLabel(column, item) {
     let label = column?.dataSource?.filter((dataItem) => (dataItem.guid === item[column.name]))[0]?.name;
     return label;
 }
+
+export function renderDropDownComponent(column, commonProps, value) {
+    return (
+        <DropDownComponent
+            {...commonProps}
+            handleChange={(e) => commonProps.onChange(e)}
+            options={column.dataSource}
+            selectedId={value}
+        ></DropDownComponent>
+    );
+}

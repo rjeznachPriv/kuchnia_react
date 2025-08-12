@@ -12,11 +12,11 @@ import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
 const cameraSound = new Audio('./camera.mp3');
 
-function CameraComponent2(props) {
+function JustCameraComponent(props) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
 
-    const [takePictureClass, setTakePictureClass] = useState('');
+    const [takePictureOverlayClass, setTakePictureOverlayClass] = useState('');
     const [cameras, setCameras] = useState();
     const [cameraIndex, setCameraIndex] = useState(0);
     const [isStreaming, setIsStreaming] = useState(false);
@@ -44,29 +44,42 @@ function CameraComponent2(props) {
 
         const newIndex = (cameraIndex + 1) % cameras.length;
         setCameraIndex(newIndex);
-        const newCamera = cameras[newIndex];
+
         stopCameras();
+
+        const newCamera = cameras[newIndex];
+        await startCamera(newCamera.deviceId);
+    }
+
+    async function startCamera(deviceId) {
         try {
-            const newStream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    deviceId: { exact: newCamera.deviceId }
-                }
-            });
+            const constraints = deviceId
+                ? { video: { deviceId: { exact: deviceId } } }
+                : { video: true };
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
             if (videoRef.current) {
-                videoRef.current.srcObject = newStream;
+                videoRef.current.srcObject = stream;
                 setIsStreaming(true);
             }
         } catch (error) {
-            console.error("TODO B³¹d podczas prze³¹czania kamery:", error);
+            console.error("TODO B³¹d dostêpu do kamery:", error);
+        }
+    }
+
+    function stopCameras() {
+        if (videoRef.current && videoRef.current.srcObject) {
+            videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+            setIsStreaming(false);
         }
     }
 
     function handleTakePictureButtonClick() {
         cameraSound.play();
         runSequence([
-            () => setTakePictureClass('fadeInAndOut'),
-            () => setTakePictureClass('')],
+            () => setTakePictureOverlayClass('fadeInAndOut'),
+            () => setTakePictureOverlayClass('')],
             config.flashOverlayTime);
         const video = videoRef.current;
         const canvas = canvasRef.current;
@@ -81,32 +94,11 @@ function CameraComponent2(props) {
         stopCameras();
     }
 
-    async function startCamera() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                setIsStreaming(true);
-            }
-        } catch (error) {
-            console.error("TODO B³¹d dostêpu do kamery:", error);
-            alert("TODO Nie mo¿na uzyskaæ dostêpu do kamery.");
-        }
-    }
-
-    function stopCameras() {
-        if (videoRef.current && videoRef.current.srcObject) {
-            videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-            setIsStreaming(false);
-        }
-    }
-
     return (
         <div className={`CameraComponent ${props.className}`}>
-            <div className={`${takePictureClass} take-picture-overlay`}></div>
+            <div className={`${takePictureOverlayClass} take-picture-overlay`}></div>
 
-            <div className="container" onClick={() => { if (!isStreaming) startCamera()  }}>
+            <div className="container" onClick={() => { if (!isStreaming) startCamera() }}>
                 <video
                     id="camera-component-video"
                     ref={videoRef}
@@ -131,4 +123,22 @@ function CameraComponent2(props) {
     );
 }
 
-export default CameraComponent2;
+export default JustCameraComponent;
+
+export function renderThumbnail(commonProps, value, onRemoveThumbnailButtonClicked, onCameraIconClicked) {
+    return (
+        <div>
+            <label>{commonProps.label}</label>
+            {
+                value ?
+                    <div className="TakenPictureThumbnailContainer">
+                        <img alt="" src={value} className="TakenPictureThumbnail"></img>
+                        <div className="top-bar-x-button button" onClick={onRemoveThumbnailButtonClicked}>
+                            <IoMdCloseCircle></IoMdCloseCircle>
+                        </div>
+                    </div> :
+                    <FaCamera role="button" tabIndex="0" onClick={onCameraIconClicked}></FaCamera>
+            }
+        </div>
+    );
+}

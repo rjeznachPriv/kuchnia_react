@@ -6,7 +6,7 @@ import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js
 import './../../Styles/Tabs/CategoriesComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
-import MyDataTable from '../MyDataTable.js';
+import InteractiveDataTable from './../InteractiveDataTable .js';
 
 function CategoriesComponent(props) {
     const [categoryClicked, setCategoryClicked] = useState({ name: "" });
@@ -38,7 +38,7 @@ function CategoriesComponent(props) {
     }
 
     return (
-        <div id={names.categories_tab} style={localStyle} className="CategoriesComponent">
+        <div id={names.categories_tab} style={localStyle} className="CategoriesComponent categories-table-container">
 
             <ChooseWhereToGoModalComponent
                 mainWindowClassName={`modal-where-to-go ${chooseClickedModalFadingClass}`}
@@ -51,7 +51,8 @@ function CategoriesComponent(props) {
 
             ></ChooseWhereToGoModalComponent>
 
-            <MyDataTable
+            <InteractiveDataTable
+                quagga={props.quagga}
                 onResourceClicked={onCategoryClicked}
                 columns={[
                     { name: "guid", type: "text", searchable: true },
@@ -86,7 +87,7 @@ function CategoriesComponent(props) {
                 deleteWindowText={captions.message_are_you_sure_to_remove_category}
 
                 editWindowTitle={captions.message_category_edit}
-            ></MyDataTable>
+            ></InteractiveDataTable>
 
         </div>
     );

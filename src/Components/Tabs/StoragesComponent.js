@@ -6,7 +6,7 @@ import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js
 import './../../Styles/Tabs/StoragesComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
-import MyDataTable from '../MyDataTable.js';
+import InteractiveDataTable from './../InteractiveDataTable .js';
 
 function StoragesComponent(props) {
     const [storageClicked, setStorageClicked] = useState({ name: "" });
@@ -57,9 +57,8 @@ function StoragesComponent(props) {
     //}
 
     return (
-        <div id={names.storages_tab} style={localStyle} className="StoragesComponent">
+        <div id={names.storages_tab} style={localStyle} className="StoragesComponent storages-table-container" >
 
-            [Wstgawic okienko ze skanerem!]
             <ChooseWhereToGoModalComponent
                 mainWindowClassName={`modal-where-to-go ${chooseClickedModalFadingClass}`}
                 button1Text={`Poka¿ produkty w ${storageClicked.name}`}
@@ -71,7 +70,8 @@ function StoragesComponent(props) {
 
             ></ChooseWhereToGoModalComponent>
 
-            <MyDataTable
+            <InteractiveDataTable
+                quagga={props.quagga}
                 onResourceClicked={onStorageClicked}
                 onScannerIconClicked={openScanner}
                 columns={[
@@ -107,7 +107,7 @@ function StoragesComponent(props) {
                 deleteWindowText={captions.message_are_you_sure_to_remove_storage}
 
                 editWindowTitle={captions.message_storage_edit}
-            ></MyDataTable>
+            ></InteractiveDataTable>
 
         </div>
     );
