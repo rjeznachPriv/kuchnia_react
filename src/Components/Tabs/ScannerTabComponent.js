@@ -32,7 +32,7 @@ const ScannerTabComponent = props => {
             return () => { props.quagga.stop() }
         });
 
-        props.registerBarcodeListener(onBarcodeScannedWhenCameraActive);
+        //props.registerBarcodeListener(onBarcodeScannedWhenCameraActive);
 
         props.quagga.onDetected(function (result) {
             props.quagga.pause();
@@ -80,15 +80,6 @@ const ScannerTabComponent = props => {
         setPictureData(image_data_url);
         props.onPictureTaken(image_data_url);
         props.activateTabWithId(names.choose_tab)
-    }
-
-    function onBarcodeScannedWhenCameraActive(barcode) {
-        setBarcode(barcode);
-        runSequence([
-            () => setScanClass('fadeInAndOut'),
-            () => setScanClass(''),
-            () => props.activateTabWithId(names.choose_tab)],
-            config.flashOverlayTime);
     }
 
     return (

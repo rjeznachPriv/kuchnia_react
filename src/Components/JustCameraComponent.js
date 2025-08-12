@@ -10,7 +10,7 @@ import config from "./../Configuration/scannerComponentConfig.json";
 import names from "./../Configuration/VitalHTMLids.json";
 import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
-const cameraSound = new Audio('./camera.mp3');
+const cameraSound = new Audio('/camera.mp3');
 
 function JustCameraComponent(props) {
     const videoRef = useRef(null);
@@ -112,7 +112,7 @@ function JustCameraComponent(props) {
                     <IoMdCloseCircle></IoMdCloseCircle>
                 </div>
                 <div className="take-picture button" onClick={handleTakePictureButtonClick}>
-                    <FaCamera></FaCamera>
+                    {isStreaming ? <FaCamera></FaCamera> : ""}
                 </div>
                 <div className="switch-camera button" onClick={handleSwitchCameraButtonClick}>
                     <FaCameraRotate></FaCameraRotate>

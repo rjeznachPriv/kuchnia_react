@@ -57,6 +57,7 @@
     cursor: pointer;
     top: 1em;
     position: absolute;
+    z-index: 999;
 }
 
     .CameraComponent div.button:hover {
@@ -111,7 +112,7 @@
     width: 100%;
     height: 3em;
     z-index: 999;
-    top: 50%;
+    top: 70%;
 }
 
 .CameraComponent .scanner-overlay {

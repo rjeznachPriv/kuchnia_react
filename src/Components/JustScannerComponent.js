@@ -10,8 +10,8 @@ import config from "./../Configuration/scannerComponentConfig.json";
 import names from "./../Configuration/VitalHTMLids.json";
 import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
-const beepOkSound = new Audio('./beep-ok.mp3');
-const beepNotOkSound = new Audio('./beep-not_ok.mp3');
+const beepOkSound = new Audio('/beep-ok.mp3');
+const beepNotOkSound = new Audio('/beep-not_ok.mp3');
 
 function JustScannerComponent(props) {
     let lastDetectedTime = 0;
@@ -19,23 +19,40 @@ function JustScannerComponent(props) {
     const canvasRef = useRef(null);
 
     const [scannerOverlayClass, setScannerOverlayClass] = useState('');
-
     const [cameras, setCameras] = useState([]);
     const [cameraIndex, setCameraIndex] = useState(0);
-    //TODO: keep preferred camera somewhere!
     const [isStreaming, setIsStreaming] = useState(false);
     const [isQuaggaRunning, setIsQuaggaRunning] = useState(false);
 
     useEffect(() => {
-        initCameras();
-        startQuagga();
+
+
+        initAndStart();
         return () => stopQuagga();
     }, []);
 
-    async function initCameras() {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        setCameras(videoDevices);
+    useEffect(() => {
+        if (props.className === 'fadeIn' && cameras.length > 0) {
+            startQuagga(cameras[cameraIndex]?.deviceId);    //TODO: remember last camera? preferred camera?
+        }
+        if (props.className === 'fadeOut') {
+            stopQuagga();
+        }
+    }, [props.className, cameras, cameraIndex]);
+
+    async function initAndStart() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            setCameras(videoDevices);
+
+            if (videoDevices.length > 0) {
+                setCameraIndex(0);
+                await startQuagga(videoDevices[0].deviceId);
+            }
+        } catch (err) {
+            console.error("Camera init error:", err);
+        }
     }
 
     function attachOnDetected() {
@@ -46,10 +63,7 @@ function JustScannerComponent(props) {
 
             props.quagga.pause();
 
-            runSequence([
-                () => PassDetectedCode(result),
-                () => props.quagga.start(),
-            ], config.scanningPauseAfterScan);
+            PassDetectedCode(result);
         });
     }
 
@@ -60,6 +74,11 @@ function JustScannerComponent(props) {
         }
 
         await startCamera(deviceId);
+
+        if (!videoRef.current?.srcObject) {
+            console.error("No video stream — cannot start Quagga");
+            return;
+        }
 
         await new Promise(resolve => {
             if (videoRef.current) {
@@ -143,6 +162,10 @@ function JustScannerComponent(props) {
     }
 
     function PassDetectedCode(result) {
+        if (!result || !result.codeResult || !result.codeResult.code) {
+            console.warn("PassDetectedCode: invalid result object", result);
+            return;
+        }
         runSequence(
             [
                 () => setScannerOverlayClass('fadeInAndOut'),
@@ -151,11 +174,13 @@ function JustScannerComponent(props) {
             config.flashOverlayTime);
 
         if (ValidateDetectedCode(result.codeResult.code, result).valid) {
-            beepOkSound.play();
+            beepOkSound.play().catch(err => console.warn("Beep sound error:", err));
             props.callback(result.codeResult.code);
+            handleCloseScannerButtonClick();
         } else {
-            beepNotOkSound.play();
+            beepNotOkSound.play().catch(err => console.warn("Beep sound error:", err));
             console.log('error scanning');
+            props.quagga.start()
         }
     }
 
@@ -171,7 +196,11 @@ function JustScannerComponent(props) {
         <div className={`CameraComponent ${props.className}`}>
             <div className={`${scannerOverlayClass} code-scanned-overlay`}></div>
 
-            <div className="container" onClick={() => { if (!isStreaming) startCamera() }}>
+            <div className="container" onClick={() => {
+                if (!isStreaming && cameras.length > 0) {
+                    startQuagga(cameras[cameraIndex]?.deviceId);
+                }
+            }}>
                 <video
                     id="camera-component-video"
                     ref={videoRef}
@@ -180,7 +209,7 @@ function JustScannerComponent(props) {
                     muted
                 ></video>
                 <div className="camera-scanner-info">
-                    {isStreaming ? "" : captions.camera_scanner_activate}
+                    {isStreaming ?  cameras[cameraIndex]?.label  : captions.camera_scanner_activate}
                 </div>
                 <div className="top-bar-x-button button" onClick={handleCloseScannerButtonClick}>
                     <IoMdCloseCircle />
