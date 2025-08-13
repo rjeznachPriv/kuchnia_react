@@ -6,13 +6,13 @@ import { parse, isValid, format } from "date-fns";
 
 import pl from "date-fns/locale/pl";
 
-import { FaEdit, FaTimes, FaSortDown, FaSortUp, FaCamera } from 'react-icons/fa';
+import { FaEdit, FaTimes, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { CiBarcode } from "react-icons/ci";
 import { MdAddBox } from 'react-icons/md';
-import { IoMdCloseCircle } from "react-icons/io";
 
 import { } from './../utils/utils';
 import { Create, Read, Update, Delete, filteredResources, EntityStateValid, IsInvalid } from './../utils/crud';
+import Draggable from './Draggable.js';
 
 import { renderTextBoxComponent } from './TextBoxComponent.js';
 import { getSelectableFieldLabel, renderDropDownComponent } from './DropDownComponent.js';
@@ -182,7 +182,7 @@ function InteractiveDataTable(props) {
                             onChange={(date) => { setValue(format(date, dateFormat)); }}
                             validationMessage={IsInvalid(column, value)}
                             dateFormat={dateFormat}
-                            locale={ locale}
+                            locale={locale}
                             showYearDropdown
                         />
                     </div>
@@ -200,18 +200,23 @@ function InteractiveDataTable(props) {
     return (
         <div id={`${props.resourceName}-table`} className={`${props.resourceName}Component`}>
 
-            <JustCameraComponent
-                className={cameraModalFadingClass}
-                setClassName={setCameraModalFadingClass}
-                callback={pictureTakenCallback}
-            ></JustCameraComponent>
+            <Draggable>
+                <JustCameraComponent
+                    className={cameraModalFadingClass}
+                    setClassName={setCameraModalFadingClass}
+                    callback={pictureTakenCallback}
+                ></JustCameraComponent>
+            </Draggable>
 
-            <JustScannerComponent
-                className={scannerModalFadingClass}
-                setClassName={setScannerModalFadingClass}
-                callback={codeScannedCallback}
-                quagga={props.quagga}
-            ></JustScannerComponent>
+
+            <Draggable>
+                <JustScannerComponent
+                    className={scannerModalFadingClass}
+                    setClassName={setScannerModalFadingClass}
+                    callback={codeScannedCallback}
+                    quagga={props.quagga}
+                ></JustScannerComponent>
+            </Draggable>
 
             <InfoModalComponent
                 mainWindowClassName={`modal-delete-window ${deleteModalFadingClass}`}

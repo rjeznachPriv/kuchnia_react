@@ -1,0 +1,7 @@
+.DraggableWrapper {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    cursor: grab;
+    z-index: 1002;
+}
