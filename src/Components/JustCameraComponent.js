@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+ï»¿import React, { useEffect, useRef, useState } from "react";
 import './../Styles/CameraComponent.css';
 import { runSequence } from './../utils/utils.js';
 
@@ -61,10 +61,20 @@ function JustCameraComponent(props) {
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-                setIsStreaming(true);
+                videoRef.current.onloadedmetadata = () => {
+                    setIsStreaming(true);
+
+                    const videoWidth = videoRef.current.videoWidth;
+                    const videoHeight = videoRef.current.videoHeight;
+                    const aspectRatio = videoHeight / videoWidth;
+
+                    if (canvasRef.current) {
+                        canvasRef.current.style.height = `${120 * aspectRatio}px`;
+                    }
+                };
             }
         } catch (error) {
-            console.error("TODO B³¹d dostêpu do kamery:", error);
+            console.error("TODO BÅ‚Ä…d dostÄ™pu do kamery:", error);
         }
     }
 
@@ -79,13 +89,24 @@ function JustCameraComponent(props) {
         cameraSound.play();
         runSequence([
             () => setTakePictureOverlayClass('fadeInAndOut'),
-            () => setTakePictureOverlayClass('')],
-            config.flashOverlayTime);
+            () => setTakePictureOverlayClass('')
+        ], config.flashOverlayTime);
+
         const video = videoRef.current;
         const canvas = canvasRef.current;
 
+        const aspectRatio = video.videoHeight / video.videoWidth;
+        const targetWidth = 120;
+        const targetHeight = Math.round(targetWidth * aspectRatio);
+
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        canvas.style.width = `${targetWidth}px`;
+        canvas.style.height = `${targetHeight}px`;
+
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        let image_data_url = canvas.toDataURL('image/jpeg', config.takenPictureQuality);
+        let image_data_url = canvas.toDataURL('image/webp', config.takenPictureQuality);
         props.callback(image_data_url);
     }
 
@@ -107,7 +128,7 @@ function JustCameraComponent(props) {
                 >
 
                 </video>
-                <div className="camera-scanner-info">{isStreaming ? "" : captions.camera_scanner_activate}</div>
+                <div className="camera-scanner-info">{isStreaming ? cameras[cameraIndex].label : captions.camera_scanner_activate}</div>
                 <div className="top-bar-x-button button" onClick={handleCloseCameraButtonClick}>
                     <IoMdCloseCircle></IoMdCloseCircle>
                 </div>
