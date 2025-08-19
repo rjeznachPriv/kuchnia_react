@@ -140,8 +140,6 @@ function App() {
         return null;
     }
 
-
-
     return (
         <div className="App">
             <Router>
@@ -218,14 +216,14 @@ function App() {
                             activeTab={activeTab}
                             activateTabWithId={activateTabWithId}
                         />
-                        <ScannerTabComponent
-                            activateTabWithId={activateTabWithId}
-                            quagga={Quagga}
-                            registerBarcodeListener={registerBarcodeListener}
-                            onBarcodeScanned={onBarcodeScanned}
-                            onPictureTaken={onPictureTaken}
-                            activeTab={activeTab}
-                        />
+                        {/*<ScannerTabComponent*/}
+                        {/*    activateTabWithId={activateTabWithId}*/}
+                        {/*    quagga={Quagga}*/}
+                        {/*    registerBarcodeListener={registerBarcodeListener}*/}
+                        {/*    onBarcodeScanned={onBarcodeScanned}*/}
+                        {/*    onPictureTaken={onPictureTaken}*/}
+                        {/*    activeTab={activeTab}*/}
+                        {/*/>*/}
                     </main>
                 </div>
                 <FooterComponent

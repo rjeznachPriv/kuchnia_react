@@ -5,10 +5,15 @@ import './../../Styles/Tabs/SuppliesComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
 
-import InteractiveDataTable from './../InteractiveDataTable .js';
+import InteractiveDataTable from './../InteractiveDataTable/InteractiveDataTable .js';
+import { groupByMulti } from './../InteractiveDataTable/Filters/Group.js';
+import { filterSpoiled } from './../InteractiveDataTable/Filters/Spoiled.js';
+import { filterNotMuch } from './../InteractiveDataTable/Filters/NotMuch.js';
 
-import { FaAppleAlt } from 'react-icons/fa';
+import { FaAppleAlt, FaLayerGroup } from 'react-icons/fa';
+import { GiFly } from "react-icons/gi";
 import { BsApple } from 'react-icons/bs';
+import { MdOutlineShoppingCart } from "react-icons/md";
 
 function SuppliesComponent(props) {
 
@@ -16,10 +21,6 @@ function SuppliesComponent(props) {
 
     useEffect(() => {
     }, []);
-
-    function openScanner() {
-
-    }
 
     function onSupplyClicked(supply, columnName) {
         if (columnName == 'isOpen') {
@@ -40,23 +41,12 @@ function SuppliesComponent(props) {
 
     return (
         <div id={names.supplies_tab} className="SuppliesComponent" style={localStyle}>
-            MODAL
-            MODAL
-
-            [Dodac barcode window (male okienko z aparatu)]
-            <br />
-            <button>Poniżej limitu</button><br />
-
-            <button>Blisko daty końca terminu (i otwarte)</button><br />
-
-            <button>Scal te same produkty</button><br />
-
             <div className="supplies-table-container">
 
                 <InteractiveDataTable
                     quagga={props.quagga}
                     onResourceClicked={onSupplyClicked}
-                    onScannerIconClicked={openScanner}
+                    
                     columns={[
                         { name: "guid", type: "text", searchable: true },
                         { name: "frequency", type: "number" },
@@ -102,6 +92,13 @@ function SuppliesComponent(props) {
                     deleteWindowText={captions.message_are_you_sure_to_remove_supply}
 
                     editWindowTitle={captions.message_supply_edit}
+
+                    customFilters={
+                        [
+                            { name: "group", icon: < FaLayerGroup />, caption: "TODO grupuj", predicate: groupByMulti, predicateArgs: [props.supplies, ["product_id"]] },
+                            { name: "spoiled", icon: < GiFly />, caption: "TODO otwarte, blisko daty", predicate: filterSpoiled, predicateArgs: [props.supplies, {}] },
+                            { name: "notMuch", icon: < MdOutlineShoppingCart />, caption: "TODO poniżej limitu", predicate: filterNotMuch, predicateArgs: [props.supplies, props.products] },
+                        ]}
                 ></InteractiveDataTable>
             </div>
         </div>

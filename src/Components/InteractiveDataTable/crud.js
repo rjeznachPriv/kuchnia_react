@@ -1,7 +1,7 @@
-import { uuidv4} from './utils.js';
+import { uuidv4} from './../../utils/utils.js';
 import { parse } from "date-fns";
-import { filterItems } from './../Components/AutocompleteSearchComponent.js';
-import { getSelectableFieldLabel } from './../Components/DropDownComponent.js';
+import { filterItemsByAutocomplete } from './../AutocompleteSearchComponent.js';
+import { getSelectableFieldLabel } from './../DropDownComponent.js';
 
 export function Create(item, itemSetter, resourcesSetter) {
         let newItem = {
@@ -56,14 +56,14 @@ export function ClearObject(obj) {
     return obj;
 }
 
-export function filteredResources(resources, columns, sortColumn, sortDirection, dateFormat, filterPhrase ) {
+export function filterBySearchPhraseAndSort(resources, columns, sortColumn, sortDirection, dateFormat, filterPhrase ) {
     let searchableColumns = columns.filter((column) => (column.searchable)).map((column) => (column.name));
     let columnWithDataSource = columns.filter((column) => (column.dataSource))[0];    //TODO: what if more columns? : push more to keyPhrase
 
     let extendedResources = resources.map((item) => ({ ...item, keyPhrase: getSelectableFieldLabel(columnWithDataSource, item) }));
     searchableColumns.push("keyPhrase");
 
-    return filterItems(extendedResources, filterPhrase, searchableColumns).sort((a, b) => {
+    return filterItemsByAutocomplete(extendedResources, filterPhrase, searchableColumns).sort((a, b) => {
         let columnType = columns.filter((column) => (column.name == sortColumn))[0]?.type || "text";
         if (columnType === "text") {
             return sortDirection ? b[sortColumn].localeCompare(a[sortColumn]) : a[sortColumn].localeCompare(b[sortColumn]);

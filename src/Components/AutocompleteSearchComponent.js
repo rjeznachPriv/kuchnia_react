@@ -53,7 +53,7 @@ function AutocompleteSearchComponent(props) {
 
 export default AutocompleteSearchComponent;
 
-export function filterItems(list, phrase, additionalColumns) {
+export function filterItemsByAutocomplete(list, phrase, additionalColumns) {
     var filteredItems = list.filter((item) => {
 
         return item.barcode?.toLowerCase()?.match(phrase?.toLowerCase())

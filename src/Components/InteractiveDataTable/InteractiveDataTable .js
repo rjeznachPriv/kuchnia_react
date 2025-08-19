@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./../Styles/InteractiveDataTable .css";
+//import './../../Styles/InteractiveDataTable.css';
+import './../../Styles/InteractiveDataTable/InteractiveDataTable.css';
 import { parse, isValid, format } from "date-fns";
 
 import pl from "date-fns/locale/pl";
@@ -10,22 +11,24 @@ import { FaEdit, FaTimes, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { CiBarcode } from "react-icons/ci";
 import { MdAddBox } from 'react-icons/md';
 
-import { } from './../utils/utils';
-import { Create, Read, Update, Delete, filteredResources, EntityStateValid, IsInvalid } from './../utils/crud';
-import Draggable from './Draggable.js';
+import { } from './../../utils/utils.js';
+import { Create, Read, Update, Delete, filterBySearchPhraseAndSort, EntityStateValid, IsInvalid } from './crud';
+import Draggable from './../Draggable.js';
 
-import { renderTextBoxComponent } from './TextBoxComponent.js';
-import { getSelectableFieldLabel, renderDropDownComponent } from './DropDownComponent.js';
-import CheckBoxComponent, { renderCheckBoxComponent } from './CheckBoxComponent.js';
-import AutocompleteSearchComponent from './AutocompleteSearchComponent.js';
-import { getSmartSelectableFieldLabel, renderSmartDropDownComponent } from './SmartDropDownComponent.js';
-import InfoModalComponent from './InfoModalComponent.js';
-import JustCameraComponent, { renderThumbnail } from './JustCameraComponent.js';
-import JustScannerComponent from './JustScannerComponent.js';
+import { renderTextBoxComponent } from './../TextBoxComponent.js';
+import { getSelectableFieldLabel, renderDropDownComponent } from './../DropDownComponent.js';
+import CheckBoxComponent, { renderCheckBoxComponent } from './../CheckBoxComponent.js';
+import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
+import { getSmartSelectableFieldLabel, renderSmartDropDownComponent } from './../SmartDropDownComponent.js';
+import InfoModalComponent from './../InfoModalComponent.js';
+import JustCameraComponent, { renderThumbnail } from './../JustCameraComponent.js';
+import JustScannerComponent from './../JustScannerComponent.js';
+import { columnsWhenGroupped } from './Filters/Group.js';
+import { columnsWhenSpoiled } from './Filters/Spoiled.js';
+import { columnsWhenNotMuch } from './Filters/NotMuch.js';
 
-import captions from "./../Configuration/LocalizedCaptionsPL.json"
-import noImagePath from "./../img/noImage.png";
-
+import captions from "./../../Configuration/LocalizedCaptionsPL.json"
+import noImagePath from "./../../img/noImage.png";
 
 let imgSetter;
 let codeSetter;
@@ -45,6 +48,8 @@ function InteractiveDataTable(props) {
     const [editModalFadingClass, setEditModalFadingClass] = useState('fadeOut');
     const [cameraModalFadingClass, setCameraModalFadingClass] = useState('fadeOut');
     const [scannerModalFadingClass, setScannerModalFadingClass] = useState('fadeOut');
+
+    const [activeFilter, setActiveFilter] = useState('');
 
     const [itemToAddValues, setItemToAddValues] = useState(() =>
         Object.fromEntries(props.columns.map(field => [field.name, ""]))
@@ -115,7 +120,12 @@ function InteractiveDataTable(props) {
     }
 
     function columnsToShow() {
-        return props.columns.filter((column) => (column.displayName));
+        let columns = props.columns.filter((column) => (column.displayName));
+        columns = columnsWhenGroupped(activeFilter, columns);
+        columns = columnsWhenSpoiled(activeFilter, columns);
+        columns = columnsWhenNotMuch(activeFilter, columns);
+        //TODO: add more here
+        return columns;
     }
 
     function valuesToSearchFor() {
@@ -143,6 +153,11 @@ function InteractiveDataTable(props) {
 
     function codeScannedCallback(code) {
         codeSetter && codeSetter(code);
+    }
+
+    function prepareResourcesToDisplay() {
+        let resourcesAfterCustomFilters = activeFilter ? activeFilter.predicate(...activeFilter.predicateArgs) : props.resources;
+        return filterBySearchPhraseAndSort(resourcesAfterCustomFilters, props.columns, sortColumn, sortDirection, dateFormat, calculateFilterPhrase());
     }
 
     function renderFieldComponent(column, value, valueSetter, withLabel = false) {
@@ -198,7 +213,7 @@ function InteractiveDataTable(props) {
     }
 
     return (
-        <div id={`${props.resourceName}-table`} className={`${props.resourceName}Component`}>
+        <div id={`${props.resourceName}-table`} className={`${props.resourceName}Component InteractiveDataTable`}>
 
             <Draggable>
                 <JustCameraComponent
@@ -207,7 +222,6 @@ function InteractiveDataTable(props) {
                     callback={pictureTakenCallback}
                 ></JustCameraComponent>
             </Draggable>
-
 
             <Draggable>
                 <JustScannerComponent
@@ -289,11 +303,23 @@ function InteractiveDataTable(props) {
                 items={valuesToSearchFor()}
             ></AutocompleteSearchComponent>
 
+            {props.customFilters?.map((filter) => {
+                return (
+
+                    <button
+                        onClick={() => { activeFilter == filter ? setActiveFilter(undefined) : setActiveFilter(filter) }}
+                        className={activeFilter == filter ? "selected" : ""}
+                    >{filter.icon} {filter.caption}</button>
+
+                )
+            }
+            )}
+
             <div className="resources-table-container">
                 <table>
                     <thead>
                         <tr className="table-header">
-                            {props.columns.map((column) => (column.displayName ?
+                            {columnsToShow().map((column) => (column.displayName ?
                                 <th key={column.displayName}>
                                     <span
                                         onClick={() => onHeaderClicked(column)}
@@ -311,7 +337,8 @@ function InteractiveDataTable(props) {
                                     {renderFieldComponent(column, itemToAddValues[column.name], setItemToAddValues)}
                                 </th> : ""
                             ))}
-
+                            {activeFilter?.name == "group" ? <th></th> : ""}
+                            {activeFilter?.name == "notMuch" ? <> <th></th><th></th></> : ""}
                             <th></th>
                             <th>
                                 <MdAddBox
@@ -324,7 +351,7 @@ function InteractiveDataTable(props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredResources(props.resources, props.columns, sortColumn, sortDirection, dateFormat, calculateFilterPhrase()).map((item) => (
+                        {prepareResourcesToDisplay().map((item) => (
                             <tr className="item" key={item.guid}>
                                 {columnsToShow().map((column) => (
                                     <td key={column.name}>
@@ -358,6 +385,7 @@ function InteractiveDataTable(props) {
                                                     {item[column.name] ? column.trueData : column.falseData}
                                                 </span>
                                             )}
+
                                             {/*TODO: implement here for other types */}
                                         </span>
 

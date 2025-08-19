@@ -7,7 +7,6 @@ import { TbCrosshair } from "react-icons/tb";
 import { IoMdCloseCircle } from "react-icons/io";
 
 import config from "./../Configuration/scannerComponentConfig.json";
-import names from "./../Configuration/VitalHTMLids.json";
 import captions from "./../Configuration/LocalizedCaptionsPL.json";
 
 const beepOkSound = new Audio('/beep-ok.mp3');
@@ -16,7 +15,6 @@ const beepNotOkSound = new Audio('/beep-not_ok.mp3');
 function JustScannerComponent(props) {
     let lastDetectedTime = 0;
     const videoRef = useRef(null);
-    const canvasRef = useRef(null);
 
     const [scannerOverlayClass, setScannerOverlayClass] = useState('');
     const [cameras, setCameras] = useState([]);
@@ -81,25 +79,26 @@ function JustScannerComponent(props) {
         }
 
         await new Promise(resolve => {
-            if (videoRef.current) {
-                videoRef.current.onloadedmetadata = () => {
-                    videoRef.current.play().catch(err => {
-                        console.warn("Video play interrupted:", err);
-                    });
-                    resolve();
-                };
-            } else {
-                resolve();
-            }
+            const video = videoRef.current;
+            if (!video) return resolve();
+
+            video.onloadedmetadata = () => {
+                video.play().then(() => resolve()).catch(() => resolve());
+            };
         });
 
         const newConfig = {
             ...config,
             inputStream: {
                 ...config.inputStream,
+                target: videoRef.current,
                 constraints: {
                     ...config.inputStream?.constraints,
                     deviceId: deviceId ? { exact: deviceId } : undefined
+                },
+                singleChannel: false,
+                canvas: {
+                    willReadFrequently: true
                 }
             }
         };
@@ -114,7 +113,6 @@ function JustScannerComponent(props) {
             attachOnDetected();
         });
     }
-
     function stopQuagga() {
         if (isQuaggaRunning) {
             props.quagga.stop();
@@ -220,7 +218,6 @@ function JustScannerComponent(props) {
                 <div className="switch-camera button" onClick={handleSwitchCameraButtonClick}>
                     <FaCameraRotate />
                 </div>
-                <canvas ref={canvasRef} id={names["camera-component-canvas"]}></canvas>
             </div>
         </div>
     );

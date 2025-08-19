@@ -1,7 +1,8 @@
+
 .resources-table-container .TakenPictureThumbnailContainer div.button {
     left: calc(50% + 0.5em);
     display: block;
-    color: #4444;
+    color: #aaaa;
     cursor: pointer;
     top: 0.5em;
     position: absolute;
@@ -9,10 +10,9 @@
 }
 
 .modal-edit-window .TakenPictureThumbnailContainer div.button {
-    color: #4444;
+    color: #aaaa;
     cursor: pointer;
     font-size: 2em;
-    color: #4444;
     position: relative;
     bottom: 120px;
     left: 80px;
@@ -24,4 +24,8 @@
 
 .resources-table-container .tableRowImage {
     width: 120px;
+}
+
+.InteractiveDataTable button.selected {
+    background-color: #ccc;
 }

@@ -6,7 +6,7 @@ import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js
 import './../../Styles/Tabs/CategoriesComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
-import InteractiveDataTable from './../InteractiveDataTable .js';
+import InteractiveDataTable from './../InteractiveDataTable/InteractiveDataTable .js';
 
 function CategoriesComponent(props) {
     const [categoryClicked, setCategoryClicked] = useState({ name: "" });

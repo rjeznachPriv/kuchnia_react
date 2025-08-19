@@ -6,7 +6,7 @@ import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js
 import './../../Styles/Tabs/StoragesComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
-import InteractiveDataTable from './../InteractiveDataTable .js';
+import InteractiveDataTable from './../InteractiveDataTable/InteractiveDataTable .js';
 
 function StoragesComponent(props) {
     const [storageClicked, setStorageClicked] = useState({ name: "" });
@@ -41,29 +41,14 @@ function StoragesComponent(props) {
         console.log('open scanner here');
     }
 
-    //function onBarcodeScannedWhenEditingScreenActive(barcode) {
-    //    if (isEditingStorage()) {
-    //        setStorageToEditBarcode(barcode);
-    //    } else if (IsAddingStorage()) {
-    //        setStorageToAddBarcode(barcode);
-    //    } else if (IsStoragesTabActive()) {
-    //        var guid = getStorage({ barcode: barcode })?.guid;
-    //        if (guid)
-    //            onStorageNameClicked(guid);
-    //        else {
-    //            // nie ma takiego kodu w bazie schowkow. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac artykul lub schowek)
-    //        }
-    //    }
-    //}
-
     return (
         <div id={names.storages_tab} style={localStyle} className="StoragesComponent storages-table-container" >
 
             <ChooseWhereToGoModalComponent
                 mainWindowClassName={`modal-where-to-go ${chooseClickedModalFadingClass}`}
-                button1Text={`Poka¿ produkty w ${storageClicked.name}`}
+                button1Text={`TODO Poka¿ produkty w ${storageClicked.name}`}
                 button1Action={() => { navigate(`/products?storage=${storageClicked.guid}`); }}
-                button2Text={`Poka¿ zapasy w ${storageClicked.name}`}
+                button2Text={`TODO Poka¿ zapasy w ${storageClicked.name}`}
                 button2Action={() => { navigate(`/storages/${storageClicked.guid}`); }}
                 button3Class="none"
                 fadeOut={() => { setChooseClickedModalFadingClass('fadeOut') }}

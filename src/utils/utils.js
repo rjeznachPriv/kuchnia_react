@@ -33,3 +33,24 @@ export function printSvgS(selectors) {
 export function uuidv4() {
     return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16));
 }
+
+export function daysUntil(dateStr, format) {
+    // znajdŸ pozycje pól w formacie
+    const dayIndex = format.indexOf("dd");
+    const monthIndex = format.indexOf("MM");
+    const yearIndex = format.indexOf("yyyy");
+
+    // wyci¹gnij wartoœci ze stringa wg pozycji
+    const day = parseInt(dateStr.substr(dayIndex, 2), 10);
+    const month = parseInt(dateStr.substr(monthIndex, 2), 10);
+    const year = parseInt(dateStr.substr(yearIndex, 4), 10);
+
+    const inputDate = new Date(year, month - 1, day);
+
+    // dzisiejsza data bez godzin
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const diffMs = inputDate - today;
+    return Math.round(diffMs / (1000 * 60 * 60 * 24));
+}

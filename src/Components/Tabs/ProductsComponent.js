@@ -6,7 +6,7 @@ import ChooseWhereToGoModalComponent from './../ChooseWhereToGoModalComponent.js
 import './../../Styles/Tabs/ProductsComponent.css';
 import names from "./../../Configuration/VitalHTMLids.json";
 import captions from "./../../Configuration/LocalizedCaptionsPL.json"
-import InteractiveDataTable from './../InteractiveDataTable .js';
+import InteractiveDataTable from './../InteractiveDataTable/InteractiveDataTable .js';
 
 function ProductsComponent(props) {
     const [productClicked, setProductClicked] = useState({ name: "" });
@@ -37,29 +37,14 @@ function ProductsComponent(props) {
         console.log('do wyboru....');
     }
 
-    //function onBarcodeScannedWhenEditingScreenActive(barcode) {
-    //    if (isEditingStorage()) {
-    //        setStorageToEditBarcode(barcode);
-    //    } else if (IsAddingStorage()) {
-    //        setStorageToAddBarcode(barcode);
-    //    } else if (IsStoragesTabActive()) {
-    //        var guid = getStorage({ barcode: barcode })?.guid;
-    //        if (guid)
-    //            onStorageNameClicked(guid);
-    //        else {
-    //            // nie ma takiego kodu w bazie schowkow. Przejdz do CHOOSE? z tym zeskanowanym guidem (dodac artykul lub schowek)
-    //        }
-    //    }
-    //}
-
     return (
         <div id={names.products_tab} style={localStyle} className="ProductsComponent products-table-container">
 
             <ChooseWhereToGoModalComponent
                 mainWindowClassName={`modal-where-to-go ${chooseClickedModalFadingClass}`}
-                button1Text={`Pokaż produkty w ${productClicked.name}`}
+                button1Text={`TODO Pokaż produkty w ${productClicked.name}`}
                 button1Action={() => { navigate(`/products?product=${productClicked.guid}`); }}
-                button2Text={`Pokaż zapasy w ${productClicked.name}`}
+                button2Text={`TODO Pokaż zapasy w ${productClicked.name}`}
                 button2Action={() => { navigate(`/products/${productClicked.guid}`); }}
                 button3Class="none"
                 fadeOut={() => { setChooseClickedModalFadingClass('fadeOut') }}
