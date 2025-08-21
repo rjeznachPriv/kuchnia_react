@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import DatePicker, { registerLocale } from "react-datepicker";
+import { useAppSettingsStore } from "./../../utils/appSettingsStore.js";
+import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-//import './../../Styles/InteractiveDataTable.css';
 import './../../Styles/InteractiveDataTable/InteractiveDataTable.css';
-import { parse, isValid, format } from "date-fns";
 
-import pl from "date-fns/locale/pl";
+import pl from "date-fns/locale/pl";    //TODO: from settings
 
 import { FaEdit, FaTimes, FaSortDown, FaSortUp } from 'react-icons/fa';
-import { CiBarcode } from "react-icons/ci";
 import { MdAddBox } from 'react-icons/md';
 
 import { } from './../../utils/utils.js';
-import { Create, Read, Update, Delete, filterBySearchPhraseAndSort, EntityStateValid, IsInvalid } from './crud';
+import { Create, Read, Update, Delete, filterBySearchPhraseAndSort, EntityStateValid } from './crud';
 import Draggable from './../Draggable.js';
 
-import { renderTextBoxComponent } from './../TextBoxComponent.js';
-import { getSelectableFieldLabel, renderDropDownComponent } from './../DropDownComponent.js';
-import CheckBoxComponent, { renderCheckBoxComponent } from './../CheckBoxComponent.js';
+import { renderFieldComponent } from './../Form/fieldComponent.js';
+
+import { getSelectableFieldLabel } from './../DropDownComponent.js';
+import CheckBoxComponent from './../CheckBoxComponent.js';
 import AutocompleteSearchComponent from './../AutocompleteSearchComponent.js';
-import { getSmartSelectableFieldLabel, renderSmartDropDownComponent } from './../SmartDropDownComponent.js';
+import { getSmartSelectableFieldLabel } from './../SmartDropDownComponent.js';
 import InfoModalComponent from './../InfoModalComponent.js';
-import JustCameraComponent, { renderThumbnail } from './../JustCameraComponent.js';
+import JustCameraComponent from './../JustCameraComponent.js';
 import JustScannerComponent from './../JustScannerComponent.js';
 import { columnsWhenGroupped } from './Filters/Group.js';
 import { columnsWhenSpoiled } from './Filters/Spoiled.js';
@@ -33,8 +32,7 @@ import noImagePath from "./../../img/noImage.png";
 let imgSetter;
 let codeSetter;
 function InteractiveDataTable(props) {
-    let dateFormat = "dd/MM/yyyy";  //TODO: take from locale settings!
-    let locale = "pl";  //TODO: take from locale settings!
+    const { appSettings, setAppSettings } = useAppSettingsStore();
 
     const [resourceToDeleteGuid, setResourceToDeleteGuid] = useState();
     const [resourceToEditGuid, setResourceToEditGuid] = useState();
@@ -63,7 +61,7 @@ function InteractiveDataTable(props) {
     const [searchComponentTouched, setSearchComponentTouched] = useState(false);
 
     useEffect(() => {
-        registerLocale("pl", pl);
+        registerLocale("pl", pl);   //TODO: register locale from settings
     }, []);
 
     function onResourceFieldClicked(guid, columnName) {
@@ -142,11 +140,6 @@ function InteractiveDataTable(props) {
         return results;
     }
 
-    function safeDate(value) {
-        const parsedDate = parse(value, dateFormat, new Date());
-        return isValid(parsedDate) ? parsedDate : null
-    }
-
     function pictureTakenCallback(picture) {
         imgSetter && imgSetter(picture);
     }
@@ -157,59 +150,7 @@ function InteractiveDataTable(props) {
 
     function prepareResourcesToDisplay() {
         let resourcesAfterCustomFilters = activeFilter ? activeFilter.predicate(...activeFilter.predicateArgs) : props.resources;
-        return filterBySearchPhraseAndSort(resourcesAfterCustomFilters, props.columns, sortColumn, sortDirection, dateFormat, calculateFilterPhrase());
-    }
-
-    function renderFieldComponent(column, value, valueSetter, withLabel = false) {
-        function scannableButton(column) {
-            return column.scannable ? (
-                <CiBarcode className="font-size-large" role="button" tabIndex="0" onClick={() => onScannerIconClicked(setValue)}></CiBarcode>
-            ) : "";
-        };
-
-        function setValue(newValue) {
-            valueSetter(prev => ({ ...prev, [column.name]: newValue }));
-        };
-
-        const commonProps = {
-            value: value,
-            validationMessage: IsInvalid(column, value),
-            label: withLabel ? column.displayName : "",
-            onChange: (e) => setValue(e.target.value),
-        };
-
-        switch (column.type) {
-            case "text":
-            case "number":
-                return renderTextBoxComponent(column, commonProps, captions, scannableButton(column));
-            case "smartselect":
-                return renderSmartDropDownComponent(column, commonProps, (selectedItem) => { setValue(selectedItem.guid); }, scannableButton(column));
-            case "select":
-                return renderDropDownComponent(column, commonProps, value);
-            case "img":
-                return renderThumbnail(commonProps, value, () => onRemoveThumbNailButtonClicked(setValue), () => onCameraIconClicked(setValue));
-            case "datetime":
-                return (
-                    <div>
-                        <label>{commonProps.label}</label>
-                        <DatePicker
-                            selected={safeDate(value)}
-                            onChange={(date) => { setValue(format(date, dateFormat)); }}
-                            validationMessage={IsInvalid(column, value)}
-                            dateFormat={dateFormat}
-                            locale={locale}
-                            showYearDropdown
-                        />
-                    </div>
-                );
-            case "bool":
-                return renderCheckBoxComponent(commonProps, setValue, value);
-
-            //TODO: implement here for other types
-
-            default:
-                return <div>{captions.message_unhandled_type} {column.type}</div>;
-        }
+        return filterBySearchPhraseAndSort(resourcesAfterCustomFilters, props.columns, sortColumn, sortDirection, appSettings.dateFormat?.value, calculateFilterPhrase());
     }
 
     return (
@@ -275,7 +216,7 @@ function InteractiveDataTable(props) {
                 text=""
                 contentLines={
                     columnsToShow().map((column) => (
-                        renderFieldComponent(column, itemToEditValues[column.name], setItemToEditValues, true)
+                        renderFieldComponent(column, itemToEditValues[column.name], setItemToEditValues, true, onScannerIconClicked, onRemoveThumbNailButtonClicked, onCameraIconClicked, appSettings)
                     ))
                 }
                 button1Text={captions.message_cancel}
@@ -310,7 +251,6 @@ function InteractiveDataTable(props) {
                         onClick={() => { activeFilter == filter ? setActiveFilter(undefined) : setActiveFilter(filter) }}
                         className={activeFilter == filter ? "selected" : ""}
                     >{filter.icon} {filter.caption}</button>
-
                 )
             }
             )}
@@ -334,7 +274,7 @@ function InteractiveDataTable(props) {
                         <tr className="table-header">
                             {props.columns.map((column) => (column.displayName ?
                                 <th key={column.name}>
-                                    {renderFieldComponent(column, itemToAddValues[column.name], setItemToAddValues)}
+                                    {renderFieldComponent(column, itemToAddValues[column.name], setItemToAddValues, false, onScannerIconClicked, onRemoveThumbNailButtonClicked, onCameraIconClicked, appSettings)}
                                 </th> : ""
                             ))}
                             {activeFilter?.name == "group" ? <th></th> : ""}

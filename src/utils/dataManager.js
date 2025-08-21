@@ -9,7 +9,7 @@ export const saveState = debounce((state) => {
 }, debounceTime);
 
 export function loadState() {
-    if (localStorage.length == 0) {
+    if (!localStorage.hasOwnProperty(stateKey)) {
         return {
             categories: initialData.categories,
             products: initialData.products,

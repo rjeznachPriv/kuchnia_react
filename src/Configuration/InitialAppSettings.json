@@ -1,0 +1,17 @@
+{
+  "locale": {
+    "value": "pl",
+    "type": "text",
+    "name": "locale"
+  },
+  "dateFormat": {
+    "value": "dd/MM/yyyy",
+    "type": "text",
+    "name": "dateFormat"
+  },
+  "spoiledDays": {
+    "value": 5,
+    "type": "number",
+    "name": "spoiledDays"
+  }
+}

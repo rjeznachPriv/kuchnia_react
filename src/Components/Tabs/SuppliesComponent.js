@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect, useRef } from 'react';
+import { useAppSettingsStore } from "./../../utils/appSettingsStore.js";
 import "react-datepicker/dist/react-datepicker.css";
 
 import './../../Styles/Tabs/SuppliesComponent.css';
@@ -16,6 +17,8 @@ import { BsApple } from 'react-icons/bs';
 import { MdOutlineShoppingCart } from "react-icons/md";
 
 function SuppliesComponent(props) {
+
+    const { appSettings, setAppSettings } = useAppSettingsStore();
 
     var localStyle = { display: props.activeTab === names.supplies_tab ? 'block' : 'none' };
 
@@ -96,7 +99,7 @@ function SuppliesComponent(props) {
                     customFilters={
                         [
                             { name: "group", icon: < FaLayerGroup />, caption: "TODO grupuj", predicate: groupByMulti, predicateArgs: [props.supplies, ["product_id"]] },
-                            { name: "spoiled", icon: < GiFly />, caption: "TODO otwarte, blisko daty", predicate: filterSpoiled, predicateArgs: [props.supplies, {}] },
+                            { name: "spoiled", icon: < GiFly />, caption: "TODO otwarte, blisko daty", predicate: filterSpoiled, predicateArgs: [props.supplies, appSettings] },
                             { name: "notMuch", icon: < MdOutlineShoppingCart />, caption: "TODO poniżej limitu", predicate: filterNotMuch, predicateArgs: [props.supplies, props.products] },
                         ]}
                 ></InteractiveDataTable>

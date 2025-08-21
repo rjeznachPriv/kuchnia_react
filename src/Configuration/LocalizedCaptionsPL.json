@@ -70,5 +70,20 @@
 
   "message_validation_required": "Pole jest wymagane",
   "message_validation_minimum_is": "Minimalna wartość to",
-  "message_validation_maximumm_is": "Maksymalna wartość to"
+  "message_validation_maximumm_is": "Maksymalna wartość to",
+
+  "settings": {
+    "locale": {
+      "displayName": "język",
+      "description": "Język napisów w aplikacji"
+    },
+    "dateFormat": {
+      "displayName": "format dat",
+      "description": "Format, w jakim apliuacja będzię wyświetlać pobierać daty."
+    },
+    "spoiledDays": {
+      "displayName": "dni do zepsucia",
+      "description": "Liczba określa, na ile dni przed datą przydatności do spożycia, filtr w zakładce 'zapasy', ma pokazywać wybrany zasób."
+    }
+  }
 }

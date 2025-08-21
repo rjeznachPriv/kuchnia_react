@@ -1,10 +1,12 @@
 ﻿import { useEffect, useState, useRef } from "react";
+import { useAppSettingsStore } from "./utils/appSettingsStore.js";
 import { BrowserRouter as Router, useLocation, Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import { saveState, loadState } from './utils/dataManager.js';
+import { saveSettings, loadSettings } from './utils/settingsManager.js';
 
 import './Styles/App.css';
 import Quagga from "quagga";
@@ -43,6 +45,10 @@ function App() {
         [names.grocery_list_tab]: captions.title_shopping,
     };
 
+    //const appSettings = useAppSettingsStore(state => state.appSettings);
+
+    const { appSettings, setAppSettings } = useAppSettingsStore();
+
     const logoModalReference = useRef();
 
     var barcodeListeners = [];
@@ -56,13 +62,14 @@ function App() {
     const [activeTab, setActiveTab] = useState('');
     const [filterPhrase, setFilterPhrase] = useState('');
 
-
     useEffect(() => {
         let data = loadState();
         setCategories(data.categories);
         setProducts(data.products);
         setStorages(data.storages);
         setSupplies(data.supplies);
+
+        setAppSettings(loadSettings());
 
         //logoModalReference.current.fadeOutSlow();
         logoModalReference.current.fadeOut();
@@ -151,7 +158,9 @@ function App() {
                     ContentClassName="IntroSpecialModal">
                 </InfoModalComponent>
 
-                <HeaderComponent title={title} />
+                <HeaderComponent
+                    title={title}
+                />
                 <div className="main-content">
                     <aside></aside>
                     <main>

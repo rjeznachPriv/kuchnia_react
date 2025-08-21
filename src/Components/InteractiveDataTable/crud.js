@@ -49,7 +49,7 @@ export function ClearObject(obj) {
         else if (typeof val === "number") obj[key] = 0;
         else if (typeof val === "boolean") obj[key] = false;
         else if (Array.isArray(val)) obj[key] = [];
-        else if (typeof val === "object" && val !== null) obj[key] = {}; // dla nested obiektów
+        else if (typeof val === "object" && val !== null) obj[key] = {}; // for nested
         else obj[key] = null;
     });
 

@@ -20,3 +20,33 @@ input {
 .inline-table {
     display: inline-table;
 }
+
+.textbox-component {
+    display: block;
+    width: 100%;
+}
+    .textbox-component > div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem; /* odstêpy miêdzy liniami */
+        /*max-width: 400px;*/
+    }
+
+    .textbox-component div.input-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .textbox-component div.input-row input {
+        flex: 0 0 100%;
+    }
+
+    .textbox-component.with-additional div.input-row input {
+        flex: 0 0 calc(100% - 2em);
+    }
+
+    .textbox-component div.input-row span {
+        flex: 0 0 1em;
+        text-align: right; /* opcjonalnie: wyrównanie do prawej */
+    }

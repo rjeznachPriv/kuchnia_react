@@ -1,8 +1,5 @@
 import { daysUntil } from './../../../utils/utils';
 
-let spoiledDays = 5; //TODO move to settings
-let format = "dd/MM/yyyy"; //TODO from settings
-
 export function columnsWhenSpoiled(activeFilter, columns) {
     if (activeFilter?.name == "spoiled") {
     }
@@ -10,7 +7,7 @@ export function columnsWhenSpoiled(activeFilter, columns) {
     return columns;
 }
 
-export function filterSpoiled(arr) {
-    arr = arr.filter((item) => (item.isOpen || daysUntil(item.valid_until, format) < spoiledDays));
+export function filterSpoiled(arr, appSettings) {
+    arr = arr.filter((item) => (item.isOpen || daysUntil(item.valid_until, appSettings.dateFormat.value) < appSettings.spoiledDays.value));
     return arr;
 }

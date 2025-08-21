@@ -37,3 +37,17 @@ a.settings-button {
         font-size: 0.3em;
         margin-top: -4.5em;
     }
+
+#app-top-header .modal-app-settings {
+    font-size: 16px;
+    position:fixed;
+    line-height: 1.5em;
+}
+
+#app-top-header .modal-app-settings-content {
+    max-height: 70%;
+}
+
+#app-top-header .modal-main-window {
+    height: auto;
+}

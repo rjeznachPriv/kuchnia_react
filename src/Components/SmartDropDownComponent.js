@@ -84,7 +84,7 @@ function SmartDropDownComponent({ options, onSelect, label, className, additiona
                 }}
             />
             <p className="ValidationMessage">{validationMessage}</p>
-            <span>{additional}</span>
+            <span className="additional-placeholder">{additional}</span>
             {isOpen && (
                 <ul className="suggestions">
                     {filteredItems.map((item, index) => (
@@ -111,7 +111,7 @@ export function getSmartSelectableFieldLabel(column, item) {
 
 export function renderSmartDropDownComponent(column, commonProps, onSelect, additional) {
     return (
-        <span className="display-flex">
+        <span className="">
             <SmartDropDownComponent
                 {...commonProps}
                 options={column.dataSource}
